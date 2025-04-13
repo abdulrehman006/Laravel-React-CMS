@@ -1,0 +1,35 @@
+@import "default/color_variable";
+@import "default/typography";
+@import "common/general";
+@import "common/slider";
+@import "common/video-modal";
+@import "common/sidebar";
+@import "common/spacing";
+@import "shortcode/header";
+@import "shortcode/customcursor";
+@import "shortcode/hero";
+@import "shortcode/iconbox";
+@import "shortcode/card";
+@import "shortcode/cta";
+@import "shortcode/funfact";
+@import "shortcode/logolist";
+@import "shortcode/movingtext";
+@import "shortcode/portfolio";
+@import "shortcode/post";
+@import "shortcode/pricing";
+@import "shortcode/servicelist";
+@import "shortcode/team";
+@import "shortcode/testimonial";
+@import "shortcode/timeline";
+@import "shortcode/footer";
+@import "common/rtl";
+
+// slider css
+.swiper-horizontal > .swiper-pagination {
+    bottom: 52px !important;
+    left: 50% !important;
+    z-index: 10;
+    @media (max-width: 1199px) {
+        bottom: 30pxpx !important;
+    }
+}

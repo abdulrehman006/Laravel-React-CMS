@@ -1,0 +1,12 @@
+/.__MACOSX
+/.arino
+/.phpunit.cache
+/node_modules
+/.fleet
+/.idea
+/.vscode
+
+.DS_Store
+/update
+
+*.zip

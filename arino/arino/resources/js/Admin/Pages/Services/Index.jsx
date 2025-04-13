@@ -1,0 +1,479 @@
+import AdminLayouts from "@/Admin/Layouts/AdminLayouts";
+import { Head, Link } from "@inertiajs/react";
+import { newspaperOutline, search, shieldOutline } from "ionicons/icons";
+import { IonIcon } from "@ionic/react";
+import { trashOutline, createOutline, eyeOutline } from "ionicons/icons";
+import moment from "moment";
+import { useState } from "react";
+import { router } from "@inertiajs/react";
+import ThSortable from "@/Admin/Components/Table/ThSortable";
+import DropDownButton from "@/Admin/Components/Button/DropDownButton";
+import { showAlert } from "@/Admin/Utils/SweetAlert.js";
+import DeleteButton from "@/Admin/Components/Button/DeleteButton";
+import hasPermission from "@/Admin/Utils/hasPermission";
+
+export default function Index({ services, sort, categories, filter }) {
+    const [searchQuery, setSearchQuery] = useState("");
+    const [selectedOption, setSelectedOption] = useState("Bulk Action");
+    const [isMarkAll, setIsMarkAll] = useState(false);
+    const [markItems, setMarkItems] = useState([]);
+    const [selectedStatus, setSelectedStatus] = useState(filter.status);
+    const [selectedCategory, setSelectedCategory] = useState(filter.category);
+
+    // handle search sort
+    const getResults = (search) => {
+        router.get(
+            route("admin.services.index", {
+                search: search ?? setSearchQuery,
+                sort: sort,
+                filter: { category: selectedCategory },
+            }),
+            {},
+            { preserveState: true }
+        );
+    };
+
+    // mark all
+    const markAll = () => {
+        if (isMarkAll) {
+            setMarkItems([]);
+            setIsMarkAll(false);
+        } else {
+            const items = services.data.map((service) => service.id);
+            setMarkItems(items);
+            setIsMarkAll(true);
+        }
+    };
+
+    // handle mark unmark
+    const handleMark = (serviceId) => {
+        const existsMark = markItems.some((item) => item === serviceId);
+        if (existsMark) {
+            const removeItem = markItems.filter((item) => item !== serviceId);
+            setMarkItems(removeItem);
+        } else {
+            const addedItem = [...markItems, serviceId];
+            setMarkItems(addedItem);
+        }
+    };
+
+    // handle bulk action
+    const handleBulkAction = () => {
+        setIsMarkAll([]);
+        showAlert(
+            "Are you sure?",
+            "You want to delete selected services?",
+            "Delete!",
+            () => {
+                router.delete(
+                    route("admin.services.bulk.delete", {
+                        ids: markItems.join(","),
+                    })
+                );
+            }
+        );
+    };
+
+    return (
+        <>
+            <Head title="All services" />
+            <AdminLayouts>
+                <div className="yoo-height-b30 yoo-height-lg-b30" />
+                <div className="container-fluid">
+                    <div className="yoo-uikits-heading">
+                        <h2 className="yoo-uikits-title">All services</h2>
+                    </div>
+                    <div className="yoo-height-b20 yoo-height-lg-b20"></div>
+                    <div className="yoo-card yoo-style1">
+                        <div className="yoo-card-heading">
+                            <div className="yoo-card-heading-left">
+                                <h2 className="yoo-card-title">
+                                    <span className="yoo-card-title-icon yoo-blue-bg">
+                                        <IonIcon
+                                            icon={shieldOutline}
+                                            style={{
+                                                width: "16px",
+                                                height: "16px",
+                                            }}
+                                        />
+                                    </span>
+                                    services
+                                </h2>
+                            </div>
+                        </div>
+                        <div className="yoo-card-body">
+                            <div className="">
+                                <div className="yoo-height-b15 yoo-height-lg-b15" />
+                                <div className="yooDataTableWrap">
+                                    <div className="dataTables_heading">
+                                        <div className="dataTables_heading_left">
+                                            <div className="yoo-group-btn">
+                                                <div className="position-relative">
+                                                    <DropDownButton
+                                                        selectedOption={
+                                                            selectedOption
+                                                        }
+                                                        disabled={
+                                                            !markItems.length
+                                                        }
+                                                    >
+                                                        <a
+                                                            onClick={() =>
+                                                                setSelectedOption(
+                                                                    "Delete"
+                                                                )
+                                                            }
+                                                            className={`dropdown-item ${
+                                                                selectedOption ===
+                                                                "Delete"
+                                                                    ? "active"
+                                                                    : ""
+                                                            }`}
+                                                            href="#"
+                                                        >
+                                                            Delete
+                                                        </a>
+                                                    </DropDownButton>
+                                                </div>
+                                                <button
+                                                    disabled={!markItems.length}
+                                                    onClick={() =>
+                                                        handleBulkAction()
+                                                    }
+                                                    className="btn btn-success btn-sm"
+                                                >
+                                                    Apply
+                                                </button>
+                                            </div>
+                                            <div className="yoo-group-btn">
+                                                <div className="position-relative">
+                                                    <DropDownButton
+                                                        selectedOption={
+                                                            selectedCategory
+                                                        }
+                                                    >
+                                                        <a
+                                                            onClick={() =>
+                                                                setSelectedCategory(
+                                                                    "All Categories"
+                                                                )
+                                                            }
+                                                            className={`dropdown-item ${
+                                                                selectedCategory ===
+                                                                "All Categories"
+                                                                    ? "active"
+                                                                    : ""
+                                                            }`}
+                                                            href="#"
+                                                        >
+                                                            All Category
+                                                        </a>
+                                                        {categories.map(
+                                                            (category) => (
+                                                                <a
+                                                                    onClick={() =>
+                                                                        setSelectedCategory(
+                                                                            category.title
+                                                                        )
+                                                                    }
+                                                                    className={`dropdown-item ${
+                                                                        selectedCategory ===
+                                                                        category.title
+                                                                            ? "active"
+                                                                            : ""
+                                                                    }`}
+                                                                    href="#"
+                                                                >
+                                                                    {
+                                                                        category.title
+                                                                    }
+                                                                </a>
+                                                            )
+                                                        )}
+                                                    </DropDownButton>
+                                                </div>
+                                                <button
+                                                    onClick={() =>
+                                                        getResults(searchQuery)
+                                                    }
+                                                    className="btn btn-success btn-sm"
+                                                >
+                                                    Filter
+                                                </button>
+                                            </div>
+                                        </div>
+                                        <div className="dataTables_heading_right">
+                                            <div
+                                                id="yooDataTable_filter"
+                                                className="dataTables_filter"
+                                            >
+                                                <label>
+                                                    <input
+                                                        type="search"
+                                                        className=""
+                                                        placeholder="Search..."
+                                                        value={searchQuery}
+                                                        onChange={(e) => {
+                                                            setSearchQuery(
+                                                                e.target.value
+                                                            );
+                                                            getResults(
+                                                                e.target.value
+                                                            );
+                                                        }}
+                                                    />
+                                                </label>
+                                                <button className="dataTables_filter_btn">
+                                                    <IonIcon icon={search} />
+                                                </button>
+                                            </div>
+                                            {hasPermission(
+                                                "services.create"
+                                            ) && (
+                                                <Link
+                                                    href={route(
+                                                        "admin.services.create"
+                                                    )}
+                                                    className="btn btn-success btn-sm yoo-table-btn1"
+                                                >
+                                                    <span className="yoo-add">
+                                                        +
+                                                    </span>{" "}
+                                                    Create New
+                                                </Link>
+                                            )}
+                                        </div>
+                                    </div>
+                                    <div
+                                        id="yooDataTable_wrapper"
+                                        className="dataTables_wrapper no-footer"
+                                    >
+                                        <table
+                                            id="yooDataTable"
+                                            className="display dataTable no-footer"
+                                            style={{ width: "100%" }}
+                                        >
+                                            <thead>
+                                                <tr role="row">
+                                                    <th
+                                                        onClick={() =>
+                                                            markAll()
+                                                        }
+                                                        style={{ width: "1%" }}
+                                                    >
+                                                        <div
+                                                            className={`yoo-check-mark-all ${
+                                                                isMarkAll &&
+                                                                "active"
+                                                            }`}
+                                                        >
+                                                            <span className="yoo-first" />
+                                                            <span className="yoo-last" />
+                                                        </div>
+                                                    </th>
+                                                    <ThSortable
+                                                        width="40%"
+                                                        sort={sort}
+                                                        onSorted={() =>
+                                                            getResults(
+                                                                searchQuery
+                                                            )
+                                                        }
+                                                        column="title"
+                                                    >
+                                                        Title
+                                                    </ThSortable>
+
+                                                    <ThSortable
+                                                        sort={sort}
+                                                        onSorted={() =>
+                                                            getResults(
+                                                                searchQuery
+                                                            )
+                                                        }
+                                                        column="category"
+                                                    >
+                                                        Categories
+                                                    </ThSortable>
+
+                                                    <ThSortable
+                                                        width="15%"
+                                                        sort={sort}
+                                                        onSorted={() =>
+                                                            getResults(
+                                                                searchQuery
+                                                            )
+                                                        }
+                                                        column="created_at"
+                                                    >
+                                                        Date
+                                                    </ThSortable>
+                                                    <th
+                                                        style={{ width: "1%" }}
+                                                        className="sorting"
+                                                    >
+                                                        Action
+                                                    </th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                {services.data.map(
+                                                    (service, index) => (
+                                                        <tr
+                                                            className="odd"
+                                                            key={index}
+                                                        >
+                                                            <td
+                                                                className="sorting_1"
+                                                                onClick={() =>
+                                                                    handleMark(
+                                                                        service.id
+                                                                    )
+                                                                }
+                                                            >
+                                                                <div
+                                                                    className={`yoo-check-mark ${
+                                                                        markItems.some(
+                                                                            (
+                                                                                item
+                                                                            ) =>
+                                                                                item ===
+                                                                                service.id
+                                                                        ) &&
+                                                                        "active"
+                                                                    }`}
+                                                                />
+                                                            </td>
+                                                            <td>
+                                                                {service.title}
+                                                            </td>
+                                                            <td>
+                                                                <span className="yoo-base-color1">
+                                                                    {
+                                                                        service
+                                                                            .category
+                                                                            .title
+                                                                    }
+                                                                </span>
+                                                            </td>
+                                                            <td>
+                                                                {moment(
+                                                                    service.created_at
+                                                                ).format("ll")}
+                                                            </td>
+                                                            <td>
+                                                                <div
+                                                                    className="d-flex"
+                                                                    style={{
+                                                                        gap: "5px",
+                                                                    }}
+                                                                >
+                                                                    {hasPermission(
+                                                                        "services.edit"
+                                                                    ) && (
+                                                                        <Link
+                                                                            href={route(
+                                                                                "admin.services.edit",
+                                                                                service
+                                                                            )}
+                                                                            className="badge badge-primary"
+                                                                        >
+                                                                            <IonIcon
+                                                                                icon={
+                                                                                    createOutline
+                                                                                }
+                                                                                style={{
+                                                                                    height: "16px",
+                                                                                    width: "16px",
+                                                                                }}
+                                                                            />
+                                                                        </Link>
+                                                                    )}
+                                                                    {hasPermission(
+                                                                        "services.show"
+                                                                    ) && (
+                                                                        <a
+                                                                            href={route(
+                                                                                "service.show",
+                                                                                service.slug
+                                                                            )}
+                                                                            target="_blank"
+                                                                            className="badge badge-secondary"
+                                                                        >
+                                                                            <IonIcon
+                                                                                icon={
+                                                                                    eyeOutline
+                                                                                }
+                                                                                style={{
+                                                                                    height: "16px",
+                                                                                    width: "16px",
+                                                                                }}
+                                                                            />
+                                                                        </a>
+                                                                    )}
+                                                                    {hasPermission(
+                                                                        "services.delete"
+                                                                    ) && (
+                                                                        <DeleteButton
+                                                                            href={route(
+                                                                                "admin.services.destroy",
+                                                                                service
+                                                                            )}
+                                                                        />
+                                                                    )}
+                                                                </div>
+                                                            </td>
+                                                        </tr>
+                                                    )
+                                                )}
+                                            </tbody>
+                                        </table>
+                                        {!services.data.length && (
+                                            <div
+                                                className="no-data-found"
+                                                style={{
+                                                    textAlign: "center",
+                                                    padding: "50px",
+                                                }}
+                                            >
+                                                <p>No services found!</p>
+                                            </div>
+                                        )}
+                                        <div className="clear" />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {/* .yoo-card */}
+                    {services.total > 1 && (
+                        <div
+                            className="pagination-wrapper"
+                            style={{ marginTop: "10px" }}
+                        >
+                            <ul className="pagination">
+                                {services.links.map((link, index) => (
+                                    <li
+                                        className={`page-item ${
+                                            link.active ? "active" : ""
+                                        }`}
+                                        key={`pagination_${index}`}
+                                    >
+                                        <Link
+                                            href={link.url}
+                                            className="page-link"
+                                            dangerouslySetInnerHTML={{
+                                                __html: link.label,
+                                            }}
+                                        />
+                                    </li>
+                                ))}
+                            </ul>
+                        </div>
+                    )}
+                    <div className="yoo-height-b30 yoo-height-lg-b30" />
+                </div>
+            </AdminLayouts>
+        </>
+    );
+}
