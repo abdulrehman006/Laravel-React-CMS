@@ -83,75 +83,104 @@ Route::get('custom/css', function () {
 
 Route::post('/appointment', [AppointmentController::class, 'send'])->name('appointment');
 
+// Route::get('/proxy/vehicle-verification', function (Request $request) {
+//     $client = new Client();
+
+//     try {
+//         // Send the GET request to the external API
+//         $response = $client->get('http://3.79.101.195:22109/api/VehicleVerification', [
+//             'query' => $request->all(),
+//             'timeout' => 10, // Set a timeout for the request (10 seconds)
+//         ]);
+
+//         // Get the response body and status code
+//         $responseBody = $response->getBody()->getContents();
+//         $statusCode = $response->getStatusCode();
+
+//         // Check if the response body is empty or contains no data
+//         if (empty($responseBody) || json_decode($responseBody) === []) {
+//             return response()->json([
+//                 'message' => 'No data found for the provided inputs.',
+//             ], 404);
+//         }
+
+//         // Return the response as it is if data exists
+//         return response($responseBody, $statusCode)
+//             ->header('Content-Type', $response->getHeader('Content-Type')[0]);
+
+//     } catch (ConnectException $e) {
+//         // Handle connection-related exceptions
+//         return response()->json([
+//             'message' => 'Cannot connect to the server. Please check your network or try again later.',
+//         ], 503); // Service Unavailable
+
+//     } catch (RequestException $e) {
+//         // Handle Guzzle exceptions
+//         if ($e->hasResponse()) {
+//             $errorResponse = $e->getResponse();
+//             $statusCode = $errorResponse->getStatusCode();
+//             $message = $errorResponse->getBody()->getContents();
+
+//             // Handle specific error codes
+//             if ($statusCode === 400) {
+//                 return response()->json([
+//                     'message' => 'Please enter Vehicle Reg. No, Chassis No, or VIR.',
+//                 ], 400);
+//             } elseif ($statusCode === 404) {
+//                 return response()->json([
+//                     'message' => 'Data is not found.',
+//                 ], 404);
+//             }
+
+//             // Return the error as is for other status codes
+//             return response($message, $statusCode)
+//                 ->header('Content-Type', $errorResponse->getHeader('Content-Type')[0]);
+//         }
+
+//         // Handle other exceptions
+//         return response()->json([
+//             'message' => 'An unexpected error occurred. Please try again.',
+//         ], 500); // Internal Server Error
+
+//     } catch (\Exception $e) {
+//         // Handle general exceptions, such as timeouts
+//         if (str_contains($e->getMessage(), 'Execution Timeout Expired')) {
+//             return response()->json([
+//                 'message' => 'Execution Timeout Expired. The timeout period elapsed prior to completion of the operation or the server is not responding.',
+//             ], 504); // Gateway Timeout
+//         }
+
+//         return response()->json([
+//             'message' => 'An unexpected error occurred. Please try again.',
+//         ], 500); // Internal Server Error
+//     }
+// });
+
+
+
+
 Route::get('/proxy/vehicle-verification', function (Request $request) {
     $client = new Client();
 
+    $query = [
+        'regNo'     => $request->input('regNo', ''),
+        'chassisNo' => $request->input('chassisNo', ''),
+        'VIR'       => $request->input('VIR', ''),
+    ];
+
     try {
-        // Send the GET request to the external API
         $response = $client->get('http://3.79.101.195:22109/api/VehicleVerification', [
-            'query' => $request->all(),
-            'timeout' => 10, // Set a timeout for the request (10 seconds)
+            'query'   => $query,
+            'timeout' => 15,
         ]);
 
-        // Get the response body and status code
-        $responseBody = $response->getBody()->getContents();
-        $statusCode = $response->getStatusCode();
+        $body = $response->getBody()->getContents();
 
-        // Check if the response body is empty or contains no data
-        if (empty($responseBody) || json_decode($responseBody) === []) {
-            return response()->json([
-                'message' => 'No data found for the provided inputs.',
-            ], 404);
-        }
-
-        // Return the response as it is if data exists
-        return response($responseBody, $statusCode)
+        return response($body, $response->getStatusCode())
             ->header('Content-Type', $response->getHeader('Content-Type')[0]);
-
-    } catch (ConnectException $e) {
-        // Handle connection-related exceptions
-        return response()->json([
-            'message' => 'Cannot connect to the server. Please check your network or try again later.',
-        ], 503); // Service Unavailable
-
-    } catch (RequestException $e) {
-        // Handle Guzzle exceptions
-        if ($e->hasResponse()) {
-            $errorResponse = $e->getResponse();
-            $statusCode = $errorResponse->getStatusCode();
-            $message = $errorResponse->getBody()->getContents();
-
-            // Handle specific error codes
-            if ($statusCode === 400) {
-                return response()->json([
-                    'message' => 'Please enter Vehicle Reg. No, Chassis No, or VIR.',
-                ], 400);
-            } elseif ($statusCode === 404) {
-                return response()->json([
-                    'message' => 'Data is not found.',
-                ], 404);
-            }
-
-            // Return the error as is for other status codes
-            return response($message, $statusCode)
-                ->header('Content-Type', $errorResponse->getHeader('Content-Type')[0]);
-        }
-
-        // Handle other exceptions
-        return response()->json([
-            'message' => 'An unexpected error occurred. Please try again.',
-        ], 500); // Internal Server Error
-
+    } catch (\GuzzleHttp\Exception\ConnectException $e) {
+        return response()->json(['message' => 'Connection timeout: ' . $e->getMessage()], 504);
     } catch (\Exception $e) {
-        // Handle general exceptions, such as timeouts
-        if (str_contains($e->getMessage(), 'Execution Timeout Expired')) {
-            return response()->json([
-                'message' => 'Execution Timeout Expired. The timeout period elapsed prior to completion of the operation or the server is not responding.',
-            ], 504); // Gateway Timeout
-        }
-
-        return response()->json([
-            'message' => 'An unexpected error occurred. Please try again.',
-        ], 500); // Internal Server Error
+        return response()->json(['message' => 'Error: ' . $e->getMessage()], 500);
     }
 });
