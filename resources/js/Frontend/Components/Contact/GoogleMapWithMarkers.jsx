@@ -13,7 +13,7 @@ const defaultCenter = {
 
 export default function GoogleMapWithMarkers({ markers }) {
     return (
-        <LoadScript googleMapsApiKey="AIzaSyA-yuY2XPkod81dYXoMUmOGtrbfxLcLShw">
+        <LoadScript googleMapsApiKey="">
             <GoogleMap
                 mapContainerStyle={mapContainerStyle}
                 center={defaultCenter}
