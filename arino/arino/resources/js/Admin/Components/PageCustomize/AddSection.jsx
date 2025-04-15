@@ -44,7 +44,7 @@ export default function AddSection({setIsAddSection, addSection}){
                 </button>
                 <span>
                     Action <br/>
-                    <strong>Add Section</strong>
+                    <strong>Add Section 12345678901</strong>
                 </span>
             </div>
             <div className="customize-field">

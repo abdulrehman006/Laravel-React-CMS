@@ -19,6 +19,7 @@ import {
     cardOutline,
     cogOutline,
     cashOutline,
+    notifications,
 } from "ionicons/icons";
 import { Link, usePage } from "@inertiajs/react";
 import { useState } from "react";
@@ -283,6 +284,23 @@ export default function Sidebar() {
                                         </span>
                                         <span className="yoo-sidebar-link-text">
                                             Pricing Plan
+                                        </span>
+                                    </span>
+                                </Link>
+                            </li>
+                            <li
+                                className={`yoo-sidebar-has-children ${
+                                    route().current("admin.notifications.*") &&
+                                    "active"
+                                }`}
+                            >
+                                <Link href={route("admin.notifications.index")}>
+                                    <span className="yoo-sidebar-link-title">
+                                        <span className="yoo-sidebar-link-icon yoo-light-blue-bg">
+                                            <IonIcon icon={notifications} />
+                                        </span>
+                                        <span className="yoo-sidebar-link-text">
+                                            Notifications
                                         </span>
                                     </span>
                                 </Link>

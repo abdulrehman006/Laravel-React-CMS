@@ -42,6 +42,7 @@
         window.tagline = "{{ \App\Models\Setting::pull('tagline') }}";
         window.layoutsData = {!! json_encode($layoutsData, JSON_PRETTY_PRINT) !!};
         window.blogs = {!! json_encode(\App\Models\Post::where('status', '1')->latest()->limit(10)->get(), JSON_PRETTY_PRINT) !!};
+        window.notifications = {!! json_encode(\App\Models\Notification::latest()->get(), JSON_PRETTY_PRINT) !!};
         window.teams = {!! json_encode(\App\Models\Team::latest()->get(), JSON_PRETTY_PRINT) !!}
         window.testimonials = {!! json_encode(\App\Models\Testimonial::latest()->get(), JSON_PRETTY_PRINT) !!}
         window.customize_settings = {!! json_encode($customize_settings, JSON_PRETTY_PRINT) !!}
@@ -54,7 +55,32 @@
             og_url: "{{ url('/') }}",
     }
     </script>
+    <style>
+        .marquee-container {
+            /* height: 100px; */
+            height: 100%;
+            overflow: hidden;
+            position: relative;
+        }
 
+        .marquee-content {
+            display: inline-block;
+            animation: scroll-up 5s linear infinite;
+        }
+
+        .marquee-container:hover .marquee-content {
+            animation-play-state: paused;
+        }
+
+        @keyframes scroll-up {
+            0% {
+                transform: translateY(100%);
+            }
+            100% {
+                transform: translateY(-100%);
+            }
+        }
+    </style>
     @routes
 </head>
 <body class="font-sans antialiased {{$is_rtl ? "rtl" : ""}}">

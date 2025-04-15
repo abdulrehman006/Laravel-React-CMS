@@ -10,3 +10,7 @@
 /update
 
 *.zip
+.env
+/storage/logs/laravel.log
+/vendor
+.vscode

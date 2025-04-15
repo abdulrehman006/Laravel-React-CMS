@@ -59,7 +59,7 @@ export default function AddSection({setIsAddSection, addSection}){
                         </select>
                     </div>
                     <div className="text-center">
-                        <button className="btn btn-sm btn-primary">Add Section</button>
+                        <button className="btn btn-sm btn-primary">Add Section 12345678901</button>
                     </div>
                 </form>
             </div>

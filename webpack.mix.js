@@ -16,6 +16,7 @@ var webpackConfig = {
         alias: {
             '@': path.resolve('resources/js'),
         },
+        extensions: ['.js', '.jsx', '.json']
     },
 };
 

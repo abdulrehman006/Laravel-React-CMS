@@ -17,6 +17,7 @@ use App\Http\Controllers\Admin\PortfolioCategoryController;
 use App\Http\Controllers\Admin\PortfolioController;
 use App\Http\Controllers\Admin\PostController;
 use App\Http\Controllers\Admin\PricingPlanController;
+use App\Http\Controllers\Admin\NotificationController;
 use App\Http\Controllers\Admin\RolePermissionController;
 use App\Http\Controllers\Admin\SeoController;
 use App\Http\Controllers\Admin\ServiceCategoryController;
@@ -243,6 +244,18 @@ Route::group(['prefix' => 'pricing-plan', 'as' => 'pricing.plans.'], function ()
     Route::put('/update/{pricingPlan}', [PricingPlanController::class, 'update'])->name('update');
     Route::delete('/destroy/{pricingPlan}', [PricingPlanController::class, 'destroy'])->name('destroy');
     Route::delete('/bulk-delete', [PricingPlanController::class, 'bulkDelete'])->name('bulk.delete');
+});
+
+// notifications
+Route::group(['prefix' => 'notifiction', 'as' => 'notifications.'], function (){
+    Route::get('/', [NotificationController::class, 'index'])->name('index');
+    Route::get('/create', [NotificationController::class, 'create'])->name('create');
+    Route::post('/store', [NotificationController::class, 'store'])->name('store');
+    Route::get('/show/{notification}', [NotificationController::class, 'show'])->name('show');
+    Route::get('/edit/{notification}', [NotificationController::class, 'edit'])->name('edit');
+    Route::put('/update/{notification}', [NotificationController::class, 'update'])->name('update');
+    Route::delete('/destroy/{notification}', [NotificationController::class, 'destroy'])->name('destroy');
+    Route::delete('/bulk-delete', [NotificationController::class, 'bulkDelete'])->name('bulk.delete');
 });
 
 // payment history route

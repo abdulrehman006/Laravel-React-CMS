@@ -534,7 +534,7 @@ export default function AboutEdit() {
                             onClick={() => setIsAddSection(true)}
                             className="btn btn-sm btn-success"
                         >
-                            Add Section
+                            Add Section 123456789
                         </button>
                     </div>
                 </div>
