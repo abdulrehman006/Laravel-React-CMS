@@ -508,7 +508,7 @@ export default function HomeEdit() {
                             onClick={() => setIsAddSection(true)}
                             className="btn btn-sm btn-success"
                         >
-                            Add Section
+                            Add Section 12345
                         </button>
                     </div>
                 </div>

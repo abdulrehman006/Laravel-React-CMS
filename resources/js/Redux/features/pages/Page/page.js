@@ -22,7 +22,7 @@ const initialState = {
             social_links: {
                 title: "Follow Us",
                 links: [
-                    { title: "Facebook", url: "https://facebook.com" },
+                    { title: "Facebook 1", url: "https://facebook.com" },
                     { title: "Twitter", url: "https://twitter.com" },
                     { title: "Instagram", url: "https://instagram.com" }
                 ]

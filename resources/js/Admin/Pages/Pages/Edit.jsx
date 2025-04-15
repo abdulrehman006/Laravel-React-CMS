@@ -535,7 +535,7 @@ export default function Create() {
                             onClick={() => setIsAddSection(true)}
                             className="btn btn-sm btn-success"
                         >
-                            Add Section
+                            Add Section 1234567
                         </button>
                     </div>
                 </div>

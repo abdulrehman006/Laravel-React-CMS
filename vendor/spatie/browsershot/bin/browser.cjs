@@ -46,9 +46,12 @@ const getOutput = async (request, page = null) => {
         if (request.action == 'evaluate') {
             output.result = await page.evaluate(request.options.pageFunction);
         } else {
-            output.result = (
-                await page[request.action](request.options)
-            ).toString('base64');
+            const result = await page[request.action](request.options);
+
+            // Ignore output result when saving to a file
+            output.result = request.options.path
+                ? ''
+                : (result instanceof Uint8Array ? Buffer.from(result) : result).toString('base64');
         }
     }
 
@@ -70,7 +73,7 @@ const callChrome = async pup => {
         if (request.options.remoteInstanceUrl || request.options.browserWSEndpoint ) {
             // default options
             let options = {
-                ignoreHTTPSErrors: request.options.ignoreHttpsErrors
+                acceptInsecureCerts: request.options.acceptInsecureCerts
             };
 
             // choose only one method to connect to the browser instance
@@ -89,8 +92,8 @@ const callChrome = async pup => {
 
         if (!browser) {
             browser = await puppet.launch({
-                headless: request.options.newHeadless ? 'new' : true,
-                ignoreHTTPSErrors: request.options.ignoreHttpsErrors,
+                headless: request.options.newHeadless ? true : 'shell',
+                acceptInsecureCerts: request.options.acceptInsecureCerts,
                 executablePath: request.options.executablePath,
                 args: request.options.args || [],
                 pipe: request.options.pipe || false,
@@ -98,6 +101,7 @@ const callChrome = async pup => {
                     ...(request.options.env || {}),
                     ...process.env
                 },
+                protocolTimeout: request.options.protocolTimeout ?? 30000,
             });
         }
 
@@ -157,9 +161,11 @@ const callChrome = async pup => {
         page.on('request', interceptedRequest => {
             var headers = interceptedRequest.headers();
 
-            requestsList.push({
-                url: interceptedRequest.url(),
-            });
+            if (!request.options || !request.options.disableCaptureURLS) {
+                requestsList.push({
+                    url: interceptedRequest.url(),
+                });
+            }
 
             if (request.options && request.options.disableImages) {
                 if (interceptedRequest.resourceType() === 'image') {
@@ -182,6 +188,13 @@ const callChrome = async pup => {
                         interceptedRequest.abort();
                         return;
                     }
+                }
+            }
+
+            if (request.options && request.options.disableRedirects) {
+                if (interceptedRequest.isNavigationRequest() && interceptedRequest.redirectChain().length) {
+                    interceptedRequest.abort();
+                    return
                 }
             }
 
@@ -235,13 +248,17 @@ const callChrome = async pup => {
         }
 
         if (request.options && request.options.device) {
-            const devices = puppet.devices;
+            const devices = puppet.KnownDevices;
             const device = devices[request.options.device];
             await page.emulate(device);
         }
 
         if (request.options && request.options.emulateMedia) {
             await page.emulateMediaType(request.options.emulateMedia);
+        }
+
+        if (request.options && request.options.emulateMediaFeatures) {
+            await page.emulateMediaFeatures(JSON.parse(request.options.emulateMediaFeatures));
         }
 
         if (request.options && request.options.viewport) {
@@ -328,7 +345,7 @@ const callChrome = async pup => {
         }
 
         if (request.options.delay) {
-            await page.waitForTimeout(request.options.delay);
+            await new Promise(r => setTimeout(r, request.options.delay));
         }
 
         if (request.options.initialPageNumber) {
@@ -381,21 +398,21 @@ const callChrome = async pup => {
         if (request.options.waitForSelector) {
             await page.waitForSelector(request.options.waitForSelector, (request.options.waitForSelectorOptions ? request.options.waitForSelectorOptions :  undefined));
         }
-        
+
         console.log(await getOutput(request, page));
 
         if (remoteInstance && page) {
             await page.close();
         }
 
-        await remoteInstance ? browser.disconnect() : browser.close();
+        await (remoteInstance ? browser.disconnect() : browser.close());
     } catch (exception) {
         if (browser) {
             if (remoteInstance && page) {
                 await page.close();
             }
 
-            (await remoteInstance) ? browser.disconnect() : browser.close();
+            await (remoteInstance ? browser.disconnect() : browser.close());
         }
 
         const output = await getOutput(request);

@@ -2,6 +2,54 @@
 
 All notable changes to `eloquent-sortable` will be documented in this file
 
+## 4.4.1 - 2024-12-23
+
+### What's Changed
+
+* Bump dependabot/fetch-metadata from 1.6.0 to 2.1.0 by @dependabot in https://github.com/spatie/eloquent-sortable/pull/176
+* Bump dependabot/fetch-metadata from 2.1.0 to 2.2.0 by @dependabot in https://github.com/spatie/eloquent-sortable/pull/181
+* Fix PHP 8.4 deprecation notice by @clarkewing in https://github.com/spatie/eloquent-sortable/pull/184
+
+### New Contributors
+
+* @clarkewing made their first contribution in https://github.com/spatie/eloquent-sortable/pull/184
+
+**Full Changelog**: https://github.com/spatie/eloquent-sortable/compare/4.4.0...4.4.1
+
+## 4.4.0 - 2024-06-04
+
+### What's Changed
+
+* Dispatch event after performing a sort by @chrispage1 in https://github.com/spatie/eloquent-sortable/pull/178
+
+### New Contributors
+
+* @chrispage1 made their first contribution in https://github.com/spatie/eloquent-sortable/pull/178
+
+**Full Changelog**: https://github.com/spatie/eloquent-sortable/compare/4.3.0...4.4.0
+
+## 4.3.0 - 2024-05-02
+
+### What's Changed
+
+* Use model's qualified key name for update queries by @JeremyDunn in https://github.com/spatie/eloquent-sortable/pull/175
+
+### New Contributors
+
+* @JeremyDunn made their first contribution in https://github.com/spatie/eloquent-sortable/pull/175
+
+**Full Changelog**: https://github.com/spatie/eloquent-sortable/compare/4.2.0...4.3.0
+
+## 4.2.0 - 2024-02-26
+
+### What's Changed
+
+* Bump stefanzweifel/git-auto-commit-action from 4 to 5 by @dependabot in https://github.com/spatie/eloquent-sortable/pull/162
+* Support laravel 11 by @mokhosh in https://github.com/spatie/eloquent-sortable/pull/171
+* bump min laravel 9 version to support ignore timestamps by @mokhosh in https://github.com/spatie/eloquent-sortable/pull/173
+
+**Full Changelog**: https://github.com/spatie/eloquent-sortable/compare/4.1.1...4.2.0
+
 ## 4.1.1 - 2024-02-06
 
 ### What's Changed

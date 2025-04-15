@@ -2,7 +2,7 @@
 
 [![Latest Version on Packagist](https://img.shields.io/packagist/v/spatie/laravel-tags.svg?style=flat-square)](https://packagist.org/packages/spatie/laravel-tags)
 [![MIT Licensed](https://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat-square)](LICENSE.md)
-![GitHub Workflow Status](https://img.shields.io/github/workflow/status/spatie/laravel-tags/run-tests?label=tests)
+![GitHub Workflow Status](https://img.shields.io/github/actions/workflow/status/spatie/laravel-tags/run-tests.yml?label=tests)
 [![Total Downloads](https://img.shields.io/packagist/dt/spatie/laravel-tags.svg?style=flat-square)](https://packagist.org/packages/spatie/laravel-tags)
 
 This package offers taggable behaviour for your models. After the package is installed the only thing you have to do is add the `HasTags` trait to an Eloquent model to make it taggable. 
@@ -98,6 +98,14 @@ $tag2->order_column; //returns 2
 
 // manipulating the order of tags
 $tag->swapOrder($anotherTag);
+
+// checking if a model has a tag
+$newsItem->hasTag('first tag');
+$newsItem->hasTag('first tag', 'some_type');
+
+// Retrieve models that have tags of a 
+Model::withAnyTagsOfType('type');
+Model::withAnyTagsOfType(['first type', 'second type']);
 ```
 
 Spatie is a webdesign agency based in Antwerp, Belgium. You'll find an overview of all our open source projects [on our website](https://spatie.be/opensource).
