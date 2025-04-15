@@ -19,6 +19,7 @@ import {
     updateHomeAboutSection,
     updateHomeAwardSection, updateHomeBannerSection,
     updateHomeBlogSection,
+    updateHomeNotificationSection,
     updateHomeCaseStudySection,
     updateHomeContactSection,
     updateHomeCTASection,
@@ -55,6 +56,7 @@ import PhotoGalleryCustomize from "@/Admin/Components/PageCustomize/PhotoGallery
 import WorkingProgressCustomize from "@/Admin/Components/PageCustomize/WorkingProgressCustomize";
 import BannerCustomize from "@/Admin/Components/PageCustomize/BannerCustomize";
 import ResumeCustomize from "@/Admin/Components/PageCustomize/ResumeCustomize";
+import NotificationCustomize from "@/Admin/Components/PageCustomize/NotificationCustomize";
 
 export default function HomeEdit() {
     const { home } = usePage().props;
@@ -111,6 +113,9 @@ export default function HomeEdit() {
     };
     const updateBlogSection = (data) => {
         dispatch(updateHomeBlogSection(data));
+    };
+    const updateNotificationSection = (data) => {
+        dispatch(updateHomeNotificationSection(data));
     };
     const updateMovingTextSection = (data) => {
         dispatch(updateHomeMovingTextSection(data));
@@ -235,6 +240,16 @@ export default function HomeEdit() {
                     spacingCallback={handleUpdateSpacing}
                     updateBlogSection={updateBlogSection}
                     sectionData={homePageData.our_blog}
+                />
+            );
+            break;
+        case "Notification":
+            customizeSection = (
+                <NotificationCustomize
+                    currentSection={currentSection}
+                    spacingCallback={handleUpdateSpacing}
+                    updateNotificationSection={updateNotificationSection}
+                    sectionData={homePageData.notification}
                 />
             );
             break;

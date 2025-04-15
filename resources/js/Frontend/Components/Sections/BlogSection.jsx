@@ -18,20 +18,8 @@ export default function BlogSection({sections_data}){
         <>
             <Div className="container-fluid">
                 <Div className="row">
-                    <Div className="col-12 col-lg-9">
+                    <Div className="col-12">
                         {section}
-                    </Div>
-                    <Div className="col-12 col-lg-3 p-0">
-                        <Div className="marquee-container bg-white p-3">
-                            <Div className="marquee-content">
-                                 {notifications.map((item, index) => (
-                                    <Div key={index}>
-                                        <span className="text-success">{item.title}</span>
-                                        <div dangerouslySetInnerHTML={{ __html: item.description }} />
-                                    </Div>
-                                ))}
-                            </Div>
-                        </Div>
                     </Div>
                 </Div>
             </Div>
