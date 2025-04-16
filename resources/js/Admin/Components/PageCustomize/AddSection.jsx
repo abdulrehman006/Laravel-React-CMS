@@ -13,6 +13,7 @@ export default function AddSection({setIsAddSection, addSection}){
         { id: 'Team', title: 'Team Section', spacing: {top: {lg: 0, md: 0}, bottom: {lg: 0, md: 0}} },
         { id: 'Testimonial', title: 'Testimonial Section', spacing: {top: {lg: 0, md: 0}, bottom: {lg: 0, md: 0}} },
         { id: 'Blog', title: 'Blog Section', spacing: {top: {lg: 0, md: 0}, bottom: {lg: 0, md: 0}} },
+        { id: 'Notification', title: 'Notification Section', spacing: {top: {lg: 0, md: 0}, bottom: {lg: 0, md: 0}} },
         { id: 'MovingText', title: 'Moving Text Section', spacing: {top: {lg: 0, md: 0}, bottom: {lg: 0, md: 0}} },
         { id: 'Partner', title: 'Partner Section', spacing: {top: {lg: 0, md: 0}, bottom: {lg: 0, md: 0}} },
         { id: 'CTA', title: 'CTA Section', spacing: {top: {lg: 0, md: 0}, bottom: {lg: 0, md: 0}} },
@@ -59,7 +60,7 @@ export default function AddSection({setIsAddSection, addSection}){
                         </select>
                     </div>
                     <div className="text-center">
-                        <button className="btn btn-sm btn-primary">Add Section 12345678901</button>
+                        <button className="btn btn-sm btn-primary">Add Section</button>
                     </div>
                 </form>
             </div>

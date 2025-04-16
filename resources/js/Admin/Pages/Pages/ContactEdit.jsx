@@ -34,6 +34,7 @@ import {
     updateContactAboutSection,
     updateContactAwardSection, updateContactBannerSection,
     updateContactBlogSection,
+    updateContactNotificationSection,
     updateContactCaseStudySection,
     updateContactContactSection,
     updateContactCTASection,
@@ -55,6 +56,7 @@ import PhotoGalleryCustomize from "@/Admin/Components/PageCustomize/PhotoGallery
 import WorkingProgressCustomize from "@/Admin/Components/PageCustomize/WorkingProgressCustomize";
 import BannerCustomize from "@/Admin/Components/PageCustomize/BannerCustomize";
 import ResumeCustomize from "@/Admin/Components/PageCustomize/ResumeCustomize";
+import NotificationCustomize from "@/Admin/Components/PageCustomize/NotificationCustomize";
 
 export default function AboutEdit() {
     const { errors, contact: contactData } = usePage().props;
@@ -101,6 +103,9 @@ export default function AboutEdit() {
     };
     const updateBlogSection = (data) => {
         dispatch(updateContactBlogSection(data));
+    };
+    const updateNotificationSection = (data) => {
+        dispatch(updateContactNotificationSection(data));
     };
     const updateMovingTextSection = (data) => {
         dispatch(updateContactMovingTextSection(data));
@@ -242,6 +247,16 @@ export default function AboutEdit() {
                     spacingCallback={handleUpdateSpacing}
                     updateBlogSection={updateBlogSection}
                     sectionData={contact.sections_data.our_blog}
+                />
+            );
+            break;
+        case "Notification":
+            customizeSection = (
+                <NotificationCustomize
+                    currentSection={currentSection}
+                    spacingCallback={handleUpdateSpacing}
+                    updateNotificationSection={updateNotificationSection}
+                    sectionData={contact.sections_data.notification}
                 />
             );
             break;
@@ -534,7 +549,7 @@ export default function AboutEdit() {
                             onClick={() => setIsAddSection(true)}
                             className="btn btn-sm btn-success"
                         >
-                            Add Section 123456789
+                            Add Section
                         </button>
                     </div>
                 </div>

@@ -9,6 +9,7 @@ import VideoSection from "@/Frontend/Components/Sections/VideoSection";
 import TeamSection from "@/Frontend/Components/Sections/TeamSection";
 import TestimonialSection from "@/Frontend/Components/Sections/TestimonialSection";
 import BlogSection from "@/Frontend/Components/Sections/BlogSection";
+import NotificationSection from "@/Frontend/Components/Sections/NotificationSection";
 import MovingTextSection from "@/Frontend/Components/Sections/MovingTextSection";
 import PartnerSection from "@/Frontend/Components/Sections/PartnerSection";
 import CTASection from "@/Frontend/Components/Sections/CTASection";
@@ -44,6 +45,7 @@ export default function Welcome({ home_data }) {
         Team: TeamSection,
         Testimonial: TestimonialSection,
         Blog: BlogSection,
+        Notification: NotificationSection,
         MovingText: MovingTextSection,
         Partner: PartnerSection,
         CTA: CTASection,

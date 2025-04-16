@@ -11,6 +11,7 @@ const initialState = {
     our_team_section: {},
     testimonial_section: {},
     our_blog: {},
+    notification: {},
     moving_text_section: {},
     partner_section: {},
     cta_section: {},
@@ -42,6 +43,7 @@ export const homePageSlice = createSlice({
             state.home_sections = payload.home_sections;
             state.our_team_section = payload.our_team_section;
             state.our_blog = payload.our_blog;
+            state.notification = payload.notification;
             state.moving_text_section = payload.moving_text_section;
             state.partner_section = payload.partner_section;
             state.cta_section = payload.cta_section;
@@ -83,6 +85,9 @@ export const homePageSlice = createSlice({
         },
         updateHomeBlogSection(state, action){
             state.our_blog = action.payload
+        },
+        updateHomeNotificationSection(state, action){
+            state.notification = action.payload
         },
         updateHomeMovingTextSection(state, action){
             state.moving_text_section = action.payload
@@ -141,6 +146,7 @@ export const {
     updateHomeHomeSections,
     updateHomeTeamSection,
     updateHomeBlogSection,
+    updateHomeNotificationSection,
     updateHomeMovingTextSection,
     updateHomePartnerSection,
     updateHomeCTASection,

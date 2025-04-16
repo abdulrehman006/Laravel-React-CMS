@@ -33,6 +33,7 @@ import {
     updateFaqAboutSection,
     updateFaqAwardSection, updateFaqBannerSection,
     updateFaqBlogSection,
+    updateFaqNotificationSection,
     updateFaqCaseStudySection,
     updateFaqContactSection,
     updateFaqCTASection,
@@ -56,6 +57,7 @@ import PhotoGalleryCustomize from "@/Admin/Components/PageCustomize/PhotoGallery
 import WorkingProgressCustomize from "@/Admin/Components/PageCustomize/WorkingProgressCustomize";
 import BannerCustomize from "@/Admin/Components/PageCustomize/BannerCustomize";
 import ResumeCustomize from "@/Admin/Components/PageCustomize/ResumeCustomize";
+import NotificationCustomize from "@/Admin/Components/PageCustomize/NotificationCustomize";
 
 export default function AboutEdit() {
     const { errors, faq: faqData } = usePage().props;
@@ -110,6 +112,9 @@ export default function AboutEdit() {
     };
     const updateBlogSection = (data) => {
         dispatch(updateFaqBlogSection(data));
+    };
+    const updateNotificationSection = (data) => {
+        dispatch(updateFaqNotificationSection(data));
     };
     const updateMovingTextSection = (data) => {
         dispatch(updateFaqMovingTextSection(data));
@@ -242,6 +247,16 @@ export default function AboutEdit() {
                     spacingCallback={handleUpdateSpacing}
                     updateBlogSection={updateBlogSection}
                     sectionData={faq.sections_data.our_blog}
+                />
+            );
+            break;
+        case "Notification":
+            customizeSection = (
+                <NotificationCustomize
+                    currentSection={currentSection}
+                    spacingCallback={handleUpdateSpacing}
+                    updateNotificationSection={updateNotificationSection}
+                    sectionData={faq.sections_data.notification}
                 />
             );
             break;
@@ -540,7 +555,7 @@ export default function AboutEdit() {
                             onClick={() => setIsAddSection(true)}
                             className="btn btn-sm btn-success"
                         >
-                            Add Section 123456
+                            Add Section
                         </button>
                     </div>
                 </div>

@@ -1,7 +1,7 @@
 {
-    "/js/frontend/app.js": "/js/frontend/app.js?id=9a7b98edfea5a81c6786d95195aa4b19",
-    "/js/admin/app.js": "/js/admin/app.js?id=63f3656e811f5dd29db348ad17ebb917",
-    "/css/frontend/globals.css": "/css/frontend/globals.css?id=3695754cb642a0e0b174582c7f9a2728",
+    "/js/frontend/app.js": "/js/frontend/app.js",
+    "/js/admin/app.js": "/js/admin/app.js",
+    "/css/frontend/globals.css": "/css/frontend/globals.css",
     "/css/frontend/bootstrap.min.css": "/css/frontend/bootstrap.min.css?id=b35674c4b87c699dfc7b9d2f422ae95f",
     "/css/admin/all.css": "/css/admin/all.css?id=fc7e85782f8edcbdebda8b939fd67155",
     "/static/02.jpg": "/static/02.jpg?id=798b79a197b687c5a40afeb985dfef99",

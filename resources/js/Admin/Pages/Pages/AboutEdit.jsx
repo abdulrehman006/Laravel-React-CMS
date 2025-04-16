@@ -33,6 +33,7 @@ import {
     updateAboutAboutSection,
     updateAboutAwardSection, updateAboutBannerSection,
     updateAboutBlogSection,
+    updateAboutNotificationSection,
     updateAboutCaseStudySection,
     updateAboutContactSection,
     updateAboutCTASection,
@@ -56,6 +57,7 @@ import WorkingProgressCustomize from "@/Admin/Components/PageCustomize/WorkingPr
 import BannerCustomize from "@/Admin/Components/PageCustomize/BannerCustomize";
 import ResumeCustomize from "@/Admin/Components/PageCustomize/ResumeCustomize";
 import {updatePageTestimonialSection} from "@/Redux/features/pages/Page/page";
+import NotificationCustomize from "@/Admin/Components/PageCustomize/NotificationCustomize";
 
 export default function AboutEdit() {
     const { errors, about: aboutData } = usePage().props;
@@ -110,6 +112,9 @@ export default function AboutEdit() {
     };
     const updateBlogSection = (data) => {
         dispatch(updateAboutBlogSection(data));
+    };
+    const updateNotificationSection = (data) => {
+        dispatch(updateAboutNotificationSection(data));
     };
     const updateMovingTextSection = (data) => {
         dispatch(updateAboutMovingTextSection(data));
@@ -242,6 +247,16 @@ export default function AboutEdit() {
                     spacingCallback={handleUpdateSpacing}
                     updateBlogSection={updateBlogSection}
                     sectionData={about.sections_data.our_blog}
+                />
+            );
+            break;
+        case "Notification":
+            customizeSection = (
+                <NotificationCustomize
+                    currentSection={currentSection}
+                    spacingCallback={handleUpdateSpacing}
+                    updateNotificationSection={updateNotificationSection}
+                    sectionData={about.sections_data.notification}
                 />
             );
             break;
@@ -533,7 +548,7 @@ export default function AboutEdit() {
                             onClick={() => setIsAddSection(true)}
                             className="btn btn-sm btn-success"
                         >
-                            Add Section 1234567890
+                            Add Section
                         </button>
                     </div>
                 </div>

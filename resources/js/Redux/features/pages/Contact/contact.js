@@ -94,6 +94,12 @@ const initialState = {
             sub_title: "Our Blog",
             action_text: "View More Blog"
         },
+        notification: {
+            layout: "1",
+            title: "Explore recent notification",
+            sub_title: "Our Notificaiton",
+            action_text: ""
+        },
         moving_text_section: {
             text: "Our reputed worldwide partners"
         },
