@@ -35,9 +35,7 @@ export default function Hero4({
           </ul>
         </Div>
       )}
-      <a href={scrollDownId} className="cs-down_btn">
-        .
-      </a>
+      
     </Div>
   );
 }

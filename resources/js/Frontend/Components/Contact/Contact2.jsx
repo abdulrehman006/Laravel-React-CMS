@@ -2,12 +2,14 @@ import Spacing from "@/Frontend/Components/Spacing";
 import Div from "@/Frontend/Components/Div";
 import SectionHeading from "@/Frontend/Components/SectionHeading";
 import { Icon } from '@iconify/react';
-import React from "react";
+import React, { useState, useMemo } from "react";
 import ContactForm from "@/Frontend/Components/Contact/ContactForm";
 import GoogleMapWithMarkers from "@/Frontend/Components/Contact/GoogleMapWithMarkers";
 
-
-export default function Contact2({contact_data}){
+export default function Contact2({ contact_data }) {
+    const [selectedCity, setSelectedCity] = useState(null);
+    const [mapCenter, setMapCenter] = useState({ lat: 31.1704, lng: 72.7097 }); // Default center for Pakistan
+    const [zoomLevel, setZoomLevel] = useState(7); // Default zoom level
 
     const markers = [
         { id: 1, position: { lat: 33.8169920, lng: 72.3552620 }, city: "Attock" },
@@ -42,9 +44,30 @@ export default function Contact2({contact_data}){
         { id: 30, position: { lat: 31.701359, lng: 74.271872 }, city: "Kala Shah Kaku" },
         { id: 31, position: { lat: 31.43193, lng: 74.185324 }, city: "Chung" },
     ];
-    
 
-    return(
+    const filteredMarkers = useMemo(() => {
+        return selectedCity 
+            ? markers.filter(marker => marker.city === selectedCity)
+            : markers;
+    }, [selectedCity]);
+
+    const handleCityClick = (city) => {
+        if (selectedCity === city) {
+            // Clicking the same city again shows all markers
+            setSelectedCity(null);
+            setMapCenter({ lat: 31.1704, lng: 72.7097 }); // Reset to Pakistan center
+            setZoomLevel(7); // Reset to default zoom
+        } else {
+            setSelectedCity(city);
+            const cityMarker = markers.find(marker => marker.city === city);
+            if (cityMarker) {
+                setMapCenter(cityMarker.position);
+                setZoomLevel(12); // Zoom in when a city is selected
+            }
+        }
+    };
+
+    return (
         <>
             <Div className="container">
                 <Div className="row">
@@ -66,14 +89,14 @@ export default function Contact2({contact_data}){
                                     <span className='cs-accent_color'><Icon icon="mdi:envelope" /></span>
                                     {contact_data.email_address}
                                 </li>
-                            ) : null }
+                            ) : null}
 
                             {contact_data.address ? (
                                 <li>
                                     <span className='cs-accent_color'><Icon icon="mdi:map-marker" /></span>
                                     {contact_data.address}
                                 </li>
-                            ) : null }
+                            ) : null}
                         </ul>
                         <Spacing lg="0" md="50" />
                     </Div>
@@ -82,12 +105,67 @@ export default function Contact2({contact_data}){
                     </Div>
                 </Div>
             </Div>
-            <Spacing lg="150" md="80" />
-            {markers.length > 0 && (
-                <Div className="cs-google_map">
-                    <GoogleMapWithMarkers markers={markers} />
+            <Spacing lg="50" md="30" />
+            
+            {/* Map Section with City List */}
+            <Div className="container">
+                <Div className="row">
+                    {/* Left Side - City List */}
+                    <Div className="col-lg-4">
+                        <h3>Our Locations</h3>
+                        <div style={{ maxHeight: '500px', overflowY: 'auto' }}>
+                            <ul style={{ listStyle: 'none', padding: 0 }} class="cstm-map-marker">
+                                {markers.map((marker) => (
+                                    <li 
+                                        key={marker.id}
+                                        onClick={() => handleCityClick(marker.city)}
+                                        style={{
+                                            padding: '10px',
+                                            cursor: 'pointer',
+                                            backgroundColor: selectedCity === marker.city ? '#f0f0f0' : 'transparent',
+                                            borderRadius: '4px',
+                                            marginBottom: '5px',
+                                            transition: 'background-color 0.2s'
+                                        }}
+                                    ><span>
+                                        {marker.city}
+                                        </span>
+                                    </li>
+                                ))}
+                            </ul>
+                        </div>
+                        <button 
+                            onClick={() => {
+                                setSelectedCity(null);
+                                setMapCenter({ lat: 31.1704, lng: 72.7097 });
+                                setZoomLevel(7);
+                            }}
+                            style={{
+                                marginTop: '20px',
+                                padding: '8px 15px',
+                                backgroundColor: '#DAA520',
+                                color: 'white',
+                                border: 'none',
+                                borderRadius: '4px',
+                                cursor: 'pointer'
+                            }}
+                            disabled={!selectedCity}
+                        >
+                            Show All Locations
+                        </button>
+                    </Div>
+                    
+                    {/* Right Side - Map */}
+                    <Div className="col-lg-8" style={{ height: '600px' }}>
+                        <GoogleMapWithMarkers 
+                            markers={filteredMarkers} 
+                            center={mapCenter}
+                            zoom={zoomLevel}
+                        />
+                    </Div>
                 </Div>
-            )}
+            </Div>
+            <Spacing lg="80" md="40" />
         </>
-    )
+    );
 }

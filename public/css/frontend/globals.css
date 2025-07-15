@@ -3,7 +3,7 @@
 ## Basic Color
 ----------------------------------------------------------------*/
 :root {
-  --accent: #059132;
+  --accent: #789262;
 }
 
 body,
@@ -875,7 +875,7 @@ label {
   margin-bottom: 20px;
 }
 .cs-section_heading.cs-style1 .cs-section_title {
-  font-size: 50px;
+  font-size: 35px;
   margin-bottom: 0;
 }
 .cs-section_heading.cs-style1 .cs-separator {
@@ -1511,7 +1511,7 @@ label {
 }
 @media screen and (max-width: 1380px) {
   .cs-section_heading.cs-style1 .cs-section_title {
-    font-size: 42px;
+    font-size: 32px;
   }
   .cs-font_50 {
     font-size: 42px;
@@ -1547,7 +1547,7 @@ label {
 }
 @media screen and (max-width: 991px) {
   .cs-section_heading.cs-style1 .cs-section_title {
-    font-size: 36px;
+    font-size: 26px;
   }
   .cs-section_heading.cs-style1 .cs-section_subtitle {
     font-size: 16px;
@@ -4242,9 +4242,9 @@ figure.table {
   opacity: 0.5;
 }
 
-.cs-hero_text:after {
+.cs-hero_title:after {
   content: "فضائی آلودگی کی روک تھام اور سیفٹی قوانین کی پاسداری ... ہم سب کی اخلاقی و قانونی ذمہ داری";
-  font-size: 40px;
+  font-size: 30px;
   color: #fff;
   font-weight: bold;
   line-height: 56px;
@@ -4317,7 +4317,7 @@ figure.table {
   min-height: 1000px;
 }
 .cs-hero.cs-style1 .cs-hero_title {
-  font-size: 70px;
+  font-size: 35px;
   font-weight: 700;
   margin-bottom: 60px;
   line-height: 1.25em;
@@ -7826,6 +7826,38 @@ form.cs-verification-form button {
   }
 }
 
+.cs-site_header.cs-style1 .cs-main_header_right {
+  display: none;
+}
+
+.cs-verification-form .cs-form-group label {
+  float: left;
+  font-weight: 700;
+  font-size: 14px;
+}
+
+.cstm-map-marker li {
+  padding: 0px !important;
+}
+
+.cstm-map-marker li > span {
+  text-decoration: underline;
+  color: #789262;
+}
+
+.cs-iconbox.cs-style1 .cs-iconbox_title {
+  font-size: 18px;
+}
+
+.cs-main_header_center .cs-nav_list > li > a:hover {
+  color: #ffd364;
+}
+
+.cs-style1 .cs-iconbox_icon img {
+  border-radius: 50px;
+  box-shadow: 5px 5px 10px 0px #333;
+}
+
 .swiper-horizontal > .swiper-pagination {
   bottom: 52px !important;
   left: 50% !important;
@@ -7834,5 +7866,55 @@ form.cs-verification-form button {
 @media (max-width: 1199px) {
   .swiper-horizontal > .swiper-pagination {
     bottom: 30pxpx !important;
+  }
+}
+
+.cs-announcements-widget {
+  background: #f8f8f8;
+  padding: 20px;
+  border: 1px solid #ddd;
+  height: 300px;
+  overflow: hidden;
+  position: relative;
+}
+
+.cs-announcements-title {
+  font-size: 18px;
+  margin-bottom: 15px;
+}
+
+.cs-marquee-container {
+  height: 230px;
+  overflow: hidden;
+  position: relative;
+}
+
+.cs-marquee-content {
+  display: inline-block;
+  animation: scroll-up 10s linear infinite;
+}
+
+.cs-marquee-container:hover .cs-marquee-content {
+  animation-play-state: paused;
+}
+
+.cs-marquee-content ul {
+  padding-left: 18px;
+  margin: 0;
+  list-style: disc;
+}
+
+.cs-marquee-content li {
+  margin-bottom: 12px;
+  font-size: 14px;
+}
+
+/* Animation */
+@keyframes scroll-up {
+  0% {
+    transform: translateY(0);
+  }
+  100% {
+    transform: translateY(-100%);
   }
 }
