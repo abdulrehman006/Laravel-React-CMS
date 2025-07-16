@@ -13,17 +13,7 @@ export default function PageHeading({ data, bgSrc }) {
       <Div className="container">
         <Div className="cs-page_heading_in">
           <h1 className="cs-page_title cs-font_50 cs-white_color">{data.title}</h1>
-          <ol className="breadcrumb text-uppercase">
-              {data.breadcrumb.map((item) => (
-                  <li className="breadcrumb-item">
-                      {item.url ? (
-                          <Link href={item.url}>{item.label}</Link>
-                      ) : (
-                          <span className="search current-item">{item.label}</span>
-                      )}
-                  </li>
-              ))}
-          </ol>
+          
         </Div>
       </Div>
     </Div>

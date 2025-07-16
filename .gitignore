@@ -1,12 +1,26 @@
-/.__MACOSX
-/.arino
-/.phpunit.cache
-/node_modules
-/.fleet
-/.idea
-/.vscode
-
+# macOS system files
 .DS_Store
-/update
+.__MACOSX/
 
+# IDE/editor configs
+.fleet/
+.idea/
+.vscode/
+
+# PHPUnit cache
+.phpunit.cache
+
+# Node modules
+node_modules/
+
+# Other hidden folders
+.arino/
+
+# Build or update folders
+update/
+
+# Zip files
 *.zip
+
+# Environment file
+.env

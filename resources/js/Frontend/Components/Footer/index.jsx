@@ -32,7 +32,7 @@ export default function Footer({copyrightText, logoSrc, logoAlt, text}) {
             </Div>
             <Div className="col-lg-3 col-sm-6">
               <Div className="cs-footer_item">
-                <MenuWidget menus={services_menu} menuHeading='Services'/>
+                
               </Div>
             </Div>
             <Div className="col-lg-3 col-sm-6">
@@ -42,9 +42,7 @@ export default function Footer({copyrightText, logoSrc, logoAlt, text}) {
             </Div>
             <Div className="col-lg-3 col-sm-6">
               <Div className="cs-footer_item">
-                <Newsletter
-                  placeholder='example@gmail.com'
-                />
+                
               </Div>
             </Div>
           </Div>
