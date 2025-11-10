@@ -33,4 +33,20 @@ class SettingController extends Controller
         $repository->updateEnvByKey($request->all());
         return back()->with('success', 'Mail setting has been updated');
     }
+
+    public function googleMapsSetting(SettingRepository $repository)
+    {
+        $data['google_maps_config'] = $repository->getGoogleMapsConfiguration();
+        return Inertia::render('Settings/GoogleMapsSettings', $data);
+    }
+
+    public function googleMapsUpdate(Request $request, SettingRepository $repository)
+    {
+        $request->validate([
+            'google_maps_api_key' => 'nullable|string|max:255',
+        ]);
+
+        $repository->updateSettingByGroup('google_maps_settings', $request->only('google_maps_api_key'));
+        return back()->with('success', 'Google Maps settings have been updated');
+    }
 }

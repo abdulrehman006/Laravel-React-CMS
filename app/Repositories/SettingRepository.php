@@ -76,6 +76,26 @@ class SettingRepository
     }
 
     /**
+     * Get Google Maps Configuration
+     */
+    public function getGoogleMapsConfiguration(): array
+    {
+        return $this->getSettingByGroup('google_maps_settings');
+    }
+
+    /**
+     * Get Google Maps API Key
+     */
+    public function getGoogleMapsApiKey(): ?string
+    {
+        $setting = $this->model->where('setting_group', 'google_maps_settings')
+            ->where('setting_key', 'google_maps_api_key')
+            ->first();
+
+        return $setting ? $setting->setting_value : null;
+    }
+
+    /**
      * Update setting by group
      */
     public function updateSettingByGroup($settingGroup, array $values = []): void

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Frontend;
 
 use App\Http\Controllers\Controller;
+use App\Models\Location;
 use App\Models\Page;
 use App\Repositories\Frontend\PageRepository;
 use Inertia\Inertia;
@@ -23,6 +24,9 @@ class PageController extends Controller
             switch ($page->slug) {
                 case 'about':
                     $data['about'] = $page;
+                    $data['locations'] = Location::where('is_active', true)
+                        ->orderBy('sort_order', 'asc')
+                        ->get();
 
                     return Inertia::render('Page/AboutPage', $data);
                 case 'faq':

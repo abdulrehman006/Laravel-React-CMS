@@ -238,6 +238,16 @@ const initialState = {
         working_progress_section: {},
         banner_section: {},
         resume_section: {},
+        locations_section: {
+            title: "Our Locations",
+            sub_title: "Where to find us",
+            description: "Visit us at any of our convenient locations worldwide",
+            layout: "1",
+            limit: "",
+            show_phone: true,
+            show_email: true,
+            show_map: true,
+        },
     }
 }
 
@@ -340,8 +350,11 @@ const aboutSlice = createSlice({
         updateAboutResumeSection(state, action){
             state.sections_data.resume_section = action.payload;
         },
+        updateAboutLocationsSection(state, action){
+            state.sections_data.locations_section = action.payload;
+        },
     }
 })
 
 export default aboutSlice.reducer
-export const {updateAboutSection, updateAboutMetaDescription, updateAboutMetaImage, updateAboutMetaTags, updateAboutMetaTitle, updateAboutTitle, updateAboutBreadcrumb, updateAboutSectionsData, updateAboutCaseStudySection, updateAboutAboutSection, updateAboutWhyChooseUsSection, updateAboutFaqSection, updateAboutAwardSection, updateAboutBlogSection, updateAboutContactSection, updateAboutHeroSection, updateAboutCTASection, updateAboutFunFactSection, updateAboutMovingTextSection, updateAboutPartnerSection, updateAboutPortfolioSection, updateAboutPricingSection, updateAboutTeamSection, updateAboutVideoSection, updateAboutServiceSection, updateAboutWorkingProgressSection, updateAboutPhotoGallerySection, updateAboutResumeSection, updateAboutBannerSection, updateAboutTestimonialSection} = aboutSlice.actions
+export const {updateAboutSection, updateAboutMetaDescription, updateAboutMetaImage, updateAboutMetaTags, updateAboutMetaTitle, updateAboutTitle, updateAboutBreadcrumb, updateAboutSectionsData, updateAboutCaseStudySection, updateAboutAboutSection, updateAboutWhyChooseUsSection, updateAboutFaqSection, updateAboutAwardSection, updateAboutBlogSection, updateAboutContactSection, updateAboutHeroSection, updateAboutCTASection, updateAboutFunFactSection, updateAboutMovingTextSection, updateAboutPartnerSection, updateAboutPortfolioSection, updateAboutPricingSection, updateAboutTeamSection, updateAboutVideoSection, updateAboutServiceSection, updateAboutWorkingProgressSection, updateAboutPhotoGallerySection, updateAboutResumeSection, updateAboutBannerSection, updateAboutTestimonialSection, updateAboutLocationsSection} = aboutSlice.actions

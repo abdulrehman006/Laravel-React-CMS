@@ -29,6 +29,7 @@ use App\Http\Controllers\Admin\TestimonialController;
 use App\Http\Controllers\Admin\ThemeController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Admin\MapMarkerController;
+use App\Http\Controllers\Admin\LocationController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -211,6 +212,17 @@ Route::group(['prefix' => 'testimonials', 'as' => 'testimonials.'], function () 
     Route::put('/update/{testimonial}', [TestimonialController::class, 'update'])->name('update')->can('testimonials.edit');
 });
 
+// locations routes
+Route::group(['prefix' => 'locations', 'as' => 'locations.'], function () {
+    Route::get('/', [LocationController::class, 'index'])->name('index');
+    Route::get('/create', [LocationController::class, 'create'])->name('create');
+    Route::get('/edit/{location}', [LocationController::class, 'edit'])->name('edit');
+    Route::post('/', [LocationController::class, 'store'])->name('store');
+    Route::put('/update/{location}', [LocationController::class, 'update'])->name('update');
+    Route::delete('/{location}', [LocationController::class, 'destroy'])->name('destroy');
+    Route::delete('/bulk/delete', [LocationController::class, 'bulkDelete'])->name('bulk.delete');
+});
+
 // users route
 Route::group(['prefix' => 'users', 'as' => 'users.'], function () {
     Route::get('/', [UserController::class, 'index'])->name('index')->can('users.index');
@@ -259,6 +271,10 @@ Route::group(['prefix' => 'settings', 'as' => 'settings.'], function (){
     // SMTP Settings
     Route::get('/smtp-setting', [SettingController::class, 'smtpSetting'])->name('smtp.setting');
     Route::put('/smtp-setting/update', [SettingController::class, 'smtpUpdate'])->name('smtp.update');
+
+    // Google Maps Settings
+    Route::get('/google-maps', [SettingController::class, 'googleMapsSetting'])->name('google.maps');
+    Route::put('/google-maps/update', [SettingController::class, 'googleMapsUpdate'])->name('google.maps.update');
 });
 
 // map markers routes

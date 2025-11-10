@@ -32,6 +32,7 @@ import PhotoGallerySection from "@/Frontend/Components/Sections/PhotoGallerySect
 import WorkingProgressSection from "@/Frontend/Components/Sections/WorkingProgressSection";
 import BannerSection from "@/Frontend/Components/Sections/BannerSection";
 import ResumeSection from "@/Frontend/Components/Sections/ResumeSection";
+import LocationsSection from "@/Frontend/Components/Sections/LocationsSection";
 
 export default function AboutPage() {
     const {sections, title, sections_data, is_show_breadcrumb} = useSelector((state) => state.aboutPage) || {}
@@ -69,6 +70,7 @@ export default function AboutPage() {
         WorkingProgress: WorkingProgressSection,
         Banner: BannerSection,
         Resume: ResumeSection,
+        Locations: LocationsSection,
     };
 
     useEffect(() => {
@@ -111,14 +113,14 @@ export default function AboutPage() {
         )}
       {/* End Page Heading Section */}
 
-    {sections.map(section => {
+    {sections.map((section, index) => {
         const SectionComponent = sectionComponents[section.id];
         return (
-            <>
+            <div key={`${section.id}-${index}`}>
                 <Spacing lg={section.spacing.top.lg ?? 0} md={section.spacing.top.md ?? 0} />
-                <SectionComponent key={section.id} sections_data={sections_data} />
+                <SectionComponent sections_data={sections_data} />
                 <Spacing lg={section.spacing.bottom.lg ?? 0} md={section.spacing.bottom.md ?? 0} />
-            </>
+            </div>
         );
     })}
 

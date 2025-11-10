@@ -19,6 +19,7 @@ import {
     cardOutline,
     cogOutline,
     cashOutline,
+    locationOutline,
 } from "ionicons/icons";
 import { Link, usePage } from "@inertiajs/react";
 import { useState } from "react";
@@ -41,6 +42,7 @@ export default function Sidebar() {
         caseStudyMenu: !!route().current("admin.case.study.*"),
         teamMenu: !!route().current("admin.teams.*"),
         testimonialMenu: !!route().current("admin.testimonials.*"),
+        locationMenu: !!route().current("admin.locations.*"),
         userMenu:
             !!route().current("admin.users.*") ||
             !!route().current("admin.roles.permissions.*"),
@@ -784,6 +786,82 @@ export default function Sidebar() {
                                 onClick={() =>
                                     setExpandMenu({
                                         ...expandMenu,
+                                        locationMenu: !expandMenu.locationMenu,
+                                    })
+                                }
+                            >
+                                <a href="#">
+                                    <span className="yoo-sidebar-link-title">
+                                        <span className="yoo-sidebar-link-icon yoo-purple-bg">
+                                            <IonIcon icon={locationOutline} />
+                                        </span>
+                                        <span className="yoo-sidebar-link-text">
+                                            Locations
+                                        </span>
+                                    </span>
+                                </a>
+                                <ul
+                                    className="yoo-sidebar-nav-dropdown"
+                                    style={
+                                        expandMenu.locationMenu
+                                            ? { display: "block" }
+                                            : { display: "none" }
+                                    }
+                                >
+                                    <li
+                                        className={`${
+                                            route().current(
+                                                "admin.locations.index"
+                                            ) && "active"
+                                        }`}
+                                    >
+                                        <Link
+                                            href={route(
+                                                "admin.locations.index"
+                                            )}
+                                        >
+                                            <span className="yoo-sidebar-link-title">
+                                                <span className="yoo-sidebar-link-text">
+                                                    All Locations
+                                                </span>
+                                            </span>
+                                        </Link>
+                                    </li>
+                                    <li
+                                        className={`${
+                                            route().current(
+                                                "admin.locations.create"
+                                            ) && "active"
+                                        }`}
+                                    >
+                                        <Link
+                                            href={route(
+                                                "admin.locations.create"
+                                            )}
+                                        >
+                                            <span className="yoo-sidebar-link-title">
+                                                <span className="yoo-sidebar-link-text">
+                                                    Add new
+                                                </span>
+                                            </span>
+                                        </Link>
+                                    </li>
+                                </ul>
+
+                                <span className="yoo-dropdown-arrow">
+                                    <IonIcon
+                                        icon={chevronForward}
+                                        role="img"
+                                        className="md hydrated"
+                                        aria-label="chevron forward"
+                                    />
+                                </span>
+                            </li>
+                            <li
+                                className="yoo-sidebar-has-children"
+                                onClick={() =>
+                                    setExpandMenu({
+                                        ...expandMenu,
                                         pageMenu: !expandMenu.pageMenu,
                                     })
                                 }
@@ -1121,6 +1199,25 @@ export default function Sidebar() {
                                             <span className="yoo-sidebar-link-title">
                                                 <span className="yoo-sidebar-link-text">
                                                     SMTP Settings
+                                                </span>
+                                            </span>
+                                        </Link>
+                                    </li>
+                                    <li
+                                        className={`${
+                                            route().current(
+                                                "admin.settings.google.maps"
+                                            ) && "active"
+                                        }`}
+                                    >
+                                        <Link
+                                            href={route(
+                                                "admin.settings.google.maps"
+                                            )}
+                                        >
+                                            <span className="yoo-sidebar-link-title">
+                                                <span className="yoo-sidebar-link-text">
+                                                    Google Maps API
                                                 </span>
                                             </span>
                                         </Link>

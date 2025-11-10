@@ -48,6 +48,7 @@ import {
     updateAboutTeamSection, updateAboutTestimonialSection,
     updateAboutVideoSection,
     updateAboutWhyChooseUsSection, updateAboutWorkingProgressSection,
+    updateAboutLocationsSection,
 } from "@/Redux/features/pages/About/about";
 import AboutPageCustomize from "@/Admin/Components/PageCustomize/AboutPageCustomize";
 import TestimonialCustomize from "@/Admin/Components/PageCustomize/TestimonialCustomize";
@@ -55,6 +56,7 @@ import PhotoGalleryCustomize from "@/Admin/Components/PageCustomize/PhotoGallery
 import WorkingProgressCustomize from "@/Admin/Components/PageCustomize/WorkingProgressCustomize";
 import BannerCustomize from "@/Admin/Components/PageCustomize/BannerCustomize";
 import ResumeCustomize from "@/Admin/Components/PageCustomize/ResumeCustomize";
+import LocationsCustomize from "@/Admin/Components/PageCustomize/LocationsCustomize";
 import {updatePageTestimonialSection} from "@/Redux/features/pages/Page/page";
 
 export default function AboutEdit() {
@@ -152,6 +154,9 @@ export default function AboutEdit() {
     };
     const updateResumeSection = (data) => {
         dispatch(updateAboutResumeSection(data))
+    }
+    const updateLocationsSection = (data) => {
+        dispatch(updateAboutLocationsSection(data))
     }
 
     // conditional customize section render
@@ -385,6 +390,17 @@ export default function AboutEdit() {
                     updateResumeSection={updateResumeSection}
                 />
             )
+            break;
+        case "Locations":
+            customizeSection = (
+                <LocationsCustomize
+                    currentSection={currentSection}
+                    spacingCallback={handleUpdateSpacing}
+                    sectionData={about.sections_data.locations_section}
+                    updateLocationsSection={updateLocationsSection}
+                />
+            )
+            break;
     }
     // handle remove section
     const handleRemoveSection = () => {

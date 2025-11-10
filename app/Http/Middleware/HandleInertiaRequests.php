@@ -4,6 +4,7 @@ namespace App\Http\Middleware;
 
 use App\Models\Setting;
 use App\Repositories\Frontend\PageRepository;
+use App\Repositories\SettingRepository;
 use Closure;
 use Illuminate\Http\Request;
 use Inertia\Middleware;
@@ -36,6 +37,7 @@ class HandleInertiaRequests extends Middleware
         if (config('app.installed')) {
             $permission = $request->user()?->getAllPermissions()->pluck('name')->toArray();
             $theme_data = app(PageRepository::class);
+            $settingRepository = app(SettingRepository::class);
             return array_merge(parent::share($request), [
                 'auth' => [
                     'user' => $request->user(),
@@ -47,6 +49,7 @@ class HandleInertiaRequests extends Middleware
                     'payment_status' => fn () => $request->session()->get('payment_status'),
                 ],
                 'active_theme' => $theme_data->getActiveTheme(),
+                'google_maps_api_key' => $settingRepository->getGoogleMapsApiKey(),
                 'ziggy' => function () use ($request) {
                     return array_merge((new Ziggy)->toArray(), [
                         'location' => $request->url(),

@@ -26,6 +26,7 @@ export default function AddSection({setIsAddSection, addSection}){
         { id: 'WorkingProgress', title: 'Working Progress Section', spacing: {top: {lg: 0, md: 0}, bottom: {lg: 0, md: 0}} },
         { id: 'Banner', title: 'Banner Section', spacing: {top: {lg: 0, md: 0}, bottom: {lg: 0, md: 0}} },
         { id: 'Resume', title: 'Resume Section', spacing: {top: {lg: 0, md: 0}, bottom: {lg: 0, md: 0}} },
+        { id: 'Locations', title: 'VICS Locations', spacing: {top: {lg: 150, md: 80}, bottom: {lg: 150, md: 80}} },
     ])
     const [selectedSection, setSelectedSection] = useState({});
 
