@@ -33,6 +33,7 @@ import WorkingProgressSection from "@/Frontend/Components/Sections/WorkingProgre
 import BannerSection from "@/Frontend/Components/Sections/BannerSection";
 import ResumeSection from "@/Frontend/Components/Sections/ResumeSection";
 import LocationsSection from "@/Frontend/Components/Sections/LocationsSection";
+import APISection from "@/Frontend/Components/Sections/APISection";
 
 export default function AboutPage() {
     const {sections, title, sections_data, is_show_breadcrumb} = useSelector((state) => state.aboutPage) || {}
@@ -71,6 +72,7 @@ export default function AboutPage() {
         Banner: BannerSection,
         Resume: ResumeSection,
         Locations: LocationsSection,
+        API: APISection,
     };
 
     useEffect(() => {

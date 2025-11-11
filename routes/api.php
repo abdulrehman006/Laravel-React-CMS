@@ -3,6 +3,7 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Admin\MapMarkerController;
+use App\Http\Controllers\Frontend\FeeCalculatorController;
 
 
 /*
@@ -27,3 +28,6 @@ Route::group(['prefix' => 'map', 'as' => 'map.'], function () {
     Route::delete('/destroy/{id}', [MapMarkerController::class, 'destroy'])->name('destroy')->can('map-markers.delete');
     Route::delete('/bulk-delete', [MapMarkerController::class, 'bulkDelete'])->name('bulk.delete')->can('map-markers.delete');
 });
+
+// Fee Calculator API Proxy
+Route::post('/fee-calculator', [FeeCalculatorController::class, 'getFeeStructure'])->name('fee-calculator');
