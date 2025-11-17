@@ -29,7 +29,6 @@ import {
     updateFaqTitle
 } from "@/Redux/features/pages/FAQ/faq";
 import Spacing from "@/Frontend/Components/Spacing";
-import {updatePageBreadcrumb} from "@/Redux/features/pages/Page/page";
 import PhotoGallerySection from "@/Frontend/Components/Sections/PhotoGallerySection";
 import WorkingProgressSection from "@/Frontend/Components/Sections/WorkingProgressSection";
 import BannerSection from "@/Frontend/Components/Sections/BannerSection";
@@ -109,14 +108,15 @@ export default function FaqPage() {
                 />
             )}
 
-            {sections.map(section => {
+            {sections?.map((section, index) => {
                 const SectionComponent = sectionComponents[section.id];
+                if (!SectionComponent) return null;
                 return (
-                    <>
-                        <Spacing lg={section.spacing.top.lg ?? 0} md={section.spacing.top.md ?? 0} />
-                        <SectionComponent key={section.id} sections_data={sections_data} />
-                        <Spacing lg={section.spacing.bottom.lg ?? 0} md={section.spacing.bottom.md ?? 0} />
-                    </>
+                    <React.Fragment key={`${section.id}-${index}`}>
+                        <Spacing lg={section.spacing?.top?.lg ?? 0} md={section.spacing?.top?.md ?? 0} />
+                        <SectionComponent sections_data={sections_data} />
+                        <Spacing lg={section.spacing?.bottom?.lg ?? 0} md={section.spacing?.bottom?.md ?? 0} />
+                    </React.Fragment>
                 );
             })}
         </FrontendLayout>

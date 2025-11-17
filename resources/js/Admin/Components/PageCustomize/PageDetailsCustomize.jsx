@@ -70,7 +70,7 @@ export default function PageDetailsCustomize(){
                 <label htmlFor="">Title</label>
                 <input onChange={(e) => setData(produce((draft) => {
                     draft.title = e.target.value
-                }))} type="text" value={data.title} className="form-control"/>
+                }))} type="text" value={data.title || ""} className="form-control"/>
                 {errors?.title && <span className="text-danger">{errors?.title}</span>}
             </div>
             <div className="form-group">
@@ -86,7 +86,7 @@ export default function PageDetailsCustomize(){
                 <label htmlFor="">Meta Title</label>
                 <input onChange={(e) => setData(produce((draft) => {
                     draft.meta_title = e.target.value
-                }))} type="text" value={data.meta_title} className="form-control"/>
+                }))} type="text" value={data.meta_title || ""} className="form-control"/>
                 {errors?.meta_title && <span className="text-danger">{errors?.meta_title}</span>}
             </div>
 
@@ -94,7 +94,7 @@ export default function PageDetailsCustomize(){
                 <label htmlFor="">Meta Tags</label>
                 <input onChange={(e) => setData(produce((draft) => {
                     draft.meta_tags = e.target.value
-                }))} type="text" value={data.meta_tags} className="form-control"/>
+                }))} type="text" value={data.meta_tags || ""} className="form-control"/>
                 <span>Separate with coma</span>
                 {errors?.meta_tags && <span className="text-danger">{errors?.meta_tags}</span>}
             </div>
@@ -103,7 +103,7 @@ export default function PageDetailsCustomize(){
                 <label htmlFor="">Meta Description</label>
                 <textarea onChange={(e) => setData(produce((draft) => {
                     draft.meta_description = e.target.value
-                }))}  value={data.meta_description} className="form-control"/>
+                }))}  value={data.meta_description || ""} className="form-control"/>
                 {errors?.meta_description && <span className="text-danger">{errors?.meta_description}</span>}
             </div>
 

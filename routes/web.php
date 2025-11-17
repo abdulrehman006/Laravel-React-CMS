@@ -156,6 +156,14 @@ Route::get('/proxy/vehicle-verification', function (Request $request) {
     }
 });
 
+Route::get('/clear-all-cache', function() {
+    Artisan::call('cache:clear');
+    Artisan::call('config:clear');
+    Artisan::call('view:clear');
+    Artisan::call('optimize');
+    return 'All caches cleared!';
+});
+
 
 Route::get('/proxy/fee-structure', function (Request $request) {
     $regNo = $request->query('regNo');
