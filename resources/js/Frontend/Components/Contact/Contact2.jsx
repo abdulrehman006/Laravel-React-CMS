@@ -114,7 +114,7 @@ export default function Contact2({ contact_data }) {
                     <Div className="col-lg-4">
                         <h3>Our Locations</h3>
                         <div style={{ maxHeight: '500px', overflowY: 'auto' }}>
-                            <ul style={{ listStyle: 'none', padding: 0 }} class="cstm-map-marker">
+                            <ul style={{ listStyle: 'none', padding: 0 }} className="cstm-map-marker">
                                 {markers.map((marker) => (
                                     <li 
                                         key={marker.id}

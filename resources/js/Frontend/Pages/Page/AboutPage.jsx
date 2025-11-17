@@ -34,6 +34,7 @@ import BannerSection from "@/Frontend/Components/Sections/BannerSection";
 import ResumeSection from "@/Frontend/Components/Sections/ResumeSection";
 import LocationsSection from "@/Frontend/Components/Sections/LocationsSection";
 import APISection from "@/Frontend/Components/Sections/APISection";
+import HTMLSection from "@/Frontend/Components/Sections/HTMLSection";
 
 export default function AboutPage() {
     const {sections, title, sections_data, is_show_breadcrumb} = useSelector((state) => state.aboutPage) || {}
@@ -73,6 +74,7 @@ export default function AboutPage() {
         Resume: ResumeSection,
         Locations: LocationsSection,
         API: APISection,
+        HTML: HTMLSection,
     };
 
     useEffect(() => {

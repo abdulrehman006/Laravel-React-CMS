@@ -14,12 +14,12 @@ export default function AboutPageCustomize(){
     const dispatch = useDispatch()
     const {errors, about} = usePage().props;
     const [data, setData] = useState({
-        title: "",
-        is_show_breadcrumb: false,
-        meta_title: "",
-        meta_tags: "",
-        meta_description: "",
-        meta_image: "",
+        title: about?.title || "",
+        is_show_breadcrumb: about?.is_show_breadcrumb || false,
+        meta_title: about?.meta_title || "",
+        meta_tags: about?.meta_tags || "",
+        meta_description: about?.meta_description || "",
+        meta_image: about?.meta_image || "",
     });
 
     // handle upload meta image

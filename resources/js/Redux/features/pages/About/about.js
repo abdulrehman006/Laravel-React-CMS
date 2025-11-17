@@ -254,6 +254,11 @@ const initialState = {
             description: "Calculate vehicle inspection fees by Registration Number or Chassis Number",
             api_url: "http://3.79.101.195:22110/api/FeeStructure",
         },
+        html_section: {
+            title: "",
+            sub_title: "",
+            html_content: "<p>Add your custom HTML content here</p>",
+        },
     }
 }
 
@@ -362,8 +367,11 @@ const aboutSlice = createSlice({
         updateAboutAPISection(state, action){
             state.sections_data.api_section = action.payload;
         },
+        updateAboutHTMLSection(state, action){
+            state.sections_data.html_section = action.payload;
+        },
     }
 })
 
 export default aboutSlice.reducer
-export const {updateAboutSection, updateAboutMetaDescription, updateAboutMetaImage, updateAboutMetaTags, updateAboutMetaTitle, updateAboutTitle, updateAboutBreadcrumb, updateAboutSectionsData, updateAboutCaseStudySection, updateAboutAboutSection, updateAboutWhyChooseUsSection, updateAboutFaqSection, updateAboutAwardSection, updateAboutBlogSection, updateAboutContactSection, updateAboutHeroSection, updateAboutCTASection, updateAboutFunFactSection, updateAboutMovingTextSection, updateAboutPartnerSection, updateAboutPortfolioSection, updateAboutPricingSection, updateAboutTeamSection, updateAboutVideoSection, updateAboutServiceSection, updateAboutWorkingProgressSection, updateAboutPhotoGallerySection, updateAboutResumeSection, updateAboutBannerSection, updateAboutTestimonialSection, updateAboutLocationsSection, updateAboutAPISection} = aboutSlice.actions
+export const {updateAboutSection, updateAboutMetaDescription, updateAboutMetaImage, updateAboutMetaTags, updateAboutMetaTitle, updateAboutTitle, updateAboutBreadcrumb, updateAboutSectionsData, updateAboutCaseStudySection, updateAboutAboutSection, updateAboutWhyChooseUsSection, updateAboutFaqSection, updateAboutAwardSection, updateAboutBlogSection, updateAboutContactSection, updateAboutHeroSection, updateAboutCTASection, updateAboutFunFactSection, updateAboutMovingTextSection, updateAboutPartnerSection, updateAboutPortfolioSection, updateAboutPricingSection, updateAboutTeamSection, updateAboutVideoSection, updateAboutServiceSection, updateAboutWorkingProgressSection, updateAboutPhotoGallerySection, updateAboutResumeSection, updateAboutBannerSection, updateAboutTestimonialSection, updateAboutLocationsSection, updateAboutAPISection, updateAboutHTMLSection} = aboutSlice.actions

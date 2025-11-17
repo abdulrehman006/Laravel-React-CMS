@@ -50,6 +50,7 @@ import {
     updateAboutWhyChooseUsSection, updateAboutWorkingProgressSection,
     updateAboutLocationsSection,
     updateAboutAPISection,
+    updateAboutHTMLSection,
 } from "@/Redux/features/pages/About/about";
 import AboutPageCustomize from "@/Admin/Components/PageCustomize/AboutPageCustomize";
 import TestimonialCustomize from "@/Admin/Components/PageCustomize/TestimonialCustomize";
@@ -59,6 +60,7 @@ import BannerCustomize from "@/Admin/Components/PageCustomize/BannerCustomize";
 import ResumeCustomize from "@/Admin/Components/PageCustomize/ResumeCustomize";
 import LocationsCustomize from "@/Admin/Components/PageCustomize/LocationsCustomize";
 import APICustomize from "@/Admin/Components/PageCustomize/APICustomize";
+import HTMLCustomize from "@/Admin/Components/PageCustomize/HTMLCustomize";
 import {updatePageTestimonialSection} from "@/Redux/features/pages/Page/page";
 
 export default function AboutEdit() {
@@ -162,6 +164,9 @@ export default function AboutEdit() {
     }
     const updateAPISection = (data) => {
         dispatch(updateAboutAPISection(data))
+    }
+    const updateHTMLSection = (data) => {
+        dispatch(updateAboutHTMLSection(data))
     }
 
     // conditional customize section render
@@ -413,6 +418,16 @@ export default function AboutEdit() {
                     spacingCallback={handleUpdateSpacing}
                     sectionData={about.sections_data.api_section}
                     updateAPISection={updateAPISection}
+                />
+            )
+            break;
+        case "HTML":
+            customizeSection = (
+                <HTMLCustomize
+                    currentSection={currentSection}
+                    spacingCallback={handleUpdateSpacing}
+                    sectionData={about.sections_data.html_section}
+                    updateHTMLSection={updateHTMLSection}
                 />
             )
             break;
