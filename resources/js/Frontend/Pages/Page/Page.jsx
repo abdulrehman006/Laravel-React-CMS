@@ -34,11 +34,28 @@ import PhotoGallerySection from "@/Frontend/Components/Sections/PhotoGallerySect
 import WorkingProgressSection from "@/Frontend/Components/Sections/WorkingProgressSection";
 import BannerSection from "@/Frontend/Components/Sections/BannerSection";
 import ResumeSection from "@/Frontend/Components/Sections/ResumeSection";
+import LocationsSection from "@/Frontend/Components/Sections/LocationsSection";
+import APISection from "@/Frontend/Components/Sections/APISection";
+import HTMLSection from "@/Frontend/Components/Sections/HTMLSection";
 
 export default function FaqPage() {
     const {sections, description, title, sections_data, is_show_breadcrumb} = useSelector((state) => state.pages) || {}
     const {page} = usePage().props
     const dispatch = useDispatch();
+
+    // Add page ID to body class for differentiation
+    useEffect(() => {
+        if (page?.id) {
+            document.body.classList.add(`page-${page.id}`);
+        }
+
+        // Cleanup: remove the class when component unmounts
+        return () => {
+            if (page?.id) {
+                document.body.classList.remove(`page-${page.id}`);
+            }
+        };
+    }, [page?.id]);
     const sectionComponents = {
         Hero: HeroSection,
         FunFact: FunFactSection,
@@ -62,6 +79,9 @@ export default function FaqPage() {
         WorkingProgress: WorkingProgressSection,
         Banner: BannerSection,
         Resume: ResumeSection,
+        Locations: LocationsSection,
+        API: APISection,
+        HTML: HTMLSection,
     };
     // page header data
     let pageHeaderData = {

@@ -5,8 +5,10 @@ import { Icon } from '@iconify/react';
 import React, { useState, useMemo } from "react";
 import ContactForm from "@/Frontend/Components/Contact/ContactForm";
 import GoogleMapWithMarkers from "@/Frontend/Components/Contact/GoogleMapWithMarkers";
+import { usePage } from "@inertiajs/react";
 
 export default function Contact2({ contact_data }) {
+    const { google_maps_api_key } = usePage().props;
     const [selectedCity, setSelectedCity] = useState(null);
     const [mapCenter, setMapCenter] = useState({ lat: 31.1704, lng: 72.7097 }); // Default center for Pakistan
     const [zoomLevel, setZoomLevel] = useState(7); // Default zoom level
@@ -43,6 +45,10 @@ export default function Contact2({ contact_data }) {
         { id: 29, position: { lat: 31.432020, lng: 74.312940 }, city: "Green Town" },
         { id: 30, position: { lat: 31.701359, lng: 74.271872 }, city: "Kala Shah Kaku" },
         { id: 31, position: { lat: 31.43193, lng: 74.185324 }, city: "Chung" },
+        { id: 32, position: { lat: 32.42927207842168, lng: 74.5037330151352 }, city: "Sialkot" },
+        
+    
+
     ];
 
     const filteredMarkers = useMemo(() => {
@@ -62,14 +68,14 @@ export default function Contact2({ contact_data }) {
             const cityMarker = markers.find(marker => marker.city === city);
             if (cityMarker) {
                 setMapCenter(cityMarker.position);
-                setZoomLevel(12); // Zoom in when a city is selected
+                setZoomLevel(15); // Much higher zoom for better focus (was 12, now 15)
             }
         }
     };
 
     return (
         <>
-            <Div className="container">
+            <Div className={`container ${contact_data.hide_contact_form ? 'hide-container' : ''}`}>
                 <Div className="row">
                     <Div className="col-lg-6">
                         <SectionHeading
@@ -106,9 +112,9 @@ export default function Contact2({ contact_data }) {
                 </Div>
             </Div>
             <Spacing lg="50" md="30" />
-            
+
             {/* Map Section with City List */}
-            <Div className="container">
+            <Div className={`container ${contact_data.hide_google_map ? 'hide-container' : ''}`}>
                 <Div className="row">
                     {/* Left Side - City List */}
                     <Div className="col-lg-4">
@@ -116,18 +122,35 @@ export default function Contact2({ contact_data }) {
                         <div style={{ maxHeight: '500px', overflowY: 'auto' }}>
                             <ul style={{ listStyle: 'none', padding: 0 }} className="cstm-map-marker">
                                 {markers.map((marker) => (
-                                    <li 
+                                    <li
                                         key={marker.id}
                                         onClick={() => handleCityClick(marker.city)}
                                         style={{
-                                            padding: '10px',
+                                            padding: '12px 15px',
                                             cursor: 'pointer',
-                                            backgroundColor: selectedCity === marker.city ? '#f0f0f0' : 'transparent',
-                                            borderRadius: '4px',
-                                            marginBottom: '5px',
-                                            transition: 'background-color 0.2s'
+                                            backgroundColor: selectedCity === marker.city ? '#DAA520' : 'transparent',
+                                            color: selectedCity === marker.city ? '#fff' : '#333',
+                                            borderRadius: '6px',
+                                            marginBottom: '8px',
+                                            transition: 'all 0.3s ease',
+                                            border: selectedCity === marker.city ? '2px solid #B8860B' : '1px solid #e0e0e0',
+                                            fontWeight: selectedCity === marker.city ? 'bold' : 'normal',
+                                            fontSize: selectedCity === marker.city ? '16px' : '14px',
+                                            boxShadow: selectedCity === marker.city ? '0 4px 8px rgba(218, 165, 32, 0.3)' : 'none',
+                                            transform: selectedCity === marker.city ? 'scale(1.02)' : 'scale(1)'
+                                        }}
+                                        onMouseEnter={(e) => {
+                                            if (selectedCity !== marker.city) {
+                                                e.currentTarget.style.backgroundColor = '#f8f8f8';
+                                            }
+                                        }}
+                                        onMouseLeave={(e) => {
+                                            if (selectedCity !== marker.city) {
+                                                e.currentTarget.style.backgroundColor = 'transparent';
+                                            }
                                         }}
                                     ><span>
+                                        {selectedCity === marker.city && '📍 '}
                                         {marker.city}
                                         </span>
                                     </li>
@@ -157,10 +180,12 @@ export default function Contact2({ contact_data }) {
                     
                     {/* Right Side - Map */}
                     <Div className="col-lg-8" style={{ height: '600px' }}>
-                        <GoogleMapWithMarkers 
-                            markers={filteredMarkers} 
+                        <GoogleMapWithMarkers
+                            markers={filteredMarkers}
                             center={mapCenter}
                             zoom={zoomLevel}
+                            selectedCity={selectedCity}
+                            googleMapsApiKey={google_maps_api_key}
                         />
                     </Div>
                 </Div>

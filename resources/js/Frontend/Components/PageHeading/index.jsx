@@ -13,7 +13,19 @@ export default function PageHeading({ data, bgSrc }) {
       <Div className="container">
         <Div className="cs-page_heading_in">
           <h1 className="cs-page_title cs-font_50 cs-white_color">{data.title}</h1>
-          
+          {data.breadcrumb && (
+            <ol className="breadcrumb text-uppercase">
+              {data.breadcrumb.map((item, index) => (
+                <li key={index} className={`breadcrumb-item ${index === data.breadcrumb.length - 1 ? 'active' : ''}`}>
+                  {index === data.breadcrumb.length - 1 ? (
+                    item.label
+                  ) : (
+                    <Link href={item.url}>{item.label}</Link>
+                  )}
+                </li>
+              ))}
+            </ol>
+          )}
         </Div>
       </Div>
     </Div>

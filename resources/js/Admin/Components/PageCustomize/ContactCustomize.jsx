@@ -63,6 +63,39 @@ export default function ContactCustomize({currentSection, spacingCallback, updat
                             </div>
                         </>
                     ) : null}
+
+                    {data.layout === '2' && (
+                        <>
+                            <div className="form-group">
+                                <div className="form-check">
+                                    <input
+                                        type="checkbox"
+                                        className="form-check-input"
+                                        id="hideContactForm"
+                                        checked={data.hide_contact_form || false}
+                                        onChange={(e) => setData({...data, hide_contact_form: e.target.checked})}
+                                    />
+                                    <label className="form-check-label" htmlFor="hideContactForm">
+                                        Hide Contact Form
+                                    </label>
+                                </div>
+                            </div>
+                            <div className="form-group">
+                                <div className="form-check">
+                                    <input
+                                        type="checkbox"
+                                        className="form-check-input"
+                                        id="hideGoogleMap"
+                                        checked={data.hide_google_map || false}
+                                        onChange={(e) => setData({...data, hide_google_map: e.target.checked})}
+                                    />
+                                    <label className="form-check-label" htmlFor="hideGoogleMap">
+                                        Hide Google Map Locations
+                                    </label>
+                                </div>
+                            </div>
+                        </>
+                    )}
                 </>
             ) : (
                 <SpacingCustomize spacingCallback={spacingCallback} currentSection={currentSection} />
