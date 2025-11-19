@@ -4,6 +4,9 @@ import {createSlice} from "@reduxjs/toolkit";
 const initialState = {
     title: "Frequently Asked Questions",
     is_show_breadcrumb: false,
+    breadcrumb_bg_type: "image",
+    breadcrumb_bg_image: "",
+    breadcrumb_bg_color: "#000000",
     meta_title: "",
     meta_description: "",
     meta_tags: "",
@@ -113,7 +116,9 @@ const initialState = {
         cta_section: {
             layout: "1",
             title: "Let's discuss and make something cool together",
+            background_type: "image",
             background_image_url: "/storage/pages/K2gbQWuWCaCgRnt2LRfB19E0OM9VuOhR8cvu2rHP.jpg",
+            background_color: "#000000",
             action_text: "Apply For Meeting",
             action_url: "#"
         },
@@ -251,6 +256,15 @@ const faqSlice = createSlice({
         updateFaqBreadcrumb(state, action){
             state.is_show_breadcrumb = action.payload;
         },
+        updateFaqBreadcrumbBgType(state, action){
+            state.breadcrumb_bg_type = action.payload;
+        },
+        updateFaqBreadcrumbBgImage(state, action){
+            state.breadcrumb_bg_image = action.payload;
+        },
+        updateFaqBreadcrumbBgColor(state, action){
+            state.breadcrumb_bg_color = action.payload;
+        },
         updateFaqMetaTitle(state, action){
             state.meta_title = action.payload;
         },
@@ -339,4 +353,4 @@ const faqSlice = createSlice({
 })
 
 export default faqSlice.reducer
-export const {updateFaqPageSection, updateFaqTitle, updateFaqMetaDescription, updateFaqMetaImage, updateFaqMetaTags, updateFaqMetaTitle, updateFaqBreadcrumb, updateFaqSectionsData, updateFaqCaseStudySection, updateFaqAboutSection, updateFaqWhyChooseUsSection, updateFaqSectionFaqPage, updateFaqAwardSection, updateFaqBlogSection, updateFaqContactSection, updateFaqHeroSection, updateFaqCTASection, updateFaqFunFactSection, updateFaqMovingTextSection, updateFaqPartnerSection, updateFaqPortfolioSection, updateFaqPricingSection, updateFaqTeamSection, updateFaqVideoSection, updateFaqServiceSection, updateFaqWorkingProgressSection, updateFaqPhotoGallerySection, updateFaqTestimonialSection, updateFaqResumeSection, updateFaqBannerSection} = faqSlice.actions
+export const {updateFaqPageSection, updateFaqTitle, updateFaqMetaDescription, updateFaqMetaImage, updateFaqMetaTags, updateFaqMetaTitle, updateFaqBreadcrumb, updateFaqBreadcrumbBgType, updateFaqBreadcrumbBgImage, updateFaqBreadcrumbBgColor, updateFaqSectionsData, updateFaqCaseStudySection, updateFaqAboutSection, updateFaqWhyChooseUsSection, updateFaqSectionFaqPage, updateFaqAwardSection, updateFaqBlogSection, updateFaqContactSection, updateFaqHeroSection, updateFaqCTASection, updateFaqFunFactSection, updateFaqMovingTextSection, updateFaqPartnerSection, updateFaqPortfolioSection, updateFaqPricingSection, updateFaqTeamSection, updateFaqVideoSection, updateFaqServiceSection, updateFaqWorkingProgressSection, updateFaqPhotoGallerySection, updateFaqTestimonialSection, updateFaqResumeSection, updateFaqBannerSection} = faqSlice.actions

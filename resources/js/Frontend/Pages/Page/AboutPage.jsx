@@ -22,7 +22,14 @@ import FaqSection from "@/Frontend/Components/Sections/FaqSection";
 import {useDispatch, useSelector} from "react-redux";
 import {Head, usePage} from "@inertiajs/react";
 import {
-    updateAboutBreadcrumb, updateAboutMetaDescription, updateAboutMetaImage, updateAboutMetaTags, updateAboutMetaTitle,
+    updateAboutBreadcrumb,
+    updateAboutBreadcrumbBgType,
+    updateAboutBreadcrumbBgImage,
+    updateAboutBreadcrumbBgColor,
+    updateAboutMetaDescription,
+    updateAboutMetaImage,
+    updateAboutMetaTags,
+    updateAboutMetaTitle,
     updateAboutSection,
     updateAboutSectionsData,
     updateAboutTitle
@@ -82,6 +89,9 @@ export default function AboutPage() {
         dispatch(updateAboutSection(about.sections))
         dispatch(updateAboutSectionsData(about.sections_data))
         dispatch(updateAboutBreadcrumb(about.is_show_breadcrumb))
+        dispatch(updateAboutBreadcrumbBgType(about.breadcrumb_bg_type))
+        dispatch(updateAboutBreadcrumbBgImage(about.breadcrumb_bg_image))
+        dispatch(updateAboutBreadcrumbBgColor(about.breadcrumb_bg_color))
         dispatch(updateAboutMetaTitle(about.meta_title))
         dispatch(updateAboutMetaDescription(about.meta_description))
         dispatch(updateAboutMetaImage(about.meta_image))

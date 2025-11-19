@@ -13,12 +13,16 @@ export default function CTASection({sections_data}){
                     btnText={ctaSection.action_text}
                     btnLink={ctaSection.action_url}
                     bgSrc={ctaSection.background_image_url}
+                    bgColor={ctaSection.background_color}
+                    bgType={ctaSection.background_type}
                 />
             </Div>
     } else if(ctaSection.layout === "2") {
         sections = <Cta2
             title={ctaSection.title}
             bgSrc={ctaSection.background_image_url}
+            bgColor={ctaSection.background_color}
+            bgType={ctaSection.background_type}
             variant="rounded-0"
         />
     } else if(ctaSection.layout === "3"){
@@ -27,6 +31,8 @@ export default function CTASection({sections_data}){
             btnText={ctaSection.action_text}
             btnLink={ctaSection.action_url}
             bgSrc={ctaSection.background_image_url}
+            bgColor={ctaSection.background_color}
+            bgType={ctaSection.background_type}
             variant="cs-type_1"
         />
     }

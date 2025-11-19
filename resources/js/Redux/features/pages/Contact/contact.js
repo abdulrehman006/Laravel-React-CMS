@@ -3,6 +3,9 @@ import {createSlice} from "@reduxjs/toolkit";
 const initialState = {
     title: "Contact Us",
     is_show_breadcrumb: false,
+    breadcrumb_bg_type: "image",
+    breadcrumb_bg_image: "",
+    breadcrumb_bg_color: "#000000",
     meta_title: "",
     meta_description: "",
     meta_tags: "",
@@ -112,7 +115,9 @@ const initialState = {
         cta_section: {
             layout: "1",
             title: "Let's discuss and make something cool together",
+            background_type: "image",
             background_image_url: "/storage/pages/K2gbQWuWCaCgRnt2LRfB19E0OM9VuOhR8cvu2rHP.jpg",
+            background_color: "#000000",
             action_text: "Apply For Meeting",
             action_url: "#"
         },
@@ -251,6 +256,15 @@ const contactSlice = createSlice({
         updateContactBreadcrumb(state, action){
             state.is_show_breadcrumb = action.payload;
         },
+        updateContactBreadcrumbBgType(state, action){
+            state.breadcrumb_bg_type = action.payload;
+        },
+        updateContactBreadcrumbBgImage(state, action){
+            state.breadcrumb_bg_image = action.payload;
+        },
+        updateContactBreadcrumbBgColor(state, action){
+            state.breadcrumb_bg_color = action.payload;
+        },
         updateContactMetaTitle(state, action){
             state.meta_title = action.payload;
         },
@@ -343,5 +357,5 @@ const contactSlice = createSlice({
 })
 
 export default contactSlice.reducer;
-export const {updateContactSection, updateContactTitle, updateContactMetaDescription, updateContactMetaImage, updateContactMetaTags, updateContactMetaTitle, updateContactBreadcrumb, updateContactSectionsData, updateContactCaseStudySection, updateContactAboutSection, updateContactWhyChooseUsSection, updateContactFaqSection, updateContactAwardSection, updateContactBlogSection, updateContactContactSection, updateContactHeroSection, updateContactCTASection, updateContactFunFactSection, updateContactMovingTextSection, updateContactPartnerSection, updateContactPortfolioSection, updateContactPricingSection, updateContactTeamSection, updateContactVideoSection, updateContactServiceSection, updateContactHomeSections, updateContactWorkingProgressSection, updateContactPhotoGallerySection, updateContactTestimonialSection, updateContactResumeSection, updateContactBannerSection} = contactSlice.actions
+export const {updateContactSection, updateContactTitle, updateContactMetaDescription, updateContactMetaImage, updateContactMetaTags, updateContactMetaTitle, updateContactBreadcrumb, updateContactBreadcrumbBgType, updateContactBreadcrumbBgImage, updateContactBreadcrumbBgColor, updateContactSectionsData, updateContactCaseStudySection, updateContactAboutSection, updateContactWhyChooseUsSection, updateContactFaqSection, updateContactAwardSection, updateContactBlogSection, updateContactContactSection, updateContactHeroSection, updateContactCTASection, updateContactFunFactSection, updateContactMovingTextSection, updateContactPartnerSection, updateContactPortfolioSection, updateContactPricingSection, updateContactTeamSection, updateContactVideoSection, updateContactServiceSection, updateContactHomeSections, updateContactWorkingProgressSection, updateContactPhotoGallerySection, updateContactTestimonialSection, updateContactResumeSection, updateContactBannerSection} = contactSlice.actions
 

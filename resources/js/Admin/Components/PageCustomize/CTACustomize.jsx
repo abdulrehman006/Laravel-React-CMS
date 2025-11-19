@@ -7,7 +7,9 @@ export default function CTACustomize({currentSection, spacingCallback, updateCTA
     const [data, setData] = useState({
         layout: sectionData.layout,
         title: sectionData.title,
+        background_type: sectionData.background_type || "image",
         background_image_url: sectionData.background_image_url,
+        background_color: sectionData.background_color || "#000000",
         action_text: sectionData.action_text,
         action_url: sectionData.action_url
     })
@@ -64,9 +66,33 @@ export default function CTACustomize({currentSection, spacingCallback, updateCTA
                         </>
                     )}
                     <div className="form-group">
-                        <label>Background image</label>
-                        <FileUpload select={(file) => handleUploadFile(file)} value={data.background_image_url}/>
+                        <label>Background Type</label>
+                        <select
+                            className="form-control"
+                            value={data.background_type || "image"}
+                            onChange={(e) => setData({...data, background_type: e.target.value})}
+                        >
+                            <option value="image">Background Image</option>
+                            <option value="color">Background Color</option>
+                        </select>
                     </div>
+                    {data.background_type === "image" ? (
+                        <div className="form-group">
+                            <label>Background Image</label>
+                            <FileUpload select={(file) => handleUploadFile(file)} value={data.background_image_url}/>
+                        </div>
+                    ) : (
+                        <div className="form-group">
+                            <label>Background Color</label>
+                            <input
+                                type="color"
+                                value={data.background_color || "#000000"}
+                                onChange={(e) => setData({...data, background_color: e.target.value})}
+                                className="form-control"
+                                style={{ height: '50px' }}
+                            />
+                        </div>
+                    )}
                 </>
             ) : (
                 <SpacingCustomize spacingCallback={spacingCallback} currentSection={currentSection} />

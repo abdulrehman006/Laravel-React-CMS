@@ -3,7 +3,11 @@ import {usePage} from "@inertiajs/react";
 import React, {useEffect, useState} from "react";
 import {produce} from "immer";
 import {
-    updateContactBreadcrumb, updateContactMetaDescription, updateContactMetaImage, updateContactMetaTags,
+    updateContactBreadcrumb,
+    updateContactBreadcrumbBgType,
+    updateContactBreadcrumbBgImage,
+    updateContactBreadcrumbBgColor,
+    updateContactMetaDescription, updateContactMetaImage, updateContactMetaTags,
     updateContactMetaTitle,
     updateContactTitle
 } from "@/Redux/features/pages/Contact/contact";
@@ -15,6 +19,9 @@ export default function ContactPageCustomize(){
     const [data, setData] = useState({
         title: "",
         is_show_breadcrumb: false,
+        breadcrumb_bg_type: "image",
+        breadcrumb_bg_image: "",
+        breadcrumb_bg_color: "#000000",
         meta_title: "",
         meta_tags: "",
         meta_description: "",
@@ -30,10 +37,22 @@ export default function ContactPageCustomize(){
         })
     }
 
+    // handle upload breadcrumb background image
+    const handleUploadBreadcrumbBg = (file) => {
+        const body = new FormData();
+        body.append('file', file)
+        axios.post(route('admin.pages.upload.file'), body).then((res) => {
+            setData({...data, breadcrumb_bg_image: res.data})
+        })
+    }
+
     // update state
     useEffect(() => {
         dispatch(updateContactTitle(data.title))
         dispatch(updateContactBreadcrumb(data.is_show_breadcrumb))
+        dispatch(updateContactBreadcrumbBgType(data.breadcrumb_bg_type))
+        dispatch(updateContactBreadcrumbBgImage(data.breadcrumb_bg_image))
+        dispatch(updateContactBreadcrumbBgColor(data.breadcrumb_bg_color))
         dispatch(updateContactMetaTitle(data.meta_title))
         dispatch(updateContactMetaDescription(data.meta_description))
         dispatch(updateContactMetaTags(data.meta_tags))
@@ -42,12 +61,15 @@ export default function ContactPageCustomize(){
 
     useEffect(() => {
         setData({
-            title: contact.title,
-            is_show_breadcrumb: contact.is_show_breadcrumb,
-            meta_title: contact.meta_title,
-            meta_tags: contact.meta_tags,
-            meta_description: contact.meta_description,
-            meta_image: contact.meta_image,
+            title: contact.title || "",
+            is_show_breadcrumb: contact.is_show_breadcrumb || false,
+            breadcrumb_bg_type: contact.breadcrumb_bg_type || "image",
+            breadcrumb_bg_image: contact.breadcrumb_bg_image || "",
+            breadcrumb_bg_color: contact.breadcrumb_bg_color || "#000000",
+            meta_title: contact.meta_title || "",
+            meta_tags: contact.meta_tags || "",
+            meta_description: contact.meta_description || "",
+            meta_image: contact.meta_image || "",
         })
     }, [contact])
     return(
@@ -61,6 +83,48 @@ export default function ContactPageCustomize(){
                     </div>
                 </label>
             </div>
+
+            {data.is_show_breadcrumb && (
+                <>
+                    <div className="form-group">
+                        <label htmlFor="">Breadcrumb Background Type</label>
+                        <select
+                            className="form-control"
+                            value={data.breadcrumb_bg_type || "image"}
+                            onChange={(e) => setData(produce((draft) => {
+                                draft.breadcrumb_bg_type = e.target.value
+                            }))}
+                        >
+                            <option value="image">Background Image</option>
+                            <option value="color">Background Color</option>
+                        </select>
+                    </div>
+
+                    {data.breadcrumb_bg_type === "image" ? (
+                        <div className="form-group">
+                            <label>Breadcrumb Background Image</label>
+                            <FileUpload
+                                select={(file) => handleUploadBreadcrumbBg(file)}
+                                value={data.breadcrumb_bg_image}
+                            />
+                        </div>
+                    ) : (
+                        <div className="form-group">
+                            <label htmlFor="">Breadcrumb Background Color</label>
+                            <input
+                                type="color"
+                                value={data.breadcrumb_bg_color || "#000000"}
+                                onChange={(e) => setData(produce((draft) => {
+                                    draft.breadcrumb_bg_color = e.target.value
+                                }))}
+                                className="form-control"
+                                style={{ height: '50px' }}
+                            />
+                        </div>
+                    )}
+                </>
+            )}
+
             <div className="form-group">
                 <label htmlFor="">Title</label>
                 <input onChange={(e) => setData(produce((draft) => {

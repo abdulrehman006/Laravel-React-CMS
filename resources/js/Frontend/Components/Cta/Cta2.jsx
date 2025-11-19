@@ -1,10 +1,12 @@
 import React, { useState } from "react";
 import axios from "axios";
+import { IonIcon } from "@ionic/react";
+import { checkmarkCircle, closeCircle } from "ionicons/icons";
 import Spacing from "@/Frontend/Components/Spacing";
 import Button from "@/Frontend/Components/Button";
 import Div from "@/Frontend/Components/Div";
 
-export default function Cta2({ title, btnText, btnLink, bgSrc, variant }) {
+export default function Cta2({ title, btnText, btnLink, bgSrc, bgColor, bgType, variant }) {
     // State management for the form and API
     const [formData, setFormData] = useState({
         regNo: "",
@@ -80,111 +82,207 @@ export default function Cta2({ title, btnText, btnLink, bgSrc, variant }) {
         setError(null);
     };
 
+    const backgroundStyle = bgType === 'color' && bgColor
+        ? { backgroundColor: bgColor, padding: '40px 15px' }
+        : { padding: '40px 15px' };
+
     return (
-        <Div
-            className={`cs-cta cs-style1 cs-bg text-center cs-shape_wrap_1 cs-position_1 ${variant ? variant : ""}`}
-            style={{ backgroundImage: `url(${bgSrc})` }}
-        >
-            <Div className="cs-shape_1" />
-            <Div className="cs-shape_1" />
-            <Div className="cs-shape_1" />
-            <Div className="cs-cta_in">
+        <Div className="container" style={backgroundStyle}>
+            <Div className="text-center mb-4">
                 <h2
                     className="cs-cta_title cs-semi_bold cs-m0"
                     dangerouslySetInnerHTML={{ __html: title }}
                 ></h2>
-                <Spacing lg="70" md="30" />
-
-                {/* Vehicle Verification Form */}
-                <form onSubmit={handleSubmit} className="cs-verification-form">
-                    <Div className="cs-form-group">
-                        <label htmlFor="regNo">Registration Number:</label>
-                        <input
-                            type="text"
-                            id="regNo"
-                            name="regNo"
-                            value={formData.regNo}
-                            onChange={handleChange}
-                        />
-                    </Div>
-                    <Div className="cs-form-group">
-                        <label htmlFor="chassisNo">Chassis Number:</label>
-                        <input
-                            type="text"
-                            id="chassisNo"
-                            name="chassisNo"
-                            value={formData.chassisNo}
-                            onChange={handleChange}
-                        />
-                    </Div>
-                    <Div className="cs-form-group">
-                        <label htmlFor="VIR">VIR:</label>
-                        <input
-                            type="text"
-                            id="VIR"
-                            name="VIR"
-                            value={formData.VIR}
-                            onChange={handleChange}
-                        />
-                    </Div>
-                    <button type="submit" className="cs-submit-button">
-                        Verify
-                    </button>
-                    {/* Reset Button */}
-                    <button type="button" className="cs-reset-button" onClick={handleReset}>
-                        Reset
-                    </button>
-                </form>
-                <Spacing lg="45" md="30" />
-
-                {/* Loading, Error, and Result */}
-                {loading && <p>Loading...</p>}
-                {error && <p style={{ color: "red" }}>{error}</p>}
-                
-                {/* Display Result Table or No Data Found Message */}
-                {result && result.length > 0 ? (
-                    <table className="cs-result-table">
-                        <thead>
-                            <tr>
-                                <th>Owner Name</th>
-                                <th>Inspection Result</th>
-                                <th>Vehicle No</th>
-                                <th>Vehicle Make</th>
-                                <th>Chassis Number</th>
-                                <th>Engine Number</th>
-                                <th>Certificate Number</th>
-                                <th>Inspection Date</th>
-                                <th>Expiry Date</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {result.map((item, index) => (
-                                <tr key={index}>
-                                    <td>{item.ownerName}</td>
-                                    <td>{item.inspectionResult}</td>
-                                    <td>{item.vehicleNo}</td>
-                                    <td>{item.vehicleMake}</td>
-                                    <td>{item.chassisNumber}</td>
-                                    <td>{item.engineNumber}</td>
-                                    <td>{item.certificateNumber}</td>
-                                    <td>{item.inspectionDate}</td>
-                                    <td>{item.expiryDate}</td>
-                                </tr>
-                            ))}
-                        </tbody>
-                    </table>
-                ) : (
-                    result && <p>No data found for the provided details.</p>
-                )}
-
-                {/* Call-to-action button */}
-                {btnText && (
-                    <>
-                        <Spacing lg="30" md="15" />
-                        <Button btnLink={btnLink} btnText={btnText} />
-                    </>
-                )}
             </Div>
+
+            <Spacing lg="50" md="30" />
+
+            <Div className="row justify-content-center">
+                {/* Vehicle Verification Widget */}
+                <Div className="col-lg-8 col-md-10 mb-4">
+                    <Div className="card shadow-sm" style={{ border: "1px solid #e0e0e0" }}>
+                        <Div className="card-body p-4">
+                            {/* Vehicle Verification Form */}
+                            <form onSubmit={handleSubmit}>
+                                <Div className="mb-3">
+                                    <label htmlFor="regNo" style={{ fontWeight: "500", marginBottom: "10px", display: "block" }}>
+                                        Registration Number:
+                                    </label>
+                                    <input
+                                        type="text"
+                                        id="regNo"
+                                        name="regNo"
+                                        className="form-control"
+                                        placeholder="e.g., LET-15-8676"
+                                        value={formData.regNo}
+                                        onChange={handleChange}
+                                        style={{
+                                            padding: "12px",
+                                            borderRadius: "5px",
+                                            border: "1px solid #e0e0e0"
+                                        }}
+                                    />
+                                </Div>
+
+                                <Div className="mb-3">
+                                    <label htmlFor="chassisNo" style={{ fontWeight: "500", marginBottom: "10px", display: "block" }}>
+                                        Chassis Number:
+                                    </label>
+                                    <input
+                                        type="text"
+                                        id="chassisNo"
+                                        name="chassisNo"
+                                        className="form-control"
+                                        placeholder="e.g., SR308PK291991"
+                                        value={formData.chassisNo}
+                                        onChange={handleChange}
+                                        style={{
+                                            padding: "12px",
+                                            borderRadius: "5px",
+                                            border: "1px solid #e0e0e0"
+                                        }}
+                                    />
+                                </Div>
+
+                                <Div className="mb-3">
+                                    <label htmlFor="VIR" style={{ fontWeight: "500", marginBottom: "10px", display: "block" }}>
+                                        VIR:
+                                    </label>
+                                    <input
+                                        type="text"
+                                        id="VIR"
+                                        name="VIR"
+                                        className="form-control"
+                                        placeholder="Enter VIR"
+                                        value={formData.VIR}
+                                        onChange={handleChange}
+                                        style={{
+                                            padding: "12px",
+                                            borderRadius: "5px",
+                                            border: "1px solid #e0e0e0"
+                                        }}
+                                    />
+                                </Div>
+
+                                <Div className="d-flex gap-2">
+                                    <button
+                                        type="submit"
+                                        className="btn btn-primary flex-fill"
+                                        disabled={loading}
+                                        style={{
+                                            backgroundColor: "#DAA520",
+                                            border: "none",
+                                            padding: "12px",
+                                            fontWeight: "500",
+                                            fontSize: "16px"
+                                        }}
+                                    >
+                                        {loading ? "Verifying..." : "Verify"}
+                                    </button>
+                                    <button
+                                        type="button"
+                                        className="btn btn-outline-secondary"
+                                        onClick={handleReset}
+                                        style={{
+                                            padding: "12px 24px",
+                                            fontWeight: "500",
+                                            fontSize: "16px"
+                                        }}
+                                    >
+                                        Reset
+                                    </button>
+                                </Div>
+                            </form>
+
+                            {/* Error Message */}
+                            {error && (
+                                <Div className="mt-3 p-3" style={{
+                                    backgroundColor: "#fff3cd",
+                                    border: "1px solid #ffc107",
+                                    borderRadius: "5px"
+                                }}>
+                                    <IonIcon icon={closeCircle} style={{ color: "#856404", marginRight: "8px" }} />
+                                    <strong style={{ color: "#856404" }}>Error: </strong>
+                                    <span style={{ color: "#856404" }}>{error}</span>
+                                </Div>
+                            )}
+
+                            {/* Success Result */}
+                            {result && result.length > 0 && (
+                                <Div className="mt-4">
+                                    <Div className="d-flex align-items-center mb-3">
+                                        <IonIcon icon={checkmarkCircle} style={{ color: "#28a745", fontSize: "24px", marginRight: "8px" }} />
+                                        <strong style={{ color: "#28a745", fontSize: "16px" }}>Verification Results</strong>
+                                    </Div>
+
+                                    <Div style={{ overflowX: "auto" }}>
+                                        <table className="table table-striped table-bordered" style={{ fontSize: "14px" }}>
+                                            <thead style={{ backgroundColor: "#f8f9fa" }}>
+                                                <tr>
+                                                    <th style={{ fontWeight: "600" }}>Owner Name</th>
+                                                    <th style={{ fontWeight: "600" }}>Inspection Result</th>
+                                                    <th style={{ fontWeight: "600" }}>Vehicle No</th>
+                                                    <th style={{ fontWeight: "600" }}>Vehicle Make</th>
+                                                    <th style={{ fontWeight: "600" }}>Chassis Number</th>
+                                                    <th style={{ fontWeight: "600" }}>Engine Number</th>
+                                                    <th style={{ fontWeight: "600" }}>Certificate Number</th>
+                                                    <th style={{ fontWeight: "600" }}>Inspection Date</th>
+                                                    <th style={{ fontWeight: "600" }}>Expiry Date</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                {result.map((item, index) => (
+                                                    <tr key={index}>
+                                                        <td>{item.ownerName}</td>
+                                                        <td>
+                                                            <span style={{
+                                                                padding: "4px 8px",
+                                                                borderRadius: "4px",
+                                                                backgroundColor: item.inspectionResult === "Pass" ? "#d4edda" : "#f8d7da",
+                                                                color: item.inspectionResult === "Pass" ? "#155724" : "#721c24",
+                                                                fontWeight: "500"
+                                                            }}>
+                                                                {item.inspectionResult}
+                                                            </span>
+                                                        </td>
+                                                        <td>{item.vehicleNo}</td>
+                                                        <td>{item.vehicleMake}</td>
+                                                        <td>{item.chassisNumber}</td>
+                                                        <td>{item.engineNumber}</td>
+                                                        <td>{item.certificateNumber}</td>
+                                                        <td>{item.inspectionDate}</td>
+                                                        <td>{item.expiryDate}</td>
+                                                    </tr>
+                                                ))}
+                                            </tbody>
+                                        </table>
+                                    </Div>
+                                </Div>
+                            )}
+
+                            {/* No Data Found */}
+                            {result && result.length === 0 && (
+                                <Div className="mt-3 p-3" style={{
+                                    backgroundColor: "#e7f3ff",
+                                    border: "1px solid #b3d9ff",
+                                    borderRadius: "5px",
+                                    textAlign: "center"
+                                }}>
+                                    <span style={{ color: "#004085" }}>No data found for the provided details.</span>
+                                </Div>
+                            )}
+                        </Div>
+                    </Div>
+                </Div>
+            </Div>
+
+            {/* Call-to-action button */}
+            {btnText && (
+                <Div className="text-center">
+                    <Spacing lg="30" md="15" />
+                    <Button btnLink={btnLink} btnText={btnText} />
+                </Div>
+            )}
         </Div>
     );
 }

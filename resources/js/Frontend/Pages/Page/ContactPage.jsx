@@ -23,6 +23,9 @@ import WhyChooseUsSection from "@/Frontend/Components/Sections/WhyChooseUsSectio
 import FaqSection from "@/Frontend/Components/Sections/FaqSection";
 import {
     updateContactBreadcrumb,
+    updateContactBreadcrumbBgType,
+    updateContactBreadcrumbBgImage,
+    updateContactBreadcrumbBgColor,
     updateContactMetaDescription,
     updateContactMetaImage,
     updateContactMetaTags,
@@ -80,6 +83,9 @@ export default function ContactPage() {
         dispatch(updateContactSection(contact.sections))
         dispatch(updateContactSectionsData(contact.sections_data))
         dispatch(updateContactBreadcrumb(contact.is_show_breadcrumb))
+        dispatch(updateContactBreadcrumbBgType(contact.breadcrumb_bg_type))
+        dispatch(updateContactBreadcrumbBgImage(contact.breadcrumb_bg_image))
+        dispatch(updateContactBreadcrumbBgColor(contact.breadcrumb_bg_color))
         dispatch(updateContactMetaTitle(contact.meta_title))
         dispatch(updateContactMetaDescription(contact.meta_description))
         dispatch(updateContactMetaTags(contact.meta_tags))

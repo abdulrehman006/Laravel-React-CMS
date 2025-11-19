@@ -25,7 +25,14 @@ import {Head, usePage} from "@inertiajs/react";
 import Spacing from "@/Frontend/Components/Spacing";
 import {
     updatePageBreadcrumb,
-    updatePageDescription, updatePageMetaDescription, updatePageMetaImage, updatePageMetaTags, updatePageMetaTitle,
+    updatePageBreadcrumbBgType,
+    updatePageBreadcrumbBgImage,
+    updatePageBreadcrumbBgColor,
+    updatePageDescription,
+    updatePageMetaDescription,
+    updatePageMetaImage,
+    updatePageMetaTags,
+    updatePageMetaTitle,
     updatePageSection,
     updatePageSectionsData,
     updatePageTitle
@@ -99,6 +106,9 @@ export default function FaqPage() {
             dispatch(updatePageDescription(page?.content))
             dispatch(updatePageSectionsData(page?.sections_data))
             dispatch(updatePageBreadcrumb(page?.is_show_breadcrumb))
+            dispatch(updatePageBreadcrumbBgType(page?.breadcrumb_bg_type))
+            dispatch(updatePageBreadcrumbBgImage(page?.breadcrumb_bg_image))
+            dispatch(updatePageBreadcrumbBgColor(page?.breadcrumb_bg_color))
             dispatch(updatePageMetaTitle(page?.meta_title))
             dispatch(updatePageMetaDescription(page?.meta_description))
             dispatch(updatePageMetaTags(page?.meta_tags))

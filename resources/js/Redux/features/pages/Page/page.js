@@ -6,6 +6,9 @@ const initialState = {
     title: "",
     description: "",
     is_show_breadcrumb: false,
+    breadcrumb_bg_type: "image",
+    breadcrumb_bg_image: "",
+    breadcrumb_bg_color: "#000000",
     meta_title: "",
     meta_description: "",
     meta_tags: "",
@@ -115,7 +118,9 @@ const initialState = {
         cta_section: {
             layout: "1",
             title: "Let's discuss and make something cool together",
+            background_type: "image",
             background_image_url: "/storage/pages/K2gbQWuWCaCgRnt2LRfB19E0OM9VuOhR8cvu2rHP.jpg",
+            background_color: "#000000",
             action_text: "Apply For Meeting",
             action_url: "#"
         },
@@ -240,6 +245,22 @@ const initialState = {
         working_progress_section: {},
         banner_section: {},
         resume_section: {},
+        locations_section: {
+            title: "",
+            sub_title: "",
+            background_color: "",
+        },
+        api_section: {
+            title: "",
+            sub_title: "",
+            background_color: "",
+        },
+        html_section: {
+            title: "",
+            sub_title: "",
+            html_content: "<p>Add your custom HTML content here</p>",
+            background_color: "",
+        },
     }
 
 }
@@ -268,6 +289,15 @@ const pageSlice = createSlice({
         },
         updatePageBreadcrumb(state, action){
             state.is_show_breadcrumb = action.payload;
+        },
+        updatePageBreadcrumbBgType(state, action){
+            state.breadcrumb_bg_type = action.payload;
+        },
+        updatePageBreadcrumbBgImage(state, action){
+            state.breadcrumb_bg_image = action.payload;
+        },
+        updatePageBreadcrumbBgColor(state, action){
+            state.breadcrumb_bg_color = action.payload;
         },
         updatePageSection(state, action){
             state.sections = action.payload
@@ -342,8 +372,17 @@ const pageSlice = createSlice({
         updatePageResumeSection(state, action){
             state.sections_data.resume_section = action.payload
         },
+        updatePageLocationsSection(state, action){
+            state.sections_data.locations_section = action.payload
+        },
+        updatePageAPISection(state, action){
+            state.sections_data.api_section = action.payload
+        },
+        updatePageHTMLSection(state, action){
+            state.sections_data.html_section = action.payload
+        },
     }
 })
 
 export default pageSlice.reducer;
-export const {updatePageDescription, updatePageSection, updatePageTitle, updatePageMetaTags, updatePageMetaDescription, updatePageMetaImage, updatePageMetaTitle, updatePageSectionsData, updatePageBreadcrumb, updatePageWhyChooseUsSection, updatePageCaseStudySection, updatePageFunFactSection, updatePageMovingTextSection, updatePageCTASection, updatePageContactSection, updatePagePartnerSection, updatePagePricingSection, updatePagePortfolioSection, updatePageServiceSection, updatePageTeamSection, updatePageVideoSection, updatePageSectionFaqPage, updatePageBlogSection, updatePageAwardSection, updatePageAboutSection, updatePageHeroSection, updatePageWorkingProgressSection, updatePagePhotoGallerySection, updatePageResumeSection, updatePageBannerSection, updatePageTestimonialSection} = pageSlice.actions
+export const {updatePageDescription, updatePageSection, updatePageTitle, updatePageMetaTags, updatePageMetaDescription, updatePageMetaImage, updatePageMetaTitle, updatePageSectionsData, updatePageBreadcrumb, updatePageBreadcrumbBgType, updatePageBreadcrumbBgImage, updatePageBreadcrumbBgColor, updatePageWhyChooseUsSection, updatePageCaseStudySection, updatePageFunFactSection, updatePageMovingTextSection, updatePageCTASection, updatePageContactSection, updatePagePartnerSection, updatePagePricingSection, updatePagePortfolioSection, updatePageServiceSection, updatePageTeamSection, updatePageVideoSection, updatePageSectionFaqPage, updatePageBlogSection, updatePageAwardSection, updatePageAboutSection, updatePageHeroSection, updatePageWorkingProgressSection, updatePagePhotoGallerySection, updatePageResumeSection, updatePageBannerSection, updatePageTestimonialSection, updatePageLocationsSection, updatePageAPISection, updatePageHTMLSection} = pageSlice.actions

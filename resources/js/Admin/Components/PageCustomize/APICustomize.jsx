@@ -99,6 +99,23 @@ export default function APICustomize({
                         </small>
                     </div>
 
+                    <hr className="my-4" />
+                    <h6 className="mb-3">Styling Options</h6>
+
+                    <div className="form-group">
+                        <label>Background Color</label>
+                        <input
+                            type="color"
+                            value={data.background_color || "#ffffff"}
+                            onChange={(e) => setData({ ...data, background_color: e.target.value })}
+                            className="form-control"
+                            style={{ height: "45px" }}
+                        />
+                        <small className="text-muted">
+                            Choose a background color for this section (leave default for white)
+                        </small>
+                    </div>
+
                     <div className="alert alert-info mt-3">
                         <strong>Note:</strong> This section provides an interactive API documentation
                         with a live tester. Users can search by Registration Number or Chassis Number

@@ -4,6 +4,9 @@ import {createSlice} from "@reduxjs/toolkit";
 const initialState = {
     title: "About",
     is_show_breadcrumb: false,
+    breadcrumb_bg_type: "image",
+    breadcrumb_bg_image: "",
+    breadcrumb_bg_color: "#000000",
     meta_title: "",
     meta_description: "",
     meta_image: "",
@@ -113,7 +116,9 @@ const initialState = {
         cta_section: {
             layout: "1",
             title: "Let's discuss and make something cool together",
+            background_type: "image",
             background_image_url: "/storage/pages/K2gbQWuWCaCgRnt2LRfB19E0OM9VuOhR8cvu2rHP.jpg",
+            background_color: "#000000",
             action_text: "Apply For Meeting",
             action_url: "#"
         },
@@ -272,6 +277,15 @@ const aboutSlice = createSlice({
         updateAboutBreadcrumb(state, action){
             state.is_show_breadcrumb = action.payload;
         },
+        updateAboutBreadcrumbBgType(state, action){
+            state.breadcrumb_bg_type = action.payload;
+        },
+        updateAboutBreadcrumbBgImage(state, action){
+            state.breadcrumb_bg_image = action.payload;
+        },
+        updateAboutBreadcrumbBgColor(state, action){
+            state.breadcrumb_bg_color = action.payload;
+        },
         updateAboutSection(state, action){
             state.sections = action.payload;
         },
@@ -374,4 +388,4 @@ const aboutSlice = createSlice({
 })
 
 export default aboutSlice.reducer
-export const {updateAboutSection, updateAboutMetaDescription, updateAboutMetaImage, updateAboutMetaTags, updateAboutMetaTitle, updateAboutTitle, updateAboutBreadcrumb, updateAboutSectionsData, updateAboutCaseStudySection, updateAboutAboutSection, updateAboutWhyChooseUsSection, updateAboutFaqSection, updateAboutAwardSection, updateAboutBlogSection, updateAboutContactSection, updateAboutHeroSection, updateAboutCTASection, updateAboutFunFactSection, updateAboutMovingTextSection, updateAboutPartnerSection, updateAboutPortfolioSection, updateAboutPricingSection, updateAboutTeamSection, updateAboutVideoSection, updateAboutServiceSection, updateAboutWorkingProgressSection, updateAboutPhotoGallerySection, updateAboutResumeSection, updateAboutBannerSection, updateAboutTestimonialSection, updateAboutLocationsSection, updateAboutAPISection, updateAboutHTMLSection} = aboutSlice.actions
+export const {updateAboutSection, updateAboutMetaDescription, updateAboutMetaImage, updateAboutMetaTags, updateAboutMetaTitle, updateAboutTitle, updateAboutBreadcrumb, updateAboutBreadcrumbBgType, updateAboutBreadcrumbBgImage, updateAboutBreadcrumbBgColor, updateAboutSectionsData, updateAboutCaseStudySection, updateAboutAboutSection, updateAboutWhyChooseUsSection, updateAboutFaqSection, updateAboutAwardSection, updateAboutBlogSection, updateAboutContactSection, updateAboutHeroSection, updateAboutCTASection, updateAboutFunFactSection, updateAboutMovingTextSection, updateAboutPartnerSection, updateAboutPortfolioSection, updateAboutPricingSection, updateAboutTeamSection, updateAboutVideoSection, updateAboutServiceSection, updateAboutWorkingProgressSection, updateAboutPhotoGallerySection, updateAboutResumeSection, updateAboutBannerSection, updateAboutTestimonialSection, updateAboutLocationsSection, updateAboutAPISection, updateAboutHTMLSection} = aboutSlice.actions

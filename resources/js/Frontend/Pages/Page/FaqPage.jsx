@@ -23,7 +23,14 @@ import PageHeading from "@/Frontend/Components/PageHeading";
 import {useDispatch, useSelector} from "react-redux";
 import {Head, usePage} from "@inertiajs/react";
 import {
-    updateFaqBreadcrumb, updateFaqMetaDescription, updateFaqMetaImage, updateFaqMetaTags, updateFaqMetaTitle,
+    updateFaqBreadcrumb,
+    updateFaqBreadcrumbBgType,
+    updateFaqBreadcrumbBgImage,
+    updateFaqBreadcrumbBgColor,
+    updateFaqMetaDescription,
+    updateFaqMetaImage,
+    updateFaqMetaTags,
+    updateFaqMetaTitle,
     updateFaqPageSection,
     updateFaqSectionsData,
     updateFaqTitle
@@ -76,6 +83,9 @@ export default function FaqPage() {
         dispatch(updateFaqPageSection(faq.sections))
         dispatch(updateFaqSectionsData(faq.sections_data))
         dispatch(updateFaqBreadcrumb(faq.is_show_breadcrumb))
+        dispatch(updateFaqBreadcrumbBgType(faq.breadcrumb_bg_type))
+        dispatch(updateFaqBreadcrumbBgImage(faq.breadcrumb_bg_image))
+        dispatch(updateFaqBreadcrumbBgColor(faq.breadcrumb_bg_color))
         dispatch(updateFaqMetaTitle(faq.meta_title))
         dispatch(updateFaqMetaTags(faq.meta_tags))
         dispatch(updateFaqMetaDescription(faq.meta_description))
