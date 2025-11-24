@@ -90743,8 +90743,10 @@ function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
 
 
 function AppointmentForm() {
-  var flash = (0,_inertiajs_react__WEBPACK_IMPORTED_MODULE_5__.usePage)().props.flash;
-  var _useState = (0,react__WEBPACK_IMPORTED_MODULE_4__.useState)("Corporate"),
+  var _usePage$props = (0,_inertiajs_react__WEBPACK_IMPORTED_MODULE_5__.usePage)().props,
+    flash = _usePage$props.flash,
+    locations = _usePage$props.locations;
+  var _useState = (0,react__WEBPACK_IMPORTED_MODULE_4__.useState)("individual"),
     _useState2 = _slicedToArray(_useState, 2),
     selectedCompany = _useState2[0],
     setSelectedCompany = _useState2[1];
@@ -90757,7 +90759,9 @@ function AppointmentForm() {
       name: "",
       phone: "",
       email: "",
-      message: ""
+      message: "",
+      location_id: "",
+      company_type: "individual"
     }),
     data = _useForm.data,
     setData = _useForm.setData,
@@ -90766,20 +90770,32 @@ function AppointmentForm() {
     wasSuccessful = _useForm.wasSuccessful,
     reset = _useForm.reset,
     processing = _useForm.processing;
+
+  // Get active locations for dropdown
+  var activeLocations = (locations === null || locations === void 0 ? void 0 : locations.filter(function (loc) {
+    return loc.is_active;
+  })) || [];
   var vehicleTypes = ["Car", "Truck", "Motorcycle", "Bus", "Van", "SUV", "Bicycle", "Electric Vehicle", "Other"];
   var handleSubmit = function handleSubmit(e) {
     e.preventDefault();
+    // Set company_type in data before submission
+    setData("company_type", selectedCompany);
     post(route("appointment"), {
       preserveScroll: true,
       onSuccess: function onSuccess() {
         reset();
+        setSelectedCompany("individual");
+      },
+      onError: function onError(errors) {
+        console.error('Form submission errors:', errors);
       }
     });
   };
   var handleCompanyChange = function handleCompanyChange(value) {
     setSelectedCompany(value);
-    if (value === "Local") {
-      setData("company_name", ""); // Clear company name when "Local" is selected
+    setData("company_type", value);
+    if (value === "individual" || value === "local") {
+      setData("company_name", ""); // Clear company name when not corporate
     }
   };
 
@@ -90808,7 +90824,10 @@ function AppointmentForm() {
           },
           className: "cs-form_field",
           required: true,
-          placeholder: "Enter your name"
+          placeholder: "Enter your name",
+          style: {
+            height: '50px'
+          }
         }), errors.name && /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)("span", {
           className: "text-danger d-block mt-1",
           children: errors.name
@@ -90827,7 +90846,10 @@ function AppointmentForm() {
           },
           className: "cs-form_field",
           required: true,
-          placeholder: "Enter your email"
+          placeholder: "Enter your email",
+          style: {
+            height: '50px'
+          }
         }), errors.email && /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)("span", {
           className: "text-danger d-block mt-1",
           children: errors.email
@@ -90838,7 +90860,7 @@ function AppointmentForm() {
           className: "cs-primary_color",
           children: "Phone*"
         }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)("input", {
-          type: "text",
+          type: "tel",
           name: "phone",
           value: data.phone,
           onChange: function onChange(e) {
@@ -90846,7 +90868,10 @@ function AppointmentForm() {
           },
           className: "cs-form_field",
           required: true,
-          placeholder: "Enter your phone number"
+          placeholder: "Enter your phone number",
+          style: {
+            height: '50px'
+          }
         }), errors.phone && /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)("span", {
           className: "text-danger d-block mt-1",
           children: errors.phone
@@ -90866,10 +90891,27 @@ function AppointmentForm() {
             children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)("input", {
               type: "radio",
               name: "company_type",
-              value: "Local",
-              checked: selectedCompany === "Local",
+              value: "individual",
+              checked: selectedCompany === "individual",
               onChange: function onChange() {
-                return handleCompanyChange("Local");
+                return handleCompanyChange("individual");
+              },
+              className: "me-2"
+            }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)("span", {
+              children: "Individual"
+            })]
+          }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsxs)("label", {
+            className: "d-flex align-items-center",
+            style: {
+              cursor: "pointer"
+            },
+            children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)("input", {
+              type: "radio",
+              name: "company_type",
+              value: "local",
+              checked: selectedCompany === "local",
+              onChange: function onChange() {
+                return handleCompanyChange("local");
               },
               className: "me-2"
             }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)("span", {
@@ -90883,10 +90925,10 @@ function AppointmentForm() {
             children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)("input", {
               type: "radio",
               name: "company_type",
-              value: "Corporate",
-              checked: selectedCompany === "Corporate",
+              value: "corporate",
+              checked: selectedCompany === "corporate",
               onChange: function onChange() {
-                return handleCompanyChange("Corporate");
+                return handleCompanyChange("corporate");
               },
               className: "me-2"
             }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)("span", {
@@ -90897,7 +90939,7 @@ function AppointmentForm() {
           className: "text-danger d-block mt-1",
           children: errors.company_type
         })]
-      }), selectedCompany === "Corporate" && /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsxs)(_Frontend_Components_Div__WEBPACK_IMPORTED_MODULE_1__["default"], {
+      }), selectedCompany === "corporate" && /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsxs)(_Frontend_Components_Div__WEBPACK_IMPORTED_MODULE_1__["default"], {
         className: "mb-3",
         children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)("label", {
           className: "cs-primary_color",
@@ -90911,10 +90953,42 @@ function AppointmentForm() {
           },
           className: "cs-form_field",
           placeholder: "Enter company name",
-          required: selectedCompany === "Corporate"
+          required: selectedCompany === "corporate",
+          style: {
+            height: '50px'
+          }
         }), errors.company_name && /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)("span", {
           className: "text-danger d-block mt-1",
           children: errors.company_name
+        })]
+      }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsxs)(_Frontend_Components_Div__WEBPACK_IMPORTED_MODULE_1__["default"], {
+        className: "mb-3",
+        children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)("label", {
+          className: "cs-primary_color",
+          children: "Preferred Station/Location*"
+        }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsxs)("select", {
+          name: "location_id",
+          value: data.location_id,
+          onChange: function onChange(e) {
+            return setData("location_id", e.target.value);
+          },
+          className: "cs-form_field",
+          required: true,
+          style: {
+            height: '50px'
+          },
+          children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)("option", {
+            value: "",
+            children: "Select a station"
+          }), activeLocations.map(function (location) {
+            return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)("option", {
+              value: location.id,
+              children: location.city || location.name
+            }, location.id);
+          })]
+        }), errors.location_id && /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)("span", {
+          className: "text-danger d-block mt-1",
+          children: errors.location_id
         })]
       })]
     }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsxs)(_Frontend_Components_Div__WEBPACK_IMPORTED_MODULE_1__["default"], {
@@ -90938,6 +91012,9 @@ function AppointmentForm() {
           },
           className: "cs-form_field",
           required: true,
+          style: {
+            height: '50px'
+          },
           children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)("option", {
             value: "",
             children: "Select vehicle type"
@@ -90965,7 +91042,10 @@ function AppointmentForm() {
           },
           className: "cs-form_field",
           placeholder: "e.g., ABC-1234",
-          required: true
+          required: true,
+          style: {
+            height: '50px'
+          }
         }), errors.vehicle_registration && /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)("span", {
           className: "text-danger d-block mt-1",
           children: errors.vehicle_registration
@@ -90986,7 +91066,10 @@ function AppointmentForm() {
           min: "1",
           max: "10",
           placeholder: "Enter number (1-10)",
-          required: true
+          required: true,
+          style: {
+            height: '50px'
+          }
         }), errors.no_of_vehicles && /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)("span", {
           className: "text-danger d-block mt-1",
           children: errors.no_of_vehicles
@@ -91004,7 +91087,10 @@ function AppointmentForm() {
             return setData("date", e.target.value);
           },
           className: "cs-form_field",
-          required: true
+          required: true,
+          style: {
+            height: '50px'
+          }
         }), errors.date && /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)("span", {
           className: "text-danger d-block mt-1",
           children: errors.date
@@ -91014,7 +91100,7 @@ function AppointmentForm() {
       className: "col-12 mt-3",
       children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)("label", {
         className: "cs-primary_color",
-        children: "Additional Message"
+        children: "Additional Message*"
       }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)("textarea", {
         name: "message",
         value: data.message,
@@ -91022,9 +91108,13 @@ function AppointmentForm() {
           return setData("message", e.target.value);
         },
         className: "cs-form_field",
-        rows: "4",
+        rows: "5",
         placeholder: "Any additional information or special requests...",
-        required: true
+        required: true,
+        style: {
+          minHeight: '120px',
+          resize: 'vertical'
+        }
       }), errors.message && /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)("span", {
         className: "text-danger d-block mt-1",
         children: errors.message
@@ -91032,13 +91122,6 @@ function AppointmentForm() {
         lg: "25",
         md: "25"
       })]
-    }), wasSuccessful && /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)(_Frontend_Components_Div__WEBPACK_IMPORTED_MODULE_1__["default"], {
-      className: "col-12",
-      children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)("div", {
-        className: "alert alert-success",
-        role: "alert",
-        children: flash.success
-      })
     }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)(_Frontend_Components_Div__WEBPACK_IMPORTED_MODULE_1__["default"], {
       className: "col-12",
       children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsxs)("button", {
@@ -91047,9 +91130,20 @@ function AppointmentForm() {
         className: "cs-btn cs-style1",
         children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)("span", {
           children: processing ? "Submitting..." : "Submit Appointment"
-        }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)(_iconify_react__WEBPACK_IMPORTED_MODULE_3__.Icon, {
+        }), !processing && /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)(_iconify_react__WEBPACK_IMPORTED_MODULE_3__.Icon, {
           icon: "bi:arrow-right"
         })]
+      })
+    }), wasSuccessful && /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)(_Frontend_Components_Div__WEBPACK_IMPORTED_MODULE_1__["default"], {
+      className: "col-12 mt-3",
+      children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)("div", {
+        className: "alert alert-success",
+        role: "alert",
+        style: {
+          padding: '15px',
+          borderRadius: '8px'
+        },
+        children: (flash === null || flash === void 0 ? void 0 : flash.success) || 'Appointment submitted successfully!'
       })
     })]
   });

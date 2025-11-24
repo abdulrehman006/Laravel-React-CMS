@@ -6,8 +6,8 @@ import React, { useState } from "react";
 import { useForm, usePage } from "@inertiajs/react";
 
 export default function AppointmentForm() {
-  const { flash } = usePage().props;
-  const [selectedCompany, setSelectedCompany] = useState("Corporate");
+  const { flash, locations } = usePage().props;
+  const [selectedCompany, setSelectedCompany] = useState("individual");
   const { data, setData, errors, post, wasSuccessful, reset, processing } = useForm({
     vehicle_type: "",
     date: "",
@@ -18,7 +18,12 @@ export default function AppointmentForm() {
     phone: "",
     email: "",
     message: "",
+    location_id: "",
+    company_type: "individual",
   });
+
+  // Get active locations for dropdown
+  const activeLocations = locations?.filter(loc => loc.is_active) || [];
 
   const vehicleTypes = [
     "Car",
@@ -35,18 +40,25 @@ export default function AppointmentForm() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    // Set company_type in data before submission
+    setData("company_type", selectedCompany);
     post(route("appointment"), {
       preserveScroll: true,
       onSuccess: () => {
         reset();
+        setSelectedCompany("individual");
       },
+      onError: (errors) => {
+        console.error('Form submission errors:', errors);
+      }
     });
   };
 
   const handleCompanyChange = (value) => {
     setSelectedCompany(value);
-    if (value === "Local") {
-      setData("company_name", ""); // Clear company name when "Local" is selected
+    setData("company_type", value);
+    if (value === "individual" || value === "local") {
+      setData("company_name", ""); // Clear company name when not corporate
     }
   };
 
@@ -67,6 +79,7 @@ export default function AppointmentForm() {
             className="cs-form_field"
             required
             placeholder="Enter your name"
+            style={{ height: '50px' }}
           />
           {errors.name && <span className="text-danger d-block mt-1">{errors.name}</span>}
         </Div>
@@ -82,6 +95,7 @@ export default function AppointmentForm() {
             className="cs-form_field"
             required
             placeholder="Enter your email"
+            style={{ height: '50px' }}
           />
           {errors.email && <span className="text-danger d-block mt-1">{errors.email}</span>}
         </Div>
@@ -90,13 +104,14 @@ export default function AppointmentForm() {
         <Div className="mb-3">
           <label className="cs-primary_color">Phone*</label>
           <input
-            type="text"
+            type="tel"
             name="phone"
             value={data.phone}
             onChange={(e) => setData("phone", e.target.value)}
             className="cs-form_field"
             required
             placeholder="Enter your phone number"
+            style={{ height: '50px' }}
           />
           {errors.phone && <span className="text-danger d-block mt-1">{errors.phone}</span>}
         </Div>
@@ -109,9 +124,20 @@ export default function AppointmentForm() {
               <input
                 type="radio"
                 name="company_type"
-                value="Local"
-                checked={selectedCompany === "Local"}
-                onChange={() => handleCompanyChange("Local")}
+                value="individual"
+                checked={selectedCompany === "individual"}
+                onChange={() => handleCompanyChange("individual")}
+                className="me-2"
+              />
+              <span>Individual</span>
+            </label>
+            <label className="d-flex align-items-center" style={{ cursor: "pointer" }}>
+              <input
+                type="radio"
+                name="company_type"
+                value="local"
+                checked={selectedCompany === "local"}
+                onChange={() => handleCompanyChange("local")}
                 className="me-2"
               />
               <span>Local</span>
@@ -120,9 +146,9 @@ export default function AppointmentForm() {
               <input
                 type="radio"
                 name="company_type"
-                value="Corporate"
-                checked={selectedCompany === "Corporate"}
-                onChange={() => handleCompanyChange("Corporate")}
+                value="corporate"
+                checked={selectedCompany === "corporate"}
+                onChange={() => handleCompanyChange("corporate")}
                 className="me-2"
               />
               <span>Corporate</span>
@@ -132,7 +158,7 @@ export default function AppointmentForm() {
         </Div>
 
         {/* Company Name - Only for Corporate */}
-        {selectedCompany === "Corporate" && (
+        {selectedCompany === "corporate" && (
           <Div className="mb-3">
             <label className="cs-primary_color">Company Name*</label>
             <input
@@ -142,11 +168,33 @@ export default function AppointmentForm() {
               onChange={(e) => setData("company_name", e.target.value)}
               className="cs-form_field"
               placeholder="Enter company name"
-              required={selectedCompany === "Corporate"}
+              required={selectedCompany === "corporate"}
+              style={{ height: '50px' }}
             />
             {errors.company_name && <span className="text-danger d-block mt-1">{errors.company_name}</span>}
           </Div>
         )}
+
+        {/* Location/Station Selection */}
+        <Div className="mb-3">
+          <label className="cs-primary_color">Preferred Station/Location*</label>
+          <select
+            name="location_id"
+            value={data.location_id}
+            onChange={(e) => setData("location_id", e.target.value)}
+            className="cs-form_field"
+            required
+            style={{ height: '50px' }}
+          >
+            <option value="">Select a station</option>
+            {activeLocations.map((location) => (
+              <option key={location.id} value={location.id}>
+                {location.city || location.name}
+              </option>
+            ))}
+          </select>
+          {errors.location_id && <span className="text-danger d-block mt-1">{errors.location_id}</span>}
+        </Div>
       </Div>
 
       {/* Right Column - Vehicle Information */}
@@ -162,6 +210,7 @@ export default function AppointmentForm() {
             onChange={(e) => setData("vehicle_type", e.target.value)}
             className="cs-form_field"
             required
+            style={{ height: '50px' }}
           >
             <option value="">Select vehicle type</option>
             {vehicleTypes.map((type, index) => (
@@ -184,6 +233,7 @@ export default function AppointmentForm() {
             className="cs-form_field"
             placeholder="e.g., ABC-1234"
             required
+            style={{ height: '50px' }}
           />
           {errors.vehicle_registration && <span className="text-danger d-block mt-1">{errors.vehicle_registration}</span>}
         </Div>
@@ -201,6 +251,7 @@ export default function AppointmentForm() {
             max="10"
             placeholder="Enter number (1-10)"
             required
+            style={{ height: '50px' }}
           />
           {errors.no_of_vehicles && <span className="text-danger d-block mt-1">{errors.no_of_vehicles}</span>}
         </Div>
@@ -215,6 +266,7 @@ export default function AppointmentForm() {
             onChange={(e) => setData("date", e.target.value)}
             className="cs-form_field"
             required
+            style={{ height: '50px' }}
           />
           {errors.date && <span className="text-danger d-block mt-1">{errors.date}</span>}
         </Div>
@@ -222,36 +274,37 @@ export default function AppointmentForm() {
 
       {/* Message - Full Width */}
       <Div className="col-12 mt-3">
-        <label className="cs-primary_color">Additional Message</label>
+        <label className="cs-primary_color">Additional Message*</label>
         <textarea
           name="message"
           value={data.message}
           onChange={(e) => setData("message", e.target.value)}
           className="cs-form_field"
-          rows="4"
+          rows="5"
           placeholder="Any additional information or special requests..."
           required
+          style={{ minHeight: '120px', resize: 'vertical' }}
         ></textarea>
         {errors.message && <span className="text-danger d-block mt-1">{errors.message}</span>}
         <Spacing lg="25" md="25" />
       </Div>
 
-      {/* Success/Error Messages */}
-      {wasSuccessful && (
-        <Div className="col-12">
-          <div className="alert alert-success" role="alert">
-            {flash.success}
-          </div>
-        </Div>
-      )}
-
       {/* Submit Button */}
       <Div className="col-12">
         <button type="submit" disabled={processing} className="cs-btn cs-style1">
           <span>{processing ? "Submitting..." : "Submit Appointment"}</span>
-          <Icon icon="bi:arrow-right" />
+          {!processing && <Icon icon="bi:arrow-right" />}
         </button>
       </Div>
+
+      {/* Success/Error Messages */}
+      {wasSuccessful && (
+        <Div className="col-12 mt-3">
+          <div className="alert alert-success" role="alert" style={{ padding: '15px', borderRadius: '8px' }}>
+            {flash?.success || 'Appointment submitted successfully!'}
+          </div>
+        </Div>
+      )}
     </form>
   );
 }
