@@ -35,6 +35,9 @@ class PageController extends Controller
                     return Inertia::render('Page/FaqPage', $data);
                 case 'contact':
                     $data['contact'] = $page;
+                    $data['locations'] = Location::where('is_active', true)
+                        ->orderBy('sort_order', 'asc')
+                        ->get();
 
                     return Inertia::render('Page/ContactPage', $data);
                 default:
