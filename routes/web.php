@@ -11,6 +11,7 @@ use App\Http\Controllers\Frontend\PricingPlanController;
 use App\Http\Controllers\Frontend\ServiceController;
 use App\Http\Controllers\Frontend\SubscribeController;
 use Illuminate\Foundation\Application;
+use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Response;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Http\Request;
@@ -167,22 +168,31 @@ Route::get('/clear-all-cache', function() {
 
 Route::get('/proxy/fee-structure', function (Request $request) {
     $regNo = $request->query('regNo');
+    $chassisNo = $request->query('chassisNo');
 
-    if (empty($regNo)) {
+    // Check if at least one parameter is provided
+    if (empty($regNo) && empty($chassisNo)) {
         return response()->json([
-            'message' => 'The registration number is required.'
+            'message' => 'Either registration number or chassis number is required.'
         ], 400);
     }
 
     $client = new Client();
 
     try {
-        // Normalize regNo (remove extra spaces/dashes)
-        $normalizedRegNo = preg_replace('/[^a-zA-Z0-9]/', '', $regNo);
+        // Determine which parameter to use and normalize it
+        $queryParams = [];
+        if (!empty($regNo)) {
+            // Normalize regNo (remove extra spaces/dashes)
+            $normalizedRegNo = preg_replace('/[^a-zA-Z0-9]/', '', $regNo);
+            $queryParams['regNo'] = $normalizedRegNo;
+        } else {
+            $queryParams['chassisNo'] = trim($chassisNo);
+        }
 
         $response = $client->get('http://3.79.101.195:22110/api/FeeStructure', [
-            'query' => ['regNo' => $normalizedRegNo],
-            'timeout' => 10,
+            'query' => $queryParams,
+            'timeout' => 30,
         ]);
 
         $responseBody = $response->getBody()->getContents();
@@ -190,7 +200,7 @@ Route::get('/proxy/fee-structure', function (Request $request) {
 
         if (empty($responseBody) || json_decode($responseBody) === []) {
             return response()->json([
-                'message' => 'No data found for the provided registration number.'
+                'message' => 'No data found for the provided ' . (!empty($regNo) ? 'registration number' : 'chassis number') . '.'
             ], 404);
         }
 
@@ -199,7 +209,7 @@ Route::get('/proxy/fee-structure', function (Request $request) {
 
     } catch (ConnectException $e) {
         return response()->json([
-            'message' => 'Cannot connect to the server. Please try again later.'
+            'message' => 'Cannot connect to the fee calculation server. Please try again later.'
         ], 503);
 
     } catch (RequestException $e) {
@@ -207,6 +217,18 @@ Route::get('/proxy/fee-structure', function (Request $request) {
             $errorResponse = $e->getResponse();
             $statusCode = $errorResponse->getStatusCode();
             $message = $errorResponse->getBody()->getContents();
+
+            if ($statusCode === 404) {
+                return response()->json([
+                    'message' => 'No fee data found for the provided ' . (!empty($regNo) ? 'registration number' : 'chassis number') . '.'
+                ], 404);
+            }
+
+            if ($statusCode === 400) {
+                return response()->json([
+                    'message' => 'Invalid ' . (!empty($regNo) ? 'registration number' : 'chassis number') . '. Please check the format and try again.'
+                ], 400);
+            }
 
             return response($message, $statusCode)
                 ->header('Content-Type', $errorResponse->getHeader('Content-Type')[0]);

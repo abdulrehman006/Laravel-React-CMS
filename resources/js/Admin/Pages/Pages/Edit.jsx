@@ -48,6 +48,9 @@ import {
     updatePageTeamSection, updatePageTestimonialSection,
     updatePageVideoSection,
     updatePageWhyChooseUsSection, updatePageWorkingProgressSection,
+    updatePageLocationsSection,
+    updatePageAPISection,
+    updatePageHTMLSection,
 } from "@/Redux/features/pages/Page/page";
 import PageDetailsCustomize from "@/Admin/Components/PageCustomize/PageDetailsCustomize";
 import { updateHomeSections } from "@/Redux/features/pages/home/home";
@@ -56,6 +59,9 @@ import PhotoGalleryCustomize from "@/Admin/Components/PageCustomize/PhotoGallery
 import WorkingProgressCustomize from "@/Admin/Components/PageCustomize/WorkingProgressCustomize";
 import BannerCustomize from "@/Admin/Components/PageCustomize/BannerCustomize";
 import ResumeCustomize from "@/Admin/Components/PageCustomize/ResumeCustomize";
+import LocationsCustomize from "@/Admin/Components/PageCustomize/LocationsCustomize";
+import APICustomize from "@/Admin/Components/PageCustomize/APICustomize";
+import HTMLCustomize from "@/Admin/Components/PageCustomize/HTMLCustomize";
 
 export default function Create() {
     const { errors, page: pageData } = usePage().props;
@@ -153,6 +159,15 @@ export default function Create() {
     };
     const updateResumeSection = (data) => {
         dispatch(updatePageResumeSection(data))
+    }
+    const updateLocationsSection = (data) => {
+        dispatch(updatePageLocationsSection(data))
+    }
+    const updateAPISection = (data) => {
+        dispatch(updatePageAPISection(data))
+    }
+    const updateHTMLSection = (data) => {
+        dispatch(updatePageHTMLSection(data))
     }
 
     // conditional customize section render
@@ -387,6 +402,37 @@ export default function Create() {
                     updateResumeSection={updateResumeSection}
                 />
             )
+            break;
+        case "Locations":
+            customizeSection = (
+                <LocationsCustomize
+                    currentSection={currentSection}
+                    spacingCallback={handleUpdateSpacing}
+                    sectionData={page.sections_data.locations_section}
+                    updateLocationsSection={updateLocationsSection}
+                />
+            )
+            break;
+        case "API":
+            customizeSection = (
+                <APICustomize
+                    currentSection={currentSection}
+                    spacingCallback={handleUpdateSpacing}
+                    sectionData={page.sections_data.api_section}
+                    updateAPISection={updateAPISection}
+                />
+            )
+            break;
+        case "HTML":
+            customizeSection = (
+                <HTMLCustomize
+                    currentSection={currentSection}
+                    spacingCallback={handleUpdateSpacing}
+                    sectionData={page.sections_data.html_section}
+                    updateHTMLSection={updateHTMLSection}
+                />
+            )
+            break;
     }
 
     // on drag end

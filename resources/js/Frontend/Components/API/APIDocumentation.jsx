@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { IonIcon } from "@ionic/react";
-import { checkmarkCircle, closeCircle, searchOutline } from "ionicons/icons";
+import { checkmarkCircle, closeCircle } from "ionicons/icons";
 import Div from "@/Frontend/Components/Div";
 import SectionHeading from "@/Frontend/Components/SectionHeading";
 
@@ -10,8 +10,6 @@ export default function APIDocumentation({ data }) {
     const [loading, setLoading] = useState(false);
     const [response, setResponse] = useState(null);
     const [error, setError] = useState(null);
-
-    const apiBaseUrl = data.api_url || "http://3.79.101.195:22110/api/FeeStructure";
 
     const handleSearch = async () => {
         if (!searchValue.trim()) {
@@ -24,6 +22,9 @@ export default function APIDocumentation({ data }) {
         setResponse(null);
 
         try {
+            // Get CSRF token from meta tag
+            const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
+
             // Use Laravel proxy endpoint instead of calling external API directly
             const res = await fetch('/api/fee-calculator', {
                 method: 'POST',
@@ -31,17 +32,29 @@ export default function APIDocumentation({ data }) {
                     'Accept': 'application/json',
                     'Content-Type': 'application/json',
                     'X-Requested-With': 'XMLHttpRequest',
+                    ...(csrfToken && { 'X-CSRF-TOKEN': csrfToken })
                 },
                 body: JSON.stringify({
                     searchType: searchType,
                     searchValue: searchValue.trim()
-                })
+                }),
+                credentials: 'same-origin' // Include cookies for session
             });
 
             const jsonData = await res.json();
 
             if (!res.ok) {
-                setError(jsonData.message || jsonData.error || `HTTP Error: ${res.status}`);
+                // Extract error message from response
+                const errorMsg = jsonData.message || jsonData.error || 'Failed to fetch fee data';
+                setError(errorMsg);
+                setLoading(false);
+                console.error('API Response Error:', jsonData);
+                return;
+            }
+
+            // Check if response is empty
+            if (!jsonData || (Array.isArray(jsonData) && jsonData.length === 0)) {
+                setError('No fee data found for the provided information.');
                 setLoading(false);
                 return;
             }
@@ -49,14 +62,14 @@ export default function APIDocumentation({ data }) {
             setResponse(jsonData);
         } catch (err) {
             console.error('API Error:', err);
-            setError(`Failed to fetch data: ${err.message}. Please try again.`);
+            setError(`Network error: ${err.message}. Please check your connection and try again.`);
         } finally {
             setLoading(false);
         }
     };
 
     return (
-        <Div className="container">
+        <Div className="container" style={{ backgroundColor: data.background_color || 'transparent', padding: data.background_color ? '40px 15px' : '0' }}>
             <Div className="text-center">
                 <SectionHeading
                     title={data.title || "Fee Calculator"}
@@ -122,7 +135,7 @@ export default function APIDocumentation({ data }) {
                                     placeholder={searchType === "regNo" ? "e.g., LET-15-8676" : "e.g., SR308PK291991"}
                                     value={searchValue}
                                     onChange={(e) => setSearchValue(e.target.value)}
-                                    onKeyPress={(e) => e.key === "Enter" && handleSearch()}
+                                    onKeyDown={(e) => e.key === "Enter" && handleSearch()}
                                     style={{
                                         padding: "12px",
                                         borderRadius: "5px",
@@ -236,8 +249,6 @@ export default function APIDocumentation({ data }) {
                     </Div>
                 </Div>
             </Div>
-
-            <Div className="cs-height_100 cs-height_lg_60" />
         </Div>
     );
 }

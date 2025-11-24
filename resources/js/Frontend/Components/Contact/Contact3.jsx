@@ -11,7 +11,7 @@ export default function Contact3({contact_data}){
         <>
             <Div className="container">
                 <Div className="row">
-                    <Div className="col-lg-6">
+                    <Div className="col-lg-12">
                         <SectionHeading
                             title={contact_data.title}
                             subtitle={contact_data.sub_title}
@@ -40,7 +40,7 @@ export default function Contact3({contact_data}){
                         </ul>
                         <Spacing lg="0" md="50" />
                     </Div>
-                    <Div className="col-lg-6">
+                    <Div className="col-lg-12">
                         <AppointmentForm />
                     </Div>
                 </Div>

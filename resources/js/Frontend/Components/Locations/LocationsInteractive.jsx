@@ -416,8 +416,6 @@ export default function LocationsInteractive({ data, locations }) {
                 </Div>
             </Div>
 
-            <Div className="cs-height_100 cs-height_lg_60" />
-
             <style>{`
                 .cstm-map-marker li:hover {
                     background-color: #f0f0f0 !important;

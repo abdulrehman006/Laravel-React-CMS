@@ -23,40 +23,112 @@ class FeeCalculatorController extends Controller
             ]);
 
             $searchType = $request->input('searchType');
-            $searchValue = $request->input('searchValue');
+            $searchValue = trim($request->input('searchValue'));
 
-            // Get API URL from settings or use default
-            $apiUrl = config('app.vics_api_url', 'http://3.79.101.195:22110/api/FeeStructure');
+            // Normalize the search value (remove extra spaces/dashes for regNo)
+            if ($searchType === 'regNo') {
+                $searchValue = preg_replace('/[^a-zA-Z0-9]/', '', $searchValue);
+            }
 
-            // Make request to external API
+            // Hardcoded API URL
+            $apiUrl = 'http://3.79.101.195:22110/api/FeeStructure';
+
+            Log::info('Fee Calculator Request', [
+                'searchType' => $searchType,
+                'searchValue' => $searchValue,
+                'apiUrl' => $apiUrl
+            ]);
+
+            // Make request to external API with better error handling
             $response = Http::timeout(30)
+                ->withHeaders([
+                    'Accept' => 'application/json',
+                ])
                 ->get($apiUrl, [
                     $searchType => $searchValue
                 ]);
 
+            Log::info('Fee Calculator Response', [
+                'status' => $response->status(),
+                'successful' => $response->successful(),
+                'body_length' => strlen($response->body())
+            ]);
+
             // Check if request was successful
             if ($response->successful()) {
-                return response()->json($response->json());
+                $data = $response->json();
+
+                // Check if data is empty
+                if (empty($data) || (is_array($data) && count($data) === 0)) {
+                    return response()->json([
+                        'error' => 'No data found',
+                        'message' => 'No fee structure found for the provided ' .
+                                   ($searchType === 'regNo' ? 'registration number' : 'chassis number') . '.'
+                    ], 404);
+                }
+
+                return response()->json($data);
             }
 
-            // Handle API errors
+            // Handle specific error status codes
+            $statusCode = $response->status();
+
+            if ($statusCode === 404) {
+                return response()->json([
+                    'error' => 'Not found',
+                    'message' => 'No fee data found for the provided ' .
+                               ($searchType === 'regNo' ? 'registration number' : 'chassis number') . '.'
+                ], 404);
+            }
+
+            if ($statusCode === 400) {
+                return response()->json([
+                    'error' => 'Bad request',
+                    'message' => 'Invalid ' . ($searchType === 'regNo' ? 'registration number' : 'chassis number') .
+                               '. Please check the format and try again.'
+                ], 400);
+            }
+
+            // Handle other API errors
+            Log::error('Fee Calculator API Error Response', [
+                'status' => $statusCode,
+                'body' => $response->body()
+            ]);
+
             return response()->json([
                 'error' => 'API request failed',
-                'message' => $response->body(),
-                'status' => $response->status()
-            ], $response->status());
+                'message' => 'The fee calculation service returned an error. Please try again later.',
+                'details' => $response->body()
+            ], $statusCode);
 
         } catch (\Illuminate\Validation\ValidationException $e) {
             return response()->json([
                 'error' => 'Validation failed',
                 'message' => $e->errors()
             ], 422);
+        } catch (\Illuminate\Http\Client\ConnectionException $e) {
+            Log::error('Fee Calculator Connection Error: ' . $e->getMessage());
+
+            return response()->json([
+                'error' => 'Connection error',
+                'message' => 'Cannot connect to the fee calculation server. Please try again later.'
+            ], 503);
+        } catch (\Illuminate\Http\Client\RequestException $e) {
+            Log::error('Fee Calculator Request Error: ' . $e->getMessage());
+
+            return response()->json([
+                'error' => 'Request error',
+                'message' => 'Failed to communicate with the fee calculation service. Please try again.'
+            ], 500);
         } catch (\Exception $e) {
-            Log::error('Fee Calculator API Error: ' . $e->getMessage());
+            Log::error('Fee Calculator Unexpected Error', [
+                'message' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
+            ]);
 
             return response()->json([
                 'error' => 'Internal server error',
-                'message' => 'Failed to fetch fee data. Please try again later.'
+                'message' => 'An unexpected error occurred. Please try again later.'
             ], 500);
         }
     }
