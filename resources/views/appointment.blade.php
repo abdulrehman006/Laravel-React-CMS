@@ -92,12 +92,20 @@
                 <span class="info-label">Phone:</span>
                 <span class="info-value">{{ $phone }}</span>
             </div>
+            <div class="info-row">
+                <span class="info-label">Company Type:</span>
+                <span class="info-value">{{ ucfirst($company_type ?? 'individual') }}</span>
+            </div>
             @if($company_name)
             <div class="info-row">
                 <span class="info-label">Company Name:</span>
                 <span class="info-value">{{ $company_name }}</span>
             </div>
             @endif
+            <div class="info-row">
+                <span class="info-label">Preferred Location:</span>
+                <span class="info-value">{{ $location_name ?? 'N/A' }}</span>
+            </div>
         </div>
 
         <!-- Vehicle Information Section -->
