@@ -22,29 +22,17 @@ export default function GoogleMapWithMarkers({ markers, center, zoom, selectedCi
         mapRef.current = map;
     }, []);
 
-    // Pan/zoom to selected location, or fit all when cleared
+    // Pan/zoom when center or zoom props change (controlled by parent)
     useEffect(() => {
         if (!mapRef.current || !isLoaded) return;
 
-        if (selectedCity) {
-            // Zoom into the selected marker
-            const selectedMarker = markers.find(m => m.city === selectedCity);
-            if (selectedMarker) {
-                mapRef.current.panTo(selectedMarker.position);
-                mapRef.current.setZoom(14);
-            }
-        } else {
-            // Show all markers - fit bounds
-            if (markers.length > 1 && window.google) {
-                const bounds = new window.google.maps.LatLngBounds();
-                markers.forEach(m => bounds.extend(m.position));
-                mapRef.current.fitBounds(bounds);
-            } else if (markers.length === 1) {
-                mapRef.current.panTo(markers[0].position);
-                mapRef.current.setZoom(zoom || 6);
-            }
+        if (center) {
+            mapRef.current.panTo(center);
         }
-    }, [selectedCity, markers, zoom, isLoaded]);
+        if (zoom) {
+            mapRef.current.setZoom(zoom);
+        }
+    }, [center, zoom, isLoaded]);
 
     const getMarkerIcon = (isSelected) => {
         if (!window.google?.maps?.Size) {
@@ -81,11 +69,6 @@ export default function GoogleMapWithMarkers({ markers, center, zoom, selectedCi
         );
     }
 
-    // Only show selected marker when a city is selected, otherwise show all
-    const visibleMarkers = selectedCity
-        ? markers.filter(m => m.city === selectedCity)
-        : markers;
-
     return (
         <GoogleMap
             mapContainerStyle={mapContainerStyle}
@@ -98,7 +81,7 @@ export default function GoogleMapWithMarkers({ markers, center, zoom, selectedCi
                 fullscreenControl: true,
             }}
         >
-            {visibleMarkers.map((marker) => {
+            {markers.map((marker) => {
                 const isSelected = selectedCity && marker.city === selectedCity;
 
                 return (

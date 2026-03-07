@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { IonIcon } from "@ionic/react";
 import { callOutline, mailOutline, locationOutline, linkOutline, searchOutline, closeOutline } from "ionicons/icons";
 import Div from "@/Frontend/Components/Div";
@@ -6,40 +6,56 @@ import SectionHeading from "@/Frontend/Components/SectionHeading";
 import { usePage } from "@inertiajs/react";
 import GoogleMapWithMarkers from "@/Frontend/Components/Contact/GoogleMapWithMarkers";
 
+const DEFAULT_CENTER = { lat: 31.99879, lng: 72.720796 };
+
 export default function LocationsInteractive({ data, locations }) {
     const { google_maps_api_key } = usePage().props;
-    const [selectedLocation, setSelectedLocation] = useState(null);
+    const [selectedCity, setSelectedCity] = useState(null);
     const [searchTerm, setSearchTerm] = useState("");
     const [filteredLocations, setFilteredLocations] = useState(locations);
+
+    // Default zoom from settings
+    const defaultZoom = data.map_zoom ? parseInt(data.map_zoom) : 6;
+
+    // Map center and zoom as state (following Contact2.jsx pattern)
+    const [mapCenter, setMapCenter] = useState(DEFAULT_CENTER);
+    const [zoomLevel, setZoomLevel] = useState(defaultZoom);
 
     // Get view mode from settings: "1" = grid, "2" = list, "3" = map
     const viewMode = data.layout === "1" ? "grid" : data.layout === "2" ? "list" : "map";
 
-    // Prepare markers for GoogleMapWithMarkers component
-    const filteredMarkers = filteredLocations
-        .filter(loc => loc.latitude && loc.longitude)
-        .map(location => ({
-            id: location.id,
-            city: location.city || location.name,
-            position: {
-                lat: parseFloat(location.latitude),
-                lng: parseFloat(location.longitude)
-            }
-        }));
+    // Prepare ALL markers from filtered locations
+    const allMarkers = useMemo(() =>
+        filteredLocations
+            .filter(loc => loc.latitude && loc.longitude)
+            .map(location => ({
+                id: location.id,
+                city: location.city || location.name,
+                position: {
+                    lat: parseFloat(location.latitude),
+                    lng: parseFloat(location.longitude)
+                }
+            })),
+        [filteredLocations]
+    );
 
-    // Calculate map center based on filtered locations
-    const mapCenter = filteredMarkers.length > 0
-        ? {
-            lat: filteredMarkers.reduce((sum, m) => sum + m.position.lat, 0) / filteredMarkers.length,
-            lng: filteredMarkers.reduce((sum, m) => sum + m.position.lng, 0) / filteredMarkers.length
+    // Filter visible markers based on selectedCity (only show selected, or all if none selected)
+    const visibleMarkers = useMemo(() => {
+        if (selectedCity) {
+            return allMarkers.filter(m => m.city === selectedCity);
         }
-        : { lat: 31.99879, lng: 72.720796 }; // Default center
+        return allMarkers;
+    }, [allMarkers, selectedCity]);
 
-    // Get zoom level from settings
-    const zoomLevel = data.map_zoom ? parseInt(data.map_zoom) : 6;
-
-    // Get selected city for highlighting on map
-    const selectedCity = selectedLocation ? (selectedLocation.city || selectedLocation.name) : null;
+    // Calculate default center from all markers on mount
+    useEffect(() => {
+        if (allMarkers.length > 0 && !selectedCity) {
+            const avgLat = allMarkers.reduce((sum, m) => sum + m.position.lat, 0) / allMarkers.length;
+            const avgLng = allMarkers.reduce((sum, m) => sum + m.position.lng, 0) / allMarkers.length;
+            setMapCenter({ lat: avgLat, lng: avgLng });
+            setZoomLevel(defaultZoom);
+        }
+    }, [allMarkers.length]);
 
     // Filter locations based on search
     useEffect(() => {
@@ -57,24 +73,46 @@ export default function LocationsInteractive({ data, locations }) {
         }
     }, [searchTerm, locations]);
 
-    // Handle location click from list
+    // Handle location click - toggle select and zoom (following Contact2.jsx pattern)
     const handleLocationClick = (location) => {
-        setSelectedLocation(location);
+        const city = location.city || location.name;
+
+        if (selectedCity === city) {
+            // Clicking same city again - deselect and show all
+            setSelectedCity(null);
+            // Reset to default center (average of all markers)
+            if (allMarkers.length > 0) {
+                const avgLat = allMarkers.reduce((sum, m) => sum + m.position.lat, 0) / allMarkers.length;
+                const avgLng = allMarkers.reduce((sum, m) => sum + m.position.lng, 0) / allMarkers.length;
+                setMapCenter({ lat: avgLat, lng: avgLng });
+            } else {
+                setMapCenter(DEFAULT_CENTER);
+            }
+            setZoomLevel(defaultZoom);
+        } else {
+            // Select new city - zoom in
+            setSelectedCity(city);
+            const cityMarker = allMarkers.find(m => m.city === city);
+            if (cityMarker) {
+                setMapCenter(cityMarker.position);
+                setZoomLevel(15);
+            }
+        }
     };
 
-    // Simplified hover handlers (map interactions now handled by GoogleMapWithMarkers)
-    const handleLocationHover = (location) => {
-        // Visual feedback only for sidebar
-    };
-
-    const handleLocationHoverEnd = (location) => {
-        // Visual feedback only for sidebar
-    };
-
-    // Handle reset
+    // Handle reset - show all locations
     const handleReset = () => {
         setSearchTerm("");
-        setSelectedLocation(null);
+        setSelectedCity(null);
+        // Reset to default center
+        if (allMarkers.length > 0) {
+            const avgLat = allMarkers.reduce((sum, m) => sum + m.position.lat, 0) / allMarkers.length;
+            const avgLng = allMarkers.reduce((sum, m) => sum + m.position.lng, 0) / allMarkers.length;
+            setMapCenter({ lat: avgLat, lng: avgLng });
+        } else {
+            setMapCenter(DEFAULT_CENTER);
+        }
+        setZoomLevel(defaultZoom);
     };
 
     if (locations.length === 0) {
@@ -175,33 +213,36 @@ export default function LocationsInteractive({ data, locations }) {
                                     });
                                     const uniqueCities = Array.from(citiesMap.values());
 
-                                    return uniqueCities.map((location) => (
-                                        <li
-                                            key={location.id}
-                                            onClick={() => handleLocationClick(location)}
-                                            onMouseEnter={() => handleLocationHover(location)}
-                                            onMouseLeave={() => handleLocationHoverEnd(location)}
-                                            style={{
-                                                padding: '12px 15px',
-                                                cursor: 'pointer',
-                                                backgroundColor: selectedLocation?.id === location.id ? '#DAA520' : 'transparent',
-                                                color: selectedLocation?.id === location.id ? '#fff' : '#333',
-                                                borderRadius: '6px',
-                                                border: selectedLocation?.id === location.id ? '2px solid #B8860B' : '1px solid #e0e0e0',
-                                                fontWeight: selectedLocation?.id === location.id ? 'bold' : 'normal',
-                                                fontSize: selectedLocation?.id === location.id ? '16px' : '14px',
-                                                marginBottom: '8px',
-                                                boxShadow: selectedLocation?.id === location.id ? '0 4px 8px rgba(218, 165, 32, 0.3)' : 'none',
-                                                transform: selectedLocation?.id === location.id ? 'scale(1.02)' : 'scale(1)',
-                                                transition: 'all 0.3s ease'
-                                            }}
-                                        >
-                                            <span>
-                                                {selectedLocation?.id === location.id && '📍 '}
-                                                {location.city || location.name}
-                                            </span>
-                                        </li>
-                                    ));
+                                    return uniqueCities.map((location) => {
+                                        const city = location.city || location.name;
+                                        const isSelected = selectedCity === city;
+
+                                        return (
+                                            <li
+                                                key={location.id}
+                                                onClick={() => handleLocationClick(location)}
+                                                style={{
+                                                    padding: '12px 15px',
+                                                    cursor: 'pointer',
+                                                    backgroundColor: isSelected ? '#DAA520' : 'transparent',
+                                                    color: isSelected ? '#fff' : '#333',
+                                                    borderRadius: '6px',
+                                                    border: isSelected ? '2px solid #B8860B' : '1px solid #e0e0e0',
+                                                    fontWeight: isSelected ? 'bold' : 'normal',
+                                                    fontSize: isSelected ? '16px' : '14px',
+                                                    marginBottom: '8px',
+                                                    boxShadow: isSelected ? '0 4px 8px rgba(218, 165, 32, 0.3)' : 'none',
+                                                    transform: isSelected ? 'scale(1.02)' : 'scale(1)',
+                                                    transition: 'all 0.3s ease'
+                                                }}
+                                            >
+                                                <span>
+                                                    {isSelected && '📍 '}
+                                                    {city}
+                                                </span>
+                                            </li>
+                                        );
+                                    });
                                 })()}
                                 {filteredLocations.length === 0 && (
                                     <li style={{ padding: "20px", textAlign: "center", color: "#999" }}>
@@ -222,27 +263,27 @@ export default function LocationsInteractive({ data, locations }) {
                                 cursor: 'pointer',
                                 fontWeight: '500',
                                 width: '100%',
-                                opacity: !selectedLocation ? '0.6' : '1',
+                                opacity: !selectedCity ? '0.6' : '1',
                                 transition: 'opacity 0.3s ease'
                             }}
-                            disabled={!selectedLocation}
+                            disabled={!selectedCity}
                         >
                             Show All Locations
                         </button>
                     </Div>
 
                     {/* Right Side - Map */}
-                                                <Div className="col-lg-8">
-                                                    <div style={{ height: '600px' }}>
-                                                        <GoogleMapWithMarkers
-                                                            markers={filteredMarkers}
-                                                            center={mapCenter}
-                                                            zoom={zoomLevel}
-                                                            selectedCity={selectedCity}
-                                                            googleMapsApiKey={google_maps_api_key}
-                                                        />
-                                                    </div>
-                                                </Div>
+                    <Div className="col-lg-8">
+                        <div style={{ height: '600px' }}>
+                            <GoogleMapWithMarkers
+                                markers={visibleMarkers}
+                                center={mapCenter}
+                                zoom={zoomLevel}
+                                selectedCity={selectedCity}
+                                googleMapsApiKey={google_maps_api_key}
+                            />
+                        </div>
+                    </Div>
                 </Div>
                 ) : viewMode === 'grid' ? (
                     <Div className="row">
