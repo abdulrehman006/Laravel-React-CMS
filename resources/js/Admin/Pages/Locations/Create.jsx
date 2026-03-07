@@ -93,9 +93,7 @@ export default function Create() {
 
                                             <div className="col-md-4">
                                                 <div className="mb-3">
-                                                    <label className="form-label">
-                                                        City <span className="text-danger">*</span>
-                                                    </label>
+                                                    <label className="form-label">City</label>
                                                     <input
                                                         type="text"
                                                         className="form-control"
@@ -119,14 +117,13 @@ export default function Create() {
                                                             setData("state", e.target.value)
                                                         }
                                                     />
+                                                    <FromValidationError error={errors.state} />
                                                 </div>
                                             </div>
 
                                             <div className="col-md-4">
                                                 <div className="mb-3">
-                                                    <label className="form-label">
-                                                        Country <span className="text-danger">*</span>
-                                                    </label>
+                                                    <label className="form-label">Country</label>
                                                     <input
                                                         type="text"
                                                         className="form-control"
@@ -150,6 +147,7 @@ export default function Create() {
                                                             setData("postal_code", e.target.value)
                                                         }
                                                     />
+                                                    <FromValidationError error={errors.postal_code} />
                                                 </div>
                                             </div>
 
@@ -164,6 +162,7 @@ export default function Create() {
                                                             setData("phone", e.target.value)
                                                         }
                                                     />
+                                                    <FromValidationError error={errors.phone} />
                                                 </div>
                                             </div>
 
@@ -178,6 +177,7 @@ export default function Create() {
                                                             setData("email", e.target.value)
                                                         }
                                                     />
+                                                    <FromValidationError error={errors.email} />
                                                 </div>
                                             </div>
 
@@ -215,6 +215,7 @@ export default function Create() {
                                                     <small className="text-muted">
                                                         For Google Maps integration
                                                     </small>
+                                                    <FromValidationError error={errors.latitude} />
                                                 </div>
                                             </div>
 
@@ -233,6 +234,7 @@ export default function Create() {
                                                     <small className="text-muted">
                                                         For Google Maps integration
                                                     </small>
+                                                    <FromValidationError error={errors.longitude} />
                                                 </div>
                                             </div>
 
@@ -247,6 +249,7 @@ export default function Create() {
                                                             setData("description", e.target.value)
                                                         }
                                                     />
+                                                    <FromValidationError error={errors.description} />
                                                 </div>
                                             </div>
 

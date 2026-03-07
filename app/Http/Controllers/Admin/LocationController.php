@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Location;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use Inertia\Inertia;
 
 class LocationController extends Controller
@@ -71,7 +72,12 @@ class LocationController extends Controller
             'sort_order' => 'integer',
         ]);
 
-        Location::create($validated);
+        try {
+            Location::create($validated);
+        } catch (\Exception $e) {
+            Log::error('Location creation failed: ' . $e->getMessage());
+            return redirect()->back()->withErrors(['name' => 'Failed to create location. Please check your input and try again.'])->withInput();
+        }
 
         return redirect()->route('admin.locations.index')
             ->with('success', 'Location created successfully.');
@@ -120,7 +126,12 @@ class LocationController extends Controller
             'sort_order' => 'integer',
         ]);
 
-        $location->update($validated);
+        try {
+            $location->update($validated);
+        } catch (\Exception $e) {
+            Log::error('Location update failed: ' . $e->getMessage());
+            return redirect()->back()->withErrors(['name' => 'Failed to update location. Please check your input and try again.'])->withInput();
+        }
 
         return redirect()->route('admin.locations.index')
             ->with('success', 'Location updated successfully.');
