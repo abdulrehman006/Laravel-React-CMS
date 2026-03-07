@@ -1,27 +1,55 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import { IonIcon } from "@ionic/react";
-import { callOutline, mailOutline, locationOutline, linkOutline, searchOutline, closeOutline, warningOutline } from "ionicons/icons";
+import { callOutline, mailOutline, locationOutline, linkOutline, searchOutline, closeOutline } from "ionicons/icons";
 import Div from "@/Frontend/Components/Div";
 import SectionHeading from "@/Frontend/Components/SectionHeading";
 import { usePage } from "@inertiajs/react";
+import GoogleMapWithMarkers from "@/Frontend/Components/Contact/GoogleMapWithMarkers";
 
 export default function LocationsInteractive({ data, locations }) {
     const { google_maps_api_key } = usePage().props;
     const [selectedLocation, setSelectedLocation] = useState(null);
     const [searchTerm, setSearchTerm] = useState("");
     const [filteredLocations, setFilteredLocations] = useState(locations);
-    const mapRef = useRef(null);
-    const googleMapRef = useRef(null);
-    const markersRef = useRef([]);
+
+    // Get view mode from settings: "1" = grid, "2" = list, "3" = map
+    const viewMode = data.layout === "1" ? "grid" : data.layout === "2" ? "list" : "map";
+
+    // Prepare markers for GoogleMapWithMarkers component
+    const filteredMarkers = filteredLocations
+        .filter(loc => loc.latitude && loc.longitude)
+        .map(location => ({
+            id: location.id,
+            city: location.city || location.name,
+            position: {
+                lat: parseFloat(location.latitude),
+                lng: parseFloat(location.longitude)
+            }
+        }));
+
+    // Calculate map center based on filtered locations
+    const mapCenter = filteredMarkers.length > 0
+        ? {
+            lat: filteredMarkers.reduce((sum, m) => sum + m.position.lat, 0) / filteredMarkers.length,
+            lng: filteredMarkers.reduce((sum, m) => sum + m.position.lng, 0) / filteredMarkers.length
+        }
+        : { lat: 31.99879, lng: 72.720796 }; // Default center
+
+    // Get zoom level from settings
+    const zoomLevel = data.map_zoom ? parseInt(data.map_zoom) : 6;
+
+    // Get selected city for highlighting on map
+    const selectedCity = selectedLocation ? (selectedLocation.city || selectedLocation.name) : null;
 
     // Filter locations based on search
     useEffect(() => {
         if (searchTerm) {
+            const term = searchTerm.toLowerCase();
             const filtered = locations.filter(location =>
-                location.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                location.city.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                location.country.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                location.address.toLowerCase().includes(searchTerm.toLowerCase())
+                (location.name || '').toLowerCase().includes(term) ||
+                (location.city || '').toLowerCase().includes(term) ||
+                (location.country || '').toLowerCase().includes(term) ||
+                (location.address || '').toLowerCase().includes(term)
             );
             setFilteredLocations(filtered);
         } else {
@@ -29,208 +57,24 @@ export default function LocationsInteractive({ data, locations }) {
         }
     }, [searchTerm, locations]);
 
-    // Initialize Google Map
-    useEffect(() => {
-        if (!mapRef.current || locations.length === 0) return;
-
-        // Check if Google Maps is loaded
-        if (typeof google === 'undefined') {
-            console.warn('Google Maps not loaded');
-            return;
-        }
-
-        // Get locations with coordinates
-        const locationsWithCoords = locations.filter(loc => loc.latitude && loc.longitude);
-
-        if (locationsWithCoords.length === 0) return;
-
-        // Calculate center
-        const avgLat = locationsWithCoords.reduce((sum, loc) => sum + parseFloat(loc.latitude), 0) / locationsWithCoords.length;
-        const avgLng = locationsWithCoords.reduce((sum, loc) => sum + parseFloat(loc.longitude), 0) / locationsWithCoords.length;
-
-        // Get zoom level from settings, default to 5
-        const zoomLevel = data.map_zoom ? parseInt(data.map_zoom) : 5;
-
-        // Create map
-        const map = new google.maps.Map(mapRef.current, {
-            center: { lat: avgLat, lng: avgLng },
-            zoom: zoomLevel,
-            styles: [
-                {
-                    featureType: "poi",
-                    elementType: "labels",
-                    stylers: [{ visibility: "off" }]
-                }
-            ]
-        });
-
-        googleMapRef.current = map;
-
-        // Create info window
-        const infoWindow = new google.maps.InfoWindow();
-
-        // Clear existing markers
-        markersRef.current.forEach(marker => marker.setMap(null));
-        markersRef.current = [];
-
-        // Add markers for each location
-        locationsWithCoords.forEach((location) => {
-            const marker = new google.maps.Marker({
-                position: {
-                    lat: parseFloat(location.latitude),
-                    lng: parseFloat(location.longitude)
-                },
-                map: map,
-                title: location.name,
-                animation: google.maps.Animation.DROP,
-            });
-
-            // Build info window content based on settings
-            const buildInfoContent = () => {
-                return `
-                    <div style="padding: 10px; max-width: 280px;">
-                        <h3 style="margin: 0 0 10px 0; color: #333; font-size: 18px;">${location.name}</h3>
-                        <p style="margin: 5px 0; font-size: 14px; line-height: 1.5;">
-                            <strong>Address:</strong><br/>
-                            ${location.address}, ${location.city}<br/>
-                            ${location.state ? location.state + ', ' : ''}${location.country}
-                        </p>
-                        ${data.show_phone && location.phone ? `
-                            <p style="margin: 5px 0; font-size: 14px;">
-                                <strong>Phone:</strong> <a href="tel:${location.phone}" style="color: #DAA520; text-decoration: none;">${location.phone}</a>
-                            </p>
-                        ` : ''}
-                        ${data.show_email && location.email ? `
-                            <p style="margin: 5px 0; font-size: 14px;">
-                                <strong>Email:</strong> <a href="mailto:${location.email}" style="color: #DAA520; text-decoration: none;">${location.email}</a>
-                            </p>
-                        ` : ''}
-                        ${location.url ? `
-                            <p style="margin: 10px 0 0 0;">
-                                <a href="${location.url}" target="_blank" rel="noopener noreferrer" style="color: #DAA520; text-decoration: none; font-weight: 500;">
-                                    Visit Website →
-                                </a>
-                            </p>
-                        ` : ''}
-                    </div>
-                `;
-            };
-
-            // Show info window on hover
-            marker.addListener("mouseover", () => {
-                infoWindow.setContent(buildInfoContent());
-                infoWindow.open(map, marker);
-            });
-
-            // Hide info window on mouseout (unless it's the selected location)
-            marker.addListener("mouseout", () => {
-                if (selectedLocation?.id !== location.id) {
-                    infoWindow.close();
-                }
-            });
-
-            // Click event for marker - zoom in and highlight
-            marker.addListener("click", () => {
-                infoWindow.setContent(buildInfoContent());
-                infoWindow.open(map, marker);
-                map.panTo(marker.getPosition());
-                map.setZoom(15); // Zoom closer on click
-                setSelectedLocation(location);
-
-                // Bounce animation for selected marker
-                marker.setAnimation(google.maps.Animation.BOUNCE);
-                setTimeout(() => marker.setAnimation(null), 2000);
-            });
-
-            markersRef.current.push(marker);
-        });
-
-        // Fit bounds to show all markers
-        if (locationsWithCoords.length > 1) {
-            const bounds = new google.maps.LatLngBounds();
-            locationsWithCoords.forEach(loc => {
-                bounds.extend(new google.maps.LatLng(parseFloat(loc.latitude), parseFloat(loc.longitude)));
-            });
-            map.fitBounds(bounds);
-        }
-
-    }, [locations]);
-
     // Handle location click from list
     const handleLocationClick = (location) => {
-        if (!location.latitude || !location.longitude) return;
-
         setSelectedLocation(location);
-
-        if (googleMapRef.current) {
-            const position = new google.maps.LatLng(parseFloat(location.latitude), parseFloat(location.longitude));
-            googleMapRef.current.panTo(position);
-            googleMapRef.current.setZoom(15); // Zoom closer when clicking from list
-
-            // Trigger marker click
-            const marker = markersRef.current.find(m =>
-                m.getPosition().lat() === parseFloat(location.latitude) &&
-                m.getPosition().lng() === parseFloat(location.longitude)
-            );
-            if (marker) {
-                google.maps.event.trigger(marker, 'click');
-            }
-        }
     };
 
-    // Handle location hover from list
+    // Simplified hover handlers (map interactions now handled by GoogleMapWithMarkers)
     const handleLocationHover = (location) => {
-        if (!location.latitude || !location.longitude) return;
-
-        if (googleMapRef.current) {
-            // Find and trigger marker mouseover
-            const marker = markersRef.current.find(m =>
-                m.getPosition().lat() === parseFloat(location.latitude) &&
-                m.getPosition().lng() === parseFloat(location.longitude)
-            );
-            if (marker) {
-                google.maps.event.trigger(marker, 'mouseover');
-            }
-        }
+        // Visual feedback only for sidebar
     };
 
-    // Handle location hover end from list
     const handleLocationHoverEnd = (location) => {
-        if (!location.latitude || !location.longitude) return;
-
-        if (googleMapRef.current) {
-            // Find and trigger marker mouseout
-            const marker = markersRef.current.find(m =>
-                m.getPosition().lat() === parseFloat(location.latitude) &&
-                m.getPosition().lng() === parseFloat(location.longitude)
-            );
-            if (marker) {
-                google.maps.event.trigger(marker, 'mouseout');
-            }
-        }
+        // Visual feedback only for sidebar
     };
 
     // Handle reset
     const handleReset = () => {
         setSearchTerm("");
         setSelectedLocation(null);
-
-        if (googleMapRef.current && locations.length > 0) {
-            const locationsWithCoords = locations.filter(loc => loc.latitude && loc.longitude);
-            if (locationsWithCoords.length > 1) {
-                const bounds = new google.maps.LatLngBounds();
-                locationsWithCoords.forEach(loc => {
-                    bounds.extend(new google.maps.LatLng(parseFloat(loc.latitude), parseFloat(loc.longitude)));
-                });
-                googleMapRef.current.fitBounds(bounds);
-            } else if (locationsWithCoords.length === 1) {
-                googleMapRef.current.setCenter({
-                    lat: parseFloat(locationsWithCoords[0].latitude),
-                    lng: parseFloat(locationsWithCoords[0].longitude)
-                });
-                googleMapRef.current.setZoom(12);
-            }
-        }
     };
 
     if (locations.length === 0) {
@@ -263,11 +107,12 @@ export default function LocationsInteractive({ data, locations }) {
 
             <Div className="cs-height_50 cs-height_lg_30" />
 
-            {/* Main Content: Locations List + Map */}
+            {/* Main Content: Conditional View Rendering */}
             <Div className="container">
-                <Div className="row">
-                    {/* Left Side - City List */}
-                    <Div className="col-lg-4">
+                {viewMode === 'map' ? (
+                    <Div className="row">
+                        {/* Left Side - City List */}
+                        <Div className="col-lg-4">
                         {/* Search Bar - conditional based on settings */}
                         {data.enable_search !== false && (
                             <Div className="mb-3">
@@ -318,27 +163,46 @@ export default function LocationsInteractive({ data, locations }) {
                             </Div>
                         )}
 
-                        <h3>Our Locations</h3>
                         <div style={{ maxHeight: '500px', overflowY: 'auto' }}>
                             <ul style={{ listStyle: 'none', padding: 0 }} className="cstm-map-marker">
-                                {filteredLocations.map((location, index) => (
-                                    <li
-                                        key={index}
-                                        onClick={() => handleLocationClick(location)}
-                                        onMouseEnter={() => handleLocationHover(location)}
-                                        onMouseLeave={() => handleLocationHoverEnd(location)}
-                                        style={{
-                                            padding: '10px',
-                                            cursor: 'pointer',
-                                            backgroundColor: selectedLocation?.id === location.id ? '#f0f0f0' : 'transparent',
-                                            borderRadius: '4px',
-                                            marginBottom: '5px',
-                                            transition: 'background-color 0.2s'
-                                        }}
-                                    >
-                                        <span>{location.name}</span>
-                                    </li>
-                                ))}
+                                {(() => {
+                                    const citiesMap = new Map();
+                                    filteredLocations.forEach(location => {
+                                        const cityName = location.city || location.name;
+                                        if (!citiesMap.has(cityName)) {
+                                            citiesMap.set(cityName, location);
+                                        }
+                                    });
+                                    const uniqueCities = Array.from(citiesMap.values());
+
+                                    return uniqueCities.map((location) => (
+                                        <li
+                                            key={location.id}
+                                            onClick={() => handleLocationClick(location)}
+                                            onMouseEnter={() => handleLocationHover(location)}
+                                            onMouseLeave={() => handleLocationHoverEnd(location)}
+                                            style={{
+                                                padding: '12px 15px',
+                                                cursor: 'pointer',
+                                                backgroundColor: selectedLocation?.id === location.id ? '#DAA520' : 'transparent',
+                                                color: selectedLocation?.id === location.id ? '#fff' : '#333',
+                                                borderRadius: '6px',
+                                                border: selectedLocation?.id === location.id ? '2px solid #B8860B' : '1px solid #e0e0e0',
+                                                fontWeight: selectedLocation?.id === location.id ? 'bold' : 'normal',
+                                                fontSize: selectedLocation?.id === location.id ? '16px' : '14px',
+                                                marginBottom: '8px',
+                                                boxShadow: selectedLocation?.id === location.id ? '0 4px 8px rgba(218, 165, 32, 0.3)' : 'none',
+                                                transform: selectedLocation?.id === location.id ? 'scale(1.02)' : 'scale(1)',
+                                                transition: 'all 0.3s ease'
+                                            }}
+                                        >
+                                            <span>
+                                                {selectedLocation?.id === location.id && '📍 '}
+                                                {location.city || location.name}
+                                            </span>
+                                        </li>
+                                    ));
+                                })()}
                                 {filteredLocations.length === 0 && (
                                     <li style={{ padding: "20px", textAlign: "center", color: "#999" }}>
                                         No locations found matching your search
@@ -350,12 +214,16 @@ export default function LocationsInteractive({ data, locations }) {
                             onClick={handleReset}
                             style={{
                                 marginTop: '20px',
-                                padding: '8px 15px',
+                                padding: '10px 20px',
                                 backgroundColor: '#DAA520',
                                 color: 'white',
                                 border: 'none',
-                                borderRadius: '4px',
-                                cursor: 'pointer'
+                                borderRadius: '6px',
+                                cursor: 'pointer',
+                                fontWeight: '500',
+                                width: '100%',
+                                opacity: !selectedLocation ? '0.6' : '1',
+                                transition: 'opacity 0.3s ease'
                             }}
                             disabled={!selectedLocation}
                         >
@@ -364,56 +232,117 @@ export default function LocationsInteractive({ data, locations }) {
                     </Div>
 
                     {/* Right Side - Map */}
-                    <Div className="col-lg-8" style={{ height: '600px', position: 'relative' }}>
-                        {!google_maps_api_key && (
-                            <Div
-                                style={{
-                                    position: 'absolute',
-                                    top: '50%',
-                                    left: '50%',
-                                    transform: 'translate(-50%, -50%)',
-                                    zIndex: 1000,
-                                    backgroundColor: 'rgba(255, 255, 255, 0.95)',
-                                    padding: '30px',
-                                    borderRadius: '8px',
-                                    boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
-                                    textAlign: 'center',
-                                    maxWidth: '400px',
-                                    width: '90%'
-                                }}
-                            >
-                                <IonIcon
-                                    icon={warningOutline}
-                                    style={{
-                                        fontSize: '48px',
-                                        color: '#DAA520',
-                                        marginBottom: '15px'
-                                    }}
-                                />
-                                <h4 style={{ marginBottom: '10px', color: '#333' }}>
-                                    Google Maps API Key Required
-                                </h4>
-                                <p style={{ color: '#666', fontSize: '14px', marginBottom: '15px', lineHeight: '1.5' }}>
-                                    To display the interactive map, please configure your Google Maps API key in the admin panel.
-                                </p>
-                                <p style={{ color: '#999', fontSize: '12px', margin: 0 }}>
-                                    <strong>Admin Panel</strong> → Settings → Google Maps API
-                                </p>
+                                                <Div className="col-lg-8">
+                                                    <div style={{ height: '600px' }}>
+                                                        <GoogleMapWithMarkers
+                                                            markers={filteredMarkers}
+                                                            center={mapCenter}
+                                                            zoom={zoomLevel}
+                                                            selectedCity={selectedCity}
+                                                            googleMapsApiKey={google_maps_api_key}
+                                                        />
+                                                    </div>
+                                                </Div>
+                </Div>
+                ) : viewMode === 'grid' ? (
+                    <Div className="row">
+                        {filteredLocations.map((location, index) => (
+                            <Div key={index} className="col-lg-4 col-md-6 mb-4">
+                                <Div className="card h-100" style={{ border: '1px solid #e0e0e0', borderRadius: '8px', overflow: 'hidden' }}>
+                                    <Div className="card-body" style={{ padding: '20px' }}>
+                                        <h5 style={{ color: '#DAA520', marginBottom: '15px', fontWeight: '600' }}>
+                                            <IonIcon icon={locationOutline} style={{ marginRight: '8px' }} />
+                                            {location.name}
+                                        </h5>
+                                        <p style={{ color: '#666', fontSize: '14px', marginBottom: '10px', lineHeight: '1.6' }}>
+                                            <strong>Address:</strong><br/>
+                                            {location.address}{location.city ? `, ${location.city}` : ''}<br/>
+                                            {location.state ? location.state + ', ' : ''}{location.country || ''}
+                                        </p>
+                                        {data.show_phone && location.phone && (
+                                            <p style={{ color: '#666', fontSize: '14px', marginBottom: '8px' }}>
+                                                <IonIcon icon={callOutline} style={{ marginRight: '8px', color: '#DAA520' }} />
+                                                <a href={`tel:${location.phone}`} style={{ color: '#666', textDecoration: 'none' }}>{location.phone}</a>
+                                            </p>
+                                        )}
+                                        {data.show_email && location.email && (
+                                            <p style={{ color: '#666', fontSize: '14px', marginBottom: '8px' }}>
+                                                <IonIcon icon={mailOutline} style={{ marginRight: '8px', color: '#DAA520' }} />
+                                                <a href={`mailto:${location.email}`} style={{ color: '#666', textDecoration: 'none' }}>{location.email}</a>
+                                            </p>
+                                        )}
+                                        {location.url && (
+                                            <p style={{ marginTop: '15px' }}>
+                                                <a href={location.url} target="_blank" rel="noopener noreferrer" style={{ color: '#DAA520', textDecoration: 'none', fontWeight: '500' }}>
+                                                    <IonIcon icon={linkOutline} style={{ marginRight: '5px' }} />
+                                                    Visit Website
+                                                </a>
+                                            </p>
+                                        )}
+                                    </Div>
+                                </Div>
+                            </Div>
+                        ))}
+                        {filteredLocations.length === 0 && (
+                            <Div className="col-12 text-center" style={{ padding: "60px 20px" }}>
+                                <IonIcon icon={locationOutline} style={{ fontSize: "64px", color: "#ddd", marginBottom: "20px" }} />
+                                <h3 style={{ color: "#999" }}>No locations found</h3>
                             </Div>
                         )}
-                        <Div
-                            ref={mapRef}
-                            style={{
-                                width: "100%",
-                                height: "100%",
-                                borderRadius: "5px",
-                                border: "1px solid #e0e0e0",
-                                backgroundColor: '#f5f5f5',
-                                filter: !google_maps_api_key ? 'blur(3px)' : 'none'
-                            }}
-                        />
                     </Div>
-                </Div>
+                ) : (
+                    <Div className="row">
+                        <Div className="col-12">
+                            {filteredLocations.map((location, index) => (
+                                <Div key={index} className="card mb-3" style={{ border: '1px solid #e0e0e0', borderRadius: '8px' }}>
+                                    <Div className="card-body" style={{ padding: '20px' }}>
+                                        <Div className="row">
+                                            <Div className="col-md-8">
+                                                <h5 style={{ color: '#DAA520', marginBottom: '15px', fontWeight: '600' }}>
+                                                    <IonIcon icon={locationOutline} style={{ marginRight: '8px' }} />
+                                                    {location.name}
+                                                </h5>
+                                                <p style={{ color: '#666', fontSize: '14px', marginBottom: '10px', lineHeight: '1.6' }}>
+                                                    <strong>Address:</strong><br/>
+                                                    {location.address}{location.city ? `, ${location.city}` : ''}<br/>
+                                                    {location.state ? location.state + ', ' : ''}{location.country || ''}
+                                                </p>
+                                            </Div>
+                                            <Div className="col-md-4">
+                                                {data.show_phone && location.phone && (
+                                                    <p style={{ color: '#666', fontSize: '14px', marginBottom: '8px' }}>
+                                                        <IonIcon icon={callOutline} style={{ marginRight: '8px', color: '#DAA520' }} />
+                                                        <a href={`tel:${location.phone}`} style={{ color: '#666', textDecoration: 'none' }}>{location.phone}</a>
+                                                    </p>
+                                                )}
+                                                {data.show_email && location.email && (
+                                                    <p style={{ color: '#666', fontSize: '14px', marginBottom: '8px' }}>
+                                                        <IonIcon icon={mailOutline} style={{ marginRight: '8px', color: '#DAA520' }} />
+                                                        <a href={`mailto:${location.email}`} style={{ color: '#666', textDecoration: 'none' }}>{location.email}</a>
+                                                    </p>
+                                                )}
+                                                {location.url && (
+                                                    <p style={{ marginTop: '15px' }}>
+                                                        <a href={location.url} target="_blank" rel="noopener noreferrer" style={{ color: '#DAA520', textDecoration: 'none', fontWeight: '500' }}>
+                                                            <IonIcon icon={linkOutline} style={{ marginRight: '5px' }} />
+                                                            Visit Website
+                                                        </a>
+                                                    </p>
+                                                )}
+                                            </Div>
+                                        </Div>
+                                    </Div>
+                                </Div>
+                            ))}
+                            {filteredLocations.length === 0 && (
+                                <Div className="text-center" style={{ padding: "60px 20px" }}>
+                                    <IonIcon icon={locationOutline} style={{ fontSize: "64px", color: "#ddd", marginBottom: "20px" }} />
+                                    <h3 style={{ color: "#999" }}>No locations found</h3>
+                                </Div>
+                            )}
+                        </Div>
+                    </Div>
+                )}
             </Div>
 
             <style>{`

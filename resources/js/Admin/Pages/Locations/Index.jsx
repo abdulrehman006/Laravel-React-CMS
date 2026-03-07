@@ -7,8 +7,8 @@ import DeleteButton from "@/Admin/Components/Button/DeleteButton";
 import Swal from "sweetalert2";
 
 export default function Index() {
-    const { locations, search: searchQuery } = usePage().props;
-    const [search, setSearch] = useState(searchQuery || "");
+    const { locations, filters } = usePage().props;
+    const [search, setSearch] = useState(filters?.search || "");
     const [sort, setSort] = useState({ column: "name", order: "asc" });
     const [selectedItems, setSelectedItems] = useState([]);
 
@@ -74,7 +74,7 @@ export default function Index() {
         }).then((result) => {
             if (result.isConfirmed) {
                 router.delete(route("admin.locations.bulk.delete"), {
-                    data: { ids: selectedItems.join(",") },
+                    data: { ids: selectedItems },
                     onSuccess: () => setSelectedItems([]),
                 });
             }
