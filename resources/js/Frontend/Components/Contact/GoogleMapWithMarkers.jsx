@@ -18,68 +18,53 @@ export default function GoogleMapWithMarkers({ markers, center, zoom, selectedCi
         googleMapsApiKey: googleMapsApiKey || "",
     });
 
-    // Store map instance on load
     const onMapLoad = useCallback((map) => {
         mapRef.current = map;
     }, []);
 
-    // Pan and zoom to selected location
+    // Pan/zoom to selected location, or fit all when cleared
     useEffect(() => {
-        if (!mapRef.current || !selectedCity) return;
+        if (!mapRef.current || !isLoaded) return;
 
-        const selectedMarker = markers.find(m => m.city === selectedCity);
-        if (selectedMarker) {
-            mapRef.current.panTo(selectedMarker.position);
-            mapRef.current.setZoom(14);
+        if (selectedCity) {
+            // Zoom into the selected marker
+            const selectedMarker = markers.find(m => m.city === selectedCity);
+            if (selectedMarker) {
+                mapRef.current.panTo(selectedMarker.position);
+                mapRef.current.setZoom(14);
+            }
+        } else {
+            // Show all markers - fit bounds
+            if (markers.length > 1 && window.google) {
+                const bounds = new window.google.maps.LatLngBounds();
+                markers.forEach(m => bounds.extend(m.position));
+                mapRef.current.fitBounds(bounds);
+            } else if (markers.length === 1) {
+                mapRef.current.panTo(markers[0].position);
+                mapRef.current.setZoom(zoom || 6);
+            }
         }
-    }, [selectedCity, markers]);
-
-    // Reset to show all markers when selection is cleared
-    useEffect(() => {
-        if (!mapRef.current || selectedCity) return;
-
-        if (markers.length > 1) {
-            const bounds = new window.google.maps.LatLngBounds();
-            markers.forEach(m => bounds.extend(m.position));
-            mapRef.current.fitBounds(bounds);
-        } else if (markers.length === 1) {
-            mapRef.current.panTo(markers[0].position);
-            mapRef.current.setZoom(zoom || 6);
-        }
-    }, [selectedCity, markers, zoom]);
+    }, [selectedCity, markers, zoom, isLoaded]);
 
     const getMarkerIcon = (isSelected) => {
-        if (!window.google || !window.google.maps || !window.google.maps.Size) {
-            return isSelected
-                ? { url: "https://maps.google.com/mapfiles/ms/icons/yellow-dot.png" }
-                : { url: "https://maps.google.com/mapfiles/ms/icons/red-dot.png" };
-        }
-
-        try {
+        if (!window.google?.maps?.Size) {
             return {
                 url: isSelected
                     ? "https://maps.google.com/mapfiles/ms/icons/yellow-dot.png"
                     : "https://maps.google.com/mapfiles/ms/icons/red-dot.png",
-                scaledSize: new window.google.maps.Size(isSelected ? 60 : 40, isSelected ? 60 : 40),
             };
-        } catch (error) {
-            return isSelected
-                ? { url: "https://maps.google.com/mapfiles/ms/icons/yellow-dot.png" }
-                : { url: "https://maps.google.com/mapfiles/ms/icons/red-dot.png" };
         }
-    };
-
-    const getAnimation = (isSelected) => {
-        if (!window.google || !window.google.maps || !isSelected) return null;
-        return window.google.maps.Animation.BOUNCE;
+        return {
+            url: isSelected
+                ? "https://maps.google.com/mapfiles/ms/icons/yellow-dot.png"
+                : "https://maps.google.com/mapfiles/ms/icons/red-dot.png",
+            scaledSize: new window.google.maps.Size(isSelected ? 60 : 40, isSelected ? 60 : 40),
+        };
     };
 
     if (loadError) {
         return (
-            <div style={{
-                display: 'flex', alignItems: 'center', justifyContent: 'center',
-                height: '600px', backgroundColor: '#f8f9fa', border: '1px solid #dee2e6', borderRadius: '4px'
-            }}>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '600px', backgroundColor: '#f8f9fa', border: '1px solid #dee2e6', borderRadius: '4px' }}>
                 <div style={{ textAlign: 'center', padding: '20px' }}>
                     <p style={{ color: '#dc3545', marginBottom: '10px', fontWeight: '600' }}>Error loading maps</p>
                     <p style={{ color: '#6c757d', fontSize: '14px' }}>Please check your Google Maps API key configuration</p>
@@ -90,14 +75,16 @@ export default function GoogleMapWithMarkers({ markers, center, zoom, selectedCi
 
     if (!isLoaded) {
         return (
-            <div style={{
-                display: 'flex', alignItems: 'center', justifyContent: 'center',
-                height: '600px', backgroundColor: '#f8f9fa', border: '1px solid #dee2e6', borderRadius: '4px'
-            }}>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '600px', backgroundColor: '#f8f9fa', border: '1px solid #dee2e6', borderRadius: '4px' }}>
                 <p style={{ color: '#6c757d' }}>Loading maps...</p>
             </div>
         );
     }
+
+    // Only show selected marker when a city is selected, otherwise show all
+    const visibleMarkers = selectedCity
+        ? markers.filter(m => m.city === selectedCity)
+        : markers;
 
     return (
         <GoogleMap
@@ -111,7 +98,7 @@ export default function GoogleMapWithMarkers({ markers, center, zoom, selectedCi
                 fullscreenControl: true,
             }}
         >
-            {markers.map((marker) => {
+            {visibleMarkers.map((marker) => {
                 const isSelected = selectedCity && marker.city === selectedCity;
 
                 return (
@@ -120,7 +107,7 @@ export default function GoogleMapWithMarkers({ markers, center, zoom, selectedCi
                         position={marker.position}
                         icon={getMarkerIcon(isSelected)}
                         title={marker.city}
-                        animation={getAnimation(isSelected)}
+                        animation={isSelected && window.google?.maps ? window.google.maps.Animation.BOUNCE : null}
                         label={isSelected ? {
                             text: marker.city,
                             color: '#000',
