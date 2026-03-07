@@ -2,6 +2,7 @@
 
 namespace App\Http\Middleware;
 
+use App\Models\Location;
 use App\Models\Setting;
 use App\Repositories\Frontend\PageRepository;
 use App\Repositories\SettingRepository;
@@ -50,6 +51,7 @@ class HandleInertiaRequests extends Middleware
                 ],
                 'active_theme' => $theme_data->getActiveTheme(),
                 'google_maps_api_key' => $settingRepository->getGoogleMapsApiKey(),
+                'locations' => fn () => Location::where('is_active', true)->orderBy('sort_order', 'asc')->get(),
                 'ziggy' => function () use ($request) {
                     return array_merge((new Ziggy)->toArray(), [
                         'location' => $request->url(),

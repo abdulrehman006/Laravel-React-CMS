@@ -2,14 +2,18 @@ import { Head, Link, router, usePage } from "@inertiajs/react";
 import { useEffect, useState } from "react";
 import AdminLayouts from "@/Admin/Layouts/AdminLayouts";
 import ThSortable from "@/Admin/Components/Table/ThSortable";
-import ActionButton from "@/Admin/Components/Button/ActionButton";
 import DeleteButton from "@/Admin/Components/Button/DeleteButton";
+import { IonIcon } from "@ionic/react";
+import { createOutline } from "ionicons/icons";
 import Swal from "sweetalert2";
 
 export default function Index() {
     const { locations, filters } = usePage().props;
     const [search, setSearch] = useState(filters?.search || "");
-    const [sort, setSort] = useState({ column: "name", order: "asc" });
+    const [sort, setSort] = useState({
+        column: filters?.sort_field || "sort_order",
+        order: filters?.sort_direction || "asc",
+    });
     const [selectedItems, setSelectedItems] = useState([]);
 
     // Handle search
@@ -17,7 +21,11 @@ export default function Index() {
         const delayDebounceFn = setTimeout(() => {
             router.get(
                 route("admin.locations.index"),
-                { search, sort },
+                {
+                    search,
+                    sort_field: sort.column,
+                    sort_direction: sort.order,
+                },
                 { preserveState: true, replace: true }
             );
         }, 500);
@@ -33,7 +41,11 @@ export default function Index() {
         setSort(newSort);
         router.get(
             route("admin.locations.index"),
-            { search, sort: newSort },
+            {
+                search,
+                sort_field: newSort.column,
+                sort_direction: newSort.order,
+            },
             { preserveState: true, replace: true }
         );
     };
@@ -135,6 +147,7 @@ export default function Index() {
                                                             type="checkbox"
                                                             onChange={handleSelectAll}
                                                             checked={
+                                                                locations.data.length > 0 &&
                                                                 selectedItems.length ===
                                                                 locations.data.length
                                                             }
@@ -171,9 +184,9 @@ export default function Index() {
                                                                 />
                                                             </td>
                                                             <td>{location.name}</td>
-                                                            <td>{location.city}</td>
-                                                            <td>{location.country}</td>
-                                                            <td>{location.phone || "N/A"}</td>
+                                                            <td>{location.city || "—"}</td>
+                                                            <td>{location.country || "—"}</td>
+                                                            <td>{location.phone || "—"}</td>
                                                             <td>
                                                                 <span
                                                                     className={`badge ${
@@ -188,14 +201,23 @@ export default function Index() {
                                                                 </span>
                                                             </td>
                                                             <td>
-                                                                <ActionButton
-                                                                    editUrl={route(
+                                                                <Link
+                                                                    href={route(
                                                                         "admin.locations.edit",
                                                                         location
                                                                     )}
-                                                                />
+                                                                    className="badge badge-primary me-1"
+                                                                >
+                                                                    <IonIcon
+                                                                        icon={createOutline}
+                                                                        style={{
+                                                                            height: "16px",
+                                                                            width: "16px",
+                                                                        }}
+                                                                    />
+                                                                </Link>
                                                                 <DeleteButton
-                                                                    url={route(
+                                                                    href={route(
                                                                         "admin.locations.destroy",
                                                                         location
                                                                     )}
@@ -215,7 +237,7 @@ export default function Index() {
                                     </div>
 
                                     {/* Pagination */}
-                                    {locations.links.length > 3 && (
+                                    {locations.links && locations.links.length > 3 && (
                                         <div className="d-flex justify-content-center mt-3">
                                             {locations.links.map((link, index) => (
                                                 <Link
