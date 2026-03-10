@@ -3,18 +3,18 @@
 namespace App\Http\Controllers\Frontend;
 
 use App\Http\Controllers\Controller;
+use App\Models\Setting;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Inertia\Inertia;
-use Inertia\Response;
 
 class AppointmentController extends Controller
 {
     /**
-     * Get contacts
+     * Send appointment request email
      */
-    public function send(Request $request)
+    public function send(Request $request): RedirectResponse
     {
         $request->validate([
             'vehicle_type' => 'required|string',
@@ -44,13 +44,42 @@ class AppointmentController extends Controller
         $location = \App\Models\Location::find($request->location_id);
         $data['location_name'] = $location ? ($location->city ?? $location->name) : 'N/A';
 
-        // Send email
-        Mail::send('appointment', $data, function ($message) use ($data) {
-            $message->to('recipient@example.com') // Replace with your recipient email
-                ->subject('New Appointment Request - ' . $data['name']);
-        });
+        // Get recipient email: Customize > Contact Info → fallback to .env
+        $recipientEmail = $this->getRecipientEmail();
 
-        // Return JSON response
+        if (!$recipientEmail) {
+            Log::error('Appointment email not sent: No recipient email configured in Customize > Contact Info or .env MAIL_FROM_ADDRESS');
+            return back()->with('success', 'Appointment submitted successfully! We will contact you soon.');
+        }
+
+        try {
+            Mail::send('emails.appointment', $data, function ($message) use ($data, $recipientEmail) {
+                $message->to($recipientEmail)
+                    ->subject('New Appointment Request - ' . $data['name'])
+                    ->replyTo($data['email'], $data['name']);
+            });
+        } catch (\Exception $e) {
+            Log::error('Appointment email failed: ' . $e->getMessage());
+        }
+
         return back()->with('success', 'Appointment submitted successfully! We will contact you soon.');
-          }
+    }
+
+    /**
+     * Get recipient email from contact_settings, fallback to .env
+     */
+    private function getRecipientEmail(): ?string
+    {
+        // First try: Customize > Contact Info > contact_email
+        $contactEmail = Setting::where('setting_group', 'contact_settings')
+            ->where('setting_key', 'contact_email')
+            ->value('setting_value');
+
+        if (!empty($contactEmail)) {
+            return $contactEmail;
+        }
+
+        // Fallback: .env MAIL_FROM_ADDRESS
+        return config('mail.from.address');
+    }
 }
