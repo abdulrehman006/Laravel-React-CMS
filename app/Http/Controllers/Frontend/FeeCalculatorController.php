@@ -30,13 +30,17 @@ class FeeCalculatorController extends Controller
                 $searchValue = preg_replace('/[^a-zA-Z0-9]/', '', $searchValue);
             }
 
+            // Encode spaces as %20 for the external API
+            $encodedValue = rawurlencode($searchValue);
+
             // Hardcoded API URL
             $apiUrl = 'http://52.58.102.77:22110/api/FeeStructure';
+            $fullUrl = $apiUrl . '?' . $searchType . '=' . $encodedValue;
 
             Log::info('Fee Calculator Request', [
                 'searchType' => $searchType,
                 'searchValue' => $searchValue,
-                'apiUrl' => $apiUrl
+                'apiUrl' => $fullUrl
             ]);
 
             // Make request to external API with better error handling
@@ -44,9 +48,7 @@ class FeeCalculatorController extends Controller
                 ->withHeaders([
                     'Accept' => 'application/json',
                 ])
-                ->get($apiUrl, [
-                    $searchType => $searchValue
-                ]);
+                ->get($fullUrl);
 
             Log::info('Fee Calculator Response', [
                 'status' => $response->status(),
