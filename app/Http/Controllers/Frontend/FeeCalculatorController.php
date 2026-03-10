@@ -31,7 +31,7 @@ class FeeCalculatorController extends Controller
             }
 
             // Hardcoded API URL
-            $apiUrl = 'http://3.79.101.195:22110/api/FeeStructure';
+            $apiUrl = 'http://52.58.102.77:22110/api/FeeStructure';
 
             Log::info('Fee Calculator Request', [
                 'searchType' => $searchType,

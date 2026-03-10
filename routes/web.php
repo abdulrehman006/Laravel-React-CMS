@@ -89,7 +89,7 @@ Route::get('/proxy/vehicle-verification', function (Request $request) {
 
     try {
         // Send the GET request to the external API
-        $response = $client->get('http://3.79.101.195:22109/api/VehicleVerification', [
+        $response = $client->get('http://52.58.102.77:22109/api/VehicleVerification', [
             'query' => $request->all(),
             'timeout' => 10, // Set a timeout for the request (10 seconds)
         ]);
@@ -190,7 +190,7 @@ Route::get('/proxy/fee-structure', function (Request $request) {
             $queryParams['chassisNo'] = trim($chassisNo);
         }
 
-        $response = $client->get('http://3.79.101.195:22110/api/FeeStructure', [
+        $response = $client->get('http://52.58.102.77:22110/api/FeeStructure', [
             'query' => $queryParams,
             'timeout' => 30,
         ]);

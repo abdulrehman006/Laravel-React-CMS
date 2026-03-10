@@ -1,6 +1,6 @@
 {
     "private": true,
-    "proxy": "http://3.79.101.195:22109",
+    "proxy": "http://52.58.102.77:22109",
     "scripts": {
         "start": "npm run dev",
         "dev": "npm run development",

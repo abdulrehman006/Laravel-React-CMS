@@ -12,7 +12,7 @@ export default function APICustomize({
         title: "Fee Calculator",
         sub_title: "Vehicle Inspection Fee",
         description: "Calculate vehicle inspection fees by Registration Number or Chassis Number",
-        api_url: "http://3.79.101.195:22110/api/FeeStructure",
+        api_url: "http://52.58.102.77:22110/api/FeeStructure",
     };
 
     const [data, setData] = useState(sectionData || defaultData);
@@ -92,7 +92,7 @@ export default function APICustomize({
                             value={data.api_url}
                             onChange={(e) => setData({ ...data, api_url: e.target.value })}
                             className="form-control"
-                            placeholder="http://3.79.101.195:22110/api/FeeStructure"
+                            placeholder="http://52.58.102.77:22110/api/FeeStructure"
                         />
                         <small className="text-muted">
                             The base URL for the Fee Structure API endpoint
