@@ -62,7 +62,7 @@
                         <td style="padding: 25px 40px 0;">
                             <h2 style="margin: 0 0 16px; font-size: 16px; color: #DAA520; text-transform: uppercase; letter-spacing: 1px; border-bottom: 2px solid #DAA520; padding-bottom: 8px;">Message</h2>
                             <div style="background-color: #fdf8ec; padding: 16px 20px; border-left: 4px solid #DAA520; border-radius: 4px; color: #333; font-size: 14px; line-height: 1.6;">
-                                {!! nl2br(e($message)) !!}
+                                {!! nl2br(e($user_message)) !!}
                             </div>
                         </td>
                     </tr>

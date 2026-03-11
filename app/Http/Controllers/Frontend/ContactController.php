@@ -24,13 +24,13 @@ class ContactController extends Controller
         $latestContact = \App\Models\Contact::latest()->first();
         $ticketId = $latestContact ? $latestContact->ticket_id : 'N/A';
 
-        // Prepare email data
+        // Prepare email data (use 'user_message' to avoid Laravel Mail $message conflict)
         $emailData = [
             'name' => $request->name,
             'email' => $request->email,
             'project_type' => $request->project_type,
             'mobile_number' => $request->mobile_number,
-            'message' => $request->message,
+            'user_message' => $request->message,
             'ticket_id' => $ticketId,
         ];
 

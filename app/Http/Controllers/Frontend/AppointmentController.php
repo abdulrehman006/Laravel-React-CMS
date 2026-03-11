@@ -44,6 +44,10 @@ class AppointmentController extends Controller
         $location = \App\Models\Location::find($request->location_id);
         $data['location_name'] = $location ? ($location->city ?? $location->name) : 'N/A';
 
+        // Rename 'message' to 'user_message' to avoid Laravel Mail $message conflict
+        $data['user_message'] = $data['message'] ?? '';
+        unset($data['message']);
+
         // Get recipient email: Customize > Contact Info → fallback to .env
         $recipientEmail = $this->getRecipientEmail();
 
@@ -53,8 +57,8 @@ class AppointmentController extends Controller
         }
 
         try {
-            Mail::send('emails.appointment', $data, function ($message) use ($data, $recipientEmail) {
-                $message->to($recipientEmail)
+            Mail::send('emails.appointment', $data, function ($msg) use ($data, $recipientEmail) {
+                $msg->to($recipientEmail)
                     ->subject('New Appointment Request - ' . $data['name'])
                     ->replyTo($data['email'], $data['name']);
             });

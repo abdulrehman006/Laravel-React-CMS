@@ -25,10 +25,8 @@ class FeeCalculatorController extends Controller
             $searchType = $request->input('searchType');
             $searchValue = trim($request->input('searchValue'));
 
-            // Normalize the search value (remove extra spaces/dashes for regNo)
-            if ($searchType === 'regNo') {
-                $searchValue = preg_replace('/[^a-zA-Z0-9]/', '', $searchValue);
-            }
+            // Trim the search value (keep dashes intact for regNo like LET-15-8676)
+            $searchValue = trim($searchValue);
 
             // Encode spaces as %20 for the external API
             $encodedValue = rawurlencode($searchValue);
