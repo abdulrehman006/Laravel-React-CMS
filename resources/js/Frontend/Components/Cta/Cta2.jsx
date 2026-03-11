@@ -216,46 +216,62 @@ export default function Cta2({ title, btnText, btnLink, bgSrc, bgColor, bgType, 
                                     </Div>
 
                                     <Div style={{ overflowX: "auto" }}>
-                                        <table className="table table-striped table-bordered" style={{ fontSize: "14px" }}>
-                                            <thead style={{ backgroundColor: "#f8f9fa" }}>
-                                                <tr>
-                                                    <th style={{ fontWeight: "600" }}>Owner Name</th>
-                                                    <th style={{ fontWeight: "600" }}>Inspection Result</th>
-                                                    <th style={{ fontWeight: "600" }}>Vehicle No</th>
-                                                    <th style={{ fontWeight: "600" }}>Vehicle Make</th>
-                                                    <th style={{ fontWeight: "600" }}>Chassis Number</th>
-                                                    <th style={{ fontWeight: "600" }}>Engine Number</th>
-                                                    <th style={{ fontWeight: "600" }}>Certificate Number</th>
-                                                    <th style={{ fontWeight: "600" }}>Inspection Date</th>
-                                                    <th style={{ fontWeight: "600" }}>Expiry Date</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                {result.map((item, index) => (
-                                                    <tr key={index}>
-                                                        <td>{item.ownerName}</td>
-                                                        <td>
-                                                            <span style={{
-                                                                padding: "4px 8px",
-                                                                borderRadius: "4px",
-                                                                backgroundColor: item.inspectionResult === "Pass" ? "#d4edda" : "#f8d7da",
-                                                                color: item.inspectionResult === "Pass" ? "#155724" : "#721c24",
-                                                                fontWeight: "500"
-                                                            }}>
-                                                                {item.inspectionResult}
-                                                            </span>
-                                                        </td>
-                                                        <td>{item.vehicleNo}</td>
-                                                        <td>{item.vehicleMake}</td>
-                                                        <td>{item.chassisNumber}</td>
-                                                        <td>{item.engineNumber}</td>
-                                                        <td>{item.certificateNumber}</td>
-                                                        <td>{item.inspectionDate}</td>
-                                                        <td>{item.expiryDate}</td>
-                                                    </tr>
-                                                ))}
-                                            </tbody>
-                                        </table>
+                                        {result.map((item, index) => (
+                                            <Div key={index} className="mb-4">
+                                                {/* Inspection Result Banner */}
+                                                <Div className="mb-3 text-center" style={{
+                                                    padding: "12px",
+                                                    borderRadius: "6px",
+                                                    backgroundColor: item.inspectionResult?.toUpperCase() === "PASS" ? "#d4edda" : "#f8d7da",
+                                                    border: `1px solid ${item.inspectionResult?.toUpperCase() === "PASS" ? "#c3e6cb" : "#f5c6cb"}`
+                                                }}>
+                                                    <strong style={{
+                                                        fontSize: "18px",
+                                                        color: item.inspectionResult?.toUpperCase() === "PASS" ? "#155724" : "#721c24"
+                                                    }}>
+                                                        Inspection Result: {item.inspectionResult}
+                                                    </strong>
+                                                </Div>
+
+                                                {/* Vehicle Details Table */}
+                                                <table className="table table-bordered" style={{ fontSize: "14px", backgroundColor: "#fff" }}>
+                                                    <tbody>
+                                                        <tr>
+                                                            <td style={{ fontWeight: "600", backgroundColor: "#f8f9fa", padding: "10px", width: "40%" }}>Owner Name</td>
+                                                            <td style={{ padding: "10px" }}>{item.ownerName}</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td style={{ fontWeight: "600", backgroundColor: "#f8f9fa", padding: "10px" }}>Vehicle No</td>
+                                                            <td style={{ padding: "10px", fontWeight: "700" }}>{item.vehicleNo}</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td style={{ fontWeight: "600", backgroundColor: "#f8f9fa", padding: "10px" }}>Vehicle Make</td>
+                                                            <td style={{ padding: "10px" }}>{item.vehicleMake}</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td style={{ fontWeight: "600", backgroundColor: "#f8f9fa", padding: "10px" }}>Chassis Number</td>
+                                                            <td style={{ padding: "10px" }}>{item.chassisNumber}</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td style={{ fontWeight: "600", backgroundColor: "#f8f9fa", padding: "10px" }}>Engine Number</td>
+                                                            <td style={{ padding: "10px" }}>{item.engineNumber}</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td style={{ fontWeight: "600", backgroundColor: "#f8f9fa", padding: "10px" }}>Certificate Number</td>
+                                                            <td style={{ padding: "10px" }}>{item.certificateNumber}</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td style={{ fontWeight: "600", backgroundColor: "#f8f9fa", padding: "10px" }}>Inspection Date</td>
+                                                            <td style={{ padding: "10px" }}>{item.inspectionDate ? new Date(item.inspectionDate).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }) : 'N/A'}</td>
+                                                        </tr>
+                                                        <tr style={{ backgroundColor: "#d4edda" }}>
+                                                            <td style={{ fontWeight: "700", padding: "10px", fontSize: "15px" }}>Expiry Date</td>
+                                                            <td style={{ fontWeight: "700", padding: "10px", fontSize: "15px", color: "#155724" }}>{item.expiryDate ? new Date(item.expiryDate).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }) : 'N/A'}</td>
+                                                        </tr>
+                                                    </tbody>
+                                                </table>
+                                            </Div>
+                                        ))}
                                     </Div>
                                 </Div>
                             )}
