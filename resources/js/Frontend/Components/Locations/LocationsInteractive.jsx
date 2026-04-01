@@ -8,10 +8,17 @@ import GoogleMapWithMarkers from "@/Frontend/Components/Contact/GoogleMapWithMar
 
 const DEFAULT_CENTER = { lat: 31.99879, lng: 72.720796 };
 
-export default function LocationsInteractive({ data, locations }) {
+export default function LocationsInteractive({ data, locations: rawLocations }) {
     const { google_maps_api_key } = usePage().props;
     const [selectedCity, setSelectedCity] = useState(null);
     const [searchTerm, setSearchTerm] = useState("");
+
+    // Sort locations alphabetically by city/name
+    const locations = useMemo(() =>
+        [...(rawLocations || [])].sort((a, b) =>
+            (a.city || a.name || '').localeCompare(b.city || b.name || '')
+        ), [rawLocations]);
+
     const [filteredLocations, setFilteredLocations] = useState(locations);
 
     // Default zoom from settings
