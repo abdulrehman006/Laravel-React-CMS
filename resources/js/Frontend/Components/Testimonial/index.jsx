@@ -47,7 +47,7 @@ export default function Testimonial({
                 </Div>
                 <Div
                     className="cs-rating_percentage"
-                    style={{ width: `${ratings * 20}%` }}
+                    style={{ width: `${Math.min(Math.max(ratings, 0), 5) * 20}%` }}
                 >
                     <svg
                         width={136}

@@ -64,9 +64,10 @@ export default function BlogComment({ blog, commnets }) {
                                                 <h6 className="name">
                                                     <a
                                                         href={
-                                                            comment.comment_author_website
+                                                            comment.comment_author_website?.startsWith('http') ? comment.comment_author_website : '#'
                                                         }
-                                                        rel="external nofollow ugc"
+                                                        rel="external nofollow ugc noopener noreferrer"
+                                                        target="_blank"
                                                         className="url"
                                                     >
                                                         {

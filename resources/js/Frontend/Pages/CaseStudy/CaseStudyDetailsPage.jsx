@@ -268,20 +268,19 @@ export default function CaseStudyDetailsPage() {
             {caseStudy.sections.map((section) => {
                 const SectionComponent = sectionComponents[section.id];
                 return (
-                    <>
+                    <Fragment key={section.id}>
                         <Spacing
                             lg={section.spacing.top.lg ?? 0}
                             md={section.spacing.top.md ?? 0}
                         />
                         <SectionComponent
-                            key={section.id}
                             sections_data={caseStudy.sections_data}
                         />
                         <Spacing
                             lg={section.spacing.bottom.lg ?? 0}
                             md={section.spacing.bottom.md ?? 0}
                         />
-                    </>
+                    </Fragment>
                 );
             })}
         </FrontendLayout>

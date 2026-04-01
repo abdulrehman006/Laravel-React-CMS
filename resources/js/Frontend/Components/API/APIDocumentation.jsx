@@ -290,10 +290,18 @@ export default function APIDocumentation({ data }) {
                                                                             <td style={{ fontWeight: "700", padding: "10px" }}>Total Fee Payable</td>
                                                                             <td style={{ fontWeight: "700", padding: "10px", textAlign: "right" }}>{renewalItem.feeWithGST}</td>
                                                                         </tr>
-                                                                        <tr>
-                                                                            <td style={{ padding: "10px" }}>Expiry Date</td>
-                                                                            <td style={{ padding: "10px", textAlign: "right" }}>05-Dec-25</td>
-                                                                        </tr>
+                                                                        {renewalItem.expiryDate && (
+                                                                            <tr>
+                                                                                <td style={{ padding: "10px" }}>Expiry Date</td>
+                                                                                <td style={{ padding: "10px", textAlign: "right" }}>
+                                                                                    {new Date(renewalItem.expiryDate).toLocaleDateString('en-GB', {
+                                                                                        day: '2-digit',
+                                                                                        month: 'short',
+                                                                                        year: '2-digit'
+                                                                                    })}
+                                                                                </td>
+                                                                            </tr>
+                                                                        )}
                                                                     </>
                                                                 );
                                                             })()}

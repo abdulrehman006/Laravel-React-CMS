@@ -1,3 +1,4 @@
+import React, { Fragment } from "react";
 import Spacing from "@/Frontend/Components/Spacing";
 import Div from "@/Frontend/Components/Div";
 import SectionHeading from "@/Frontend/Components/SectionHeading";
@@ -22,7 +23,7 @@ export default function Service({service_data}){
                         <Div className="col-xl-8">
                             <Div className="row">
                                 {services.map((item, index) => (
-                                    <>
+                                    <Fragment key={`card_${index}`}>
                                         {index === 0 && (
                                             <Div className='col-lg-3 col-sm-6 cs-hidden_mobile'></Div>
                                         )}
@@ -36,7 +37,7 @@ export default function Service({service_data}){
                                                 <Div className='col-lg-3 col-sm-6 cs-hidden_mobile'></Div>
                                             </>
                                         )}
-                                        <Div key={`card_${index}`} className='col-lg-3 col-sm-6'>
+                                        <Div className='col-lg-3 col-sm-6'>
                                             <Card
                                                 title={item.title}
                                                 link={item.action_url}
@@ -45,7 +46,7 @@ export default function Service({service_data}){
                                             />
                                             <Spacing lg='0' md='30' />
                                         </Div>
-                                    </>
+                                    </Fragment>
                                 ))}
                             </Div>
                         </Div>
