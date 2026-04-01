@@ -89,7 +89,7 @@ Route::get('/proxy/vehicle-verification', function (Request $request) {
     // Validate input
     $regNo     = trim($request->query('regNo', ''));
     $chassisNo = trim($request->query('chassisNo', ''));
-    $vir       = trim($request->query('vir', ''));
+    $vir       = trim($request->query('VIR', $request->query('vir', '')));
 
     if (empty($regNo) && empty($chassisNo) && empty($vir)) {
         return response()->json([
@@ -101,7 +101,7 @@ Route::get('/proxy/vehicle-verification', function (Request $request) {
     $queryParams = array_filter([
         'regNo'     => $regNo,
         'chassisNo' => $chassisNo,
-        'vir'       => $vir,
+        'VIR'       => $vir,
     ]);
 
     $client = new Client(['timeout' => 10]);
