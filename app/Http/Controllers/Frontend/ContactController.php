@@ -17,12 +17,8 @@ class ContactController extends Controller
      */
     public function submitContact(ContactSubmitRequest $request, ContactRepository $repository): RedirectResponse
     {
-        // Store in database
-        $repository->submitContact($request);
-
-        // Get ticket ID for the email
-        $latestContact = \App\Models\Contact::latest()->first();
-        $ticketId = $latestContact ? $latestContact->ticket_id : 'N/A';
+        // Store in database and get the created contact with ticket_id
+        $contact = $repository->submitContact($request);
 
         // Prepare email data (use 'user_message' to avoid Laravel Mail $message conflict)
         $emailData = [
@@ -31,24 +27,26 @@ class ContactController extends Controller
             'project_type' => $request->project_type,
             'mobile_number' => $request->mobile_number,
             'user_message' => $request->message,
-            'ticket_id' => $ticketId,
+            'ticket_id' => $contact->ticket_id,
         ];
 
         // Get recipient email: Customize > Contact Info → fallback to .env
         $recipientEmail = $this->getRecipientEmail();
 
-        if ($recipientEmail) {
-            try {
-                Mail::send('emails.contact', $emailData, function ($mail) use ($emailData, $recipientEmail) {
-                    $mail->to($recipientEmail)
-                        ->subject('New Contact Message - #' . $emailData['ticket_id'] . ' - ' . $emailData['name'])
-                        ->replyTo($emailData['email'], $emailData['name']);
-                });
-            } catch (\Exception $e) {
-                Log::error('Contact email failed: ' . $e->getMessage());
-            }
-        } else {
-            Log::warning('Contact email not sent: No recipient email configured in Customize > Contact Info or .env MAIL_FROM_ADDRESS');
+        if (!$recipientEmail) {
+            Log::error('Contact email not sent: No recipient email configured in Customize > Contact Info or .env MAIL_FROM_ADDRESS');
+            return back()->with('error', 'Your message was saved but we could not send the notification. Please try again later or contact us directly.');
+        }
+
+        try {
+            Mail::send('emails.contact', $emailData, function ($mail) use ($emailData, $recipientEmail) {
+                $mail->to($recipientEmail)
+                    ->subject('New Contact Message - #' . $emailData['ticket_id'] . ' - ' . $emailData['name'])
+                    ->replyTo($emailData['email'], $emailData['name']);
+            });
+        } catch (\Exception $e) {
+            Log::error('Contact email failed: ' . $e->getMessage());
+            return back()->with('error', 'Your message was saved but we could not send the notification. Please try again later or contact us directly.');
         }
 
         return back()->with('success', 'Message successfully sent.');

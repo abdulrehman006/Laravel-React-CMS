@@ -26,7 +26,7 @@ class ContactSubmitRequest extends FormRequest
             'email' => 'required|email|max:100',
             'project_type' => 'required|max:100',
             'mobile_number' => 'required|max:20',
-            'message' => 'required',
+            'message' => 'required|max:2000',
         ];
     }
 }

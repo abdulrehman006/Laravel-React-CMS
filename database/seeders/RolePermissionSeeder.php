@@ -70,6 +70,10 @@ class RolePermissionSeeder extends Seeder
             'title' => 'Manage testimonials',
             'action' => ['index' => 1, 'delete' => 1, 'edit' => 1, 'create' => 1],
         ],
+        'locations' => [
+            'title' => 'Manage locations',
+            'action' => ['index' => 1, 'delete' => 1, 'edit' => 1, 'create' => 1],
+        ],
         'pages' => [
             'title' => 'Manage pages',
             'action' => ['index' => 1, 'delete' => 1, 'edit' => 1, 'create' => 1, 'show' => 1],

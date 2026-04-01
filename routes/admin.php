@@ -214,13 +214,13 @@ Route::group(['prefix' => 'testimonials', 'as' => 'testimonials.'], function () 
 
 // locations routes
 Route::group(['prefix' => 'locations', 'as' => 'locations.'], function () {
-    Route::get('/', [LocationController::class, 'index'])->name('index');
-    Route::get('/create', [LocationController::class, 'create'])->name('create');
-    Route::get('/edit/{location}', [LocationController::class, 'edit'])->name('edit');
-    Route::post('/', [LocationController::class, 'store'])->name('store');
-    Route::put('/update/{location}', [LocationController::class, 'update'])->name('update');
-    Route::delete('/{location}', [LocationController::class, 'destroy'])->name('destroy');
-    Route::delete('/bulk/delete', [LocationController::class, 'bulkDelete'])->name('bulk.delete');
+    Route::get('/', [LocationController::class, 'index'])->name('index')->can('locations.index');
+    Route::get('/create', [LocationController::class, 'create'])->name('create')->can('locations.create');
+    Route::get('/edit/{location}', [LocationController::class, 'edit'])->name('edit')->can('locations.edit');
+    Route::post('/', [LocationController::class, 'store'])->name('store')->can('locations.create');
+    Route::put('/update/{location}', [LocationController::class, 'update'])->name('update')->can('locations.edit');
+    Route::delete('/{location}', [LocationController::class, 'destroy'])->name('destroy')->can('locations.delete');
+    Route::delete('/bulk/delete', [LocationController::class, 'bulkDelete'])->name('bulk.delete')->can('locations.delete');
 });
 
 // users route

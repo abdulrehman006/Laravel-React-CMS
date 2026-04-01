@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Location;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
 
 class LocationController extends Controller
@@ -66,11 +67,16 @@ class LocationController extends Controller
             'url' => 'nullable|string|max:255',
             'latitude' => 'nullable|numeric|between:-90,90',
             'longitude' => 'nullable|numeric|between:-180,180',
-            'image' => 'nullable|string',
-            'description' => 'nullable|string',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:2048',
+            'description' => 'nullable|string|max:2000',
             'is_active' => 'boolean',
-            'sort_order' => 'integer',
+            'sort_order' => 'integer|min:0',
         ]);
+
+        // Handle image upload
+        if ($request->hasFile('image')) {
+            $validated['image'] = $request->file('image')->store('locations');
+        }
 
         try {
             Location::create($validated);
@@ -120,11 +126,21 @@ class LocationController extends Controller
             'url' => 'nullable|string|max:255',
             'latitude' => 'nullable|numeric|between:-90,90',
             'longitude' => 'nullable|numeric|between:-180,180',
-            'image' => 'nullable|string',
-            'description' => 'nullable|string',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:2048',
+            'description' => 'nullable|string|max:2000',
             'is_active' => 'boolean',
-            'sort_order' => 'integer',
+            'sort_order' => 'integer|min:0',
         ]);
+
+        // Handle image upload — delete old image if new one uploaded
+        if ($request->hasFile('image')) {
+            if ($location->image) {
+                Storage::delete($location->image);
+            }
+            $validated['image'] = $request->file('image')->store('locations');
+        } else {
+            unset($validated['image']); // Keep existing image
+        }
 
         try {
             $location->update($validated);
@@ -142,6 +158,9 @@ class LocationController extends Controller
      */
     public function destroy(Location $location)
     {
+        if ($location->image) {
+            Storage::delete($location->image);
+        }
         $location->delete();
 
         return redirect()->route('admin.locations.index')
@@ -158,6 +177,13 @@ class LocationController extends Controller
             'ids.*' => 'exists:locations,id',
         ]);
 
+        // Delete associated images before removing locations
+        $locations = Location::whereIn('id', $request->ids)->get();
+        foreach ($locations as $loc) {
+            if ($loc->image) {
+                Storage::delete($loc->image);
+            }
+        }
         Location::whereIn('id', $request->ids)->delete();
 
         return redirect()->route('admin.locations.index')

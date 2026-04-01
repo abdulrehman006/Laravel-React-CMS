@@ -17,17 +17,17 @@ class AppointmentController extends Controller
     public function send(Request $request): RedirectResponse
     {
         $request->validate([
-            'vehicle_type' => 'required|string',
-            'date' => 'required|date',
-            'company_type' => 'required|in:individual,local,corporate',
-            'company_name' => 'required_if:company_type,corporate|nullable|string',
+            'vehicle_type' => 'required|string|max:50',
+            'date' => 'required|date|after_or_equal:today',
+            'company_type' => 'required|in:individual,corporate',
+            'company_name' => 'required_if:company_type,corporate|nullable|string|max:150',
             'location_id' => 'required|exists:locations,id',
             'no_of_vehicles' => 'required|integer|min:1|max:10',
-            'vehicle_registration' => 'required|string',
+            'vehicle_registration' => 'required|string|max:20',
             'name' => 'required|string|max:100',
             'phone' => 'required|string|max:20',
             'email' => 'required|email|max:100',
-            'message' => 'required|string',
+            'message' => 'required|string|max:2000',
         ], [
             'company_type.required' => 'Please select a company type',
             'company_type.in' => 'Invalid company type selected',
@@ -36,6 +36,8 @@ class AppointmentController extends Controller
             'location_id.exists' => 'The selected station is invalid',
             'no_of_vehicles.min' => 'Number of vehicles must be at least 1',
             'no_of_vehicles.max' => 'Number of vehicles cannot exceed 10',
+            'date.after_or_equal' => 'Appointment date cannot be in the past',
+            'message.max' => 'Message cannot exceed 2000 characters',
         ]);
 
         $data = $request->all();
@@ -53,7 +55,7 @@ class AppointmentController extends Controller
 
         if (!$recipientEmail) {
             Log::error('Appointment email not sent: No recipient email configured in Customize > Contact Info or .env MAIL_FROM_ADDRESS');
-            return back()->with('success', 'Appointment submitted successfully! We will contact you soon.');
+            return back()->with('error', 'Unable to process your appointment at this time. Please try again later or contact us directly.');
         }
 
         try {
@@ -64,6 +66,7 @@ class AppointmentController extends Controller
             });
         } catch (\Exception $e) {
             Log::error('Appointment email failed: ' . $e->getMessage());
+            return back()->with('error', 'Unable to send your appointment request. Please try again later or contact us directly.');
         }
 
         return back()->with('success', 'Appointment submitted successfully! We will contact you soon.');

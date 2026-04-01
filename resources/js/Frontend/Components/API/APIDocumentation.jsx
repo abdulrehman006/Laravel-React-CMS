@@ -181,66 +181,114 @@ export default function APIDocumentation({ data }) {
                                     </Div>
 
                                     <Div style={{ overflowX: "auto" }}>
-                                        {Array.isArray(response) && response.length > 0 ? (
+                                        {Array.isArray(response) && response.length > 0 && response[0].totalFee !== null ? (
                                             // Display first item from array
                                             <table className="table table-striped table-bordered" style={{ fontSize: "14px" }}>
                                                 <tbody>
-                                                    <tr>
-                                                        <td style={{ fontWeight: "600", backgroundColor: "#f8f9fa", width: "40%" }}>Vehicle Category</td>
-                                                        <td>{response[0].vehicleCategory}</td>
-                                                    </tr>
                                                     <tr>
                                                         <td style={{ fontWeight: "600", backgroundColor: "#f8f9fa" }}>Fee Type</td>
                                                         <td>{response[0].feeType}</td>
                                                     </tr>
                                                     <tr>
-                                                        <td style={{ fontWeight: "600", backgroundColor: "#f8f9fa" }}>Base Fee</td>
-                                                        <td>Rs. {response[0].fee}</td>
+                                                        <td style={{ fontWeight: "600", backgroundColor: "#f8f9fa" }}>Test Fee</td>
+                                                        <td>{response[0].testFee}</td>
                                                     </tr>
                                                     <tr>
-                                                        <td style={{ fontWeight: "600", backgroundColor: "#f8f9fa" }}>GST Amount</td>
-                                                        <td>Rs. {response[0].gst}</td>
-                                                    </tr>
-                                                    <tr style={{ backgroundColor: "#fff3cd" }}>
-                                                        <td style={{ fontWeight: "600" }}>Fee with GST</td>
-                                                        <td style={{ fontWeight: "600" }}>Rs. {response[0].feeWithGST}</td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td style={{ fontWeight: "600", backgroundColor: "#f8f9fa" }}>1st Retest</td>
-                                                        <td>{response[0].firstRetest}</td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td style={{ fontWeight: "600", backgroundColor: "#f8f9fa" }}>2nd Retest</td>
-                                                        <td>Rs. {response[0].secondRetest} (Rs. {response[0].secondRetestWithGST} with GST)</td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td style={{ fontWeight: "600", backgroundColor: "#f8f9fa" }}>3rd Retest</td>
-                                                        <td>Rs. {response[0].thirdRetest} (Rs. {response[0].thirdRetestWithGST} with GST)</td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td style={{ fontWeight: "600", backgroundColor: "#f8f9fa" }}>Off-Road Inspection</td>
-                                                        <td>Rs. {response[0].offRoadInspection} (Rs. {response[0].offRoadInspectionWithGST} with GST)</td>
+                                                        <td style={{ fontWeight: "600", backgroundColor: "#f8f9fa" }}>GST</td>
+                                                        <td>{response[0].gst}</td>
                                                     </tr>
                                                     <tr>
                                                         <td style={{ fontWeight: "600", backgroundColor: "#f8f9fa" }}>Late Fee</td>
-                                                        <td>Rs. {response[0].lateFee}</td>
+                                                        <td>{response[0].lateFee}</td>
                                                     </tr>
                                                     <tr style={{ backgroundColor: "#d4edda" }}>
-                                                        <td style={{ fontWeight: "700", fontSize: "16px" }}>Total Fee</td>
-                                                        <td style={{ fontWeight: "700", fontSize: "16px", color: "#155724" }}>Rs. {response[0].totalFee}</td>
+                                                        <td style={{ fontWeight: "700", fontSize: "16px" }}>Total Fee Payable</td>
+                                                        <td style={{ fontWeight: "700", fontSize: "16px", color: "#155724" }}>{response[0].totalFee}</td>
                                                     </tr>
                                                     {response[0].expiryDate && (
                                                         <tr>
                                                             <td style={{ fontWeight: "600", backgroundColor: "#f8f9fa" }}>Expiry Date</td>
-                                                            <td>{new Date(response[0].expiryDate).toLocaleDateString('en-US', {
-                                                                year: 'numeric',
-                                                                month: 'long',
-                                                                day: 'numeric'
+                                                            <td>{new Date(response[0].expiryDate).toLocaleDateString('en-GB', {
+                                                                day: '2-digit',
+                                                                month: 'short',
+                                                                year: '2-digit'
                                                             })}</td>
                                                         </tr>
                                                     )}
                                                 </tbody>
                                             </table>
+                                        ) : Array.isArray(response) && response.length > 0 && response[0].totalFee === null ? (
+                                            // NOT MATCHED: Display general fee structure tables
+                                            <Div>
+                                                {/* First Time VICS Inspection Fee Table */}
+                                                <Div className="mb-4">
+                                                    <h6 style={{ fontWeight: "600", marginBottom: "15px", color: "#333" }}>First Time VICS Inspection Fee</h6>
+                                                    <table className="table table-bordered" style={{ fontSize: "14px", backgroundColor: "#f8f9fa" }}>
+                                                        <thead>
+                                                            <tr style={{ backgroundColor: "#c0c0c0" }}>
+                                                                <th style={{ fontWeight: "600", padding: "10px" }}>Vehicle Category</th>
+                                                                <th style={{ fontWeight: "600", padding: "10px" }}>Fee Type</th>
+                                                                <th style={{ fontWeight: "600", padding: "10px", textAlign: "right" }}>Fee</th>
+                                                                <th style={{ fontWeight: "600", padding: "10px", textAlign: "right" }}>FeeWithGST</th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                            {response
+                                                                .filter(item => item.feeType === "First Time VICS Inspection Fee")
+                                                                .map((item, index) => (
+                                                                    <tr key={index} style={{ backgroundColor: index % 2 === 0 ? "#ffffff" : "#f8f9fa" }}>
+                                                                        <td style={{ padding: "10px" }}>{item.vehicleCategory}</td>
+                                                                        <td style={{ padding: "10px" }}>{item.feeType}</td>
+                                                                        <td style={{ padding: "10px", textAlign: "right" }}>{item.fee}</td>
+                                                                        <td style={{ padding: "10px", textAlign: "right" }}>{item.feeWithGST}</td>
+                                                                    </tr>
+                                                                ))}
+                                                        </tbody>
+                                                    </table>
+                                                </Div>
+
+                                                {/* Renewal Fee Table */}
+                                                <Div>
+                                                    <h6 style={{ fontWeight: "600", marginBottom: "15px", color: "#333" }}>Renewal Fee (Every 06 Month)</h6>
+                                                    <table className="table table-bordered" style={{ fontSize: "14px", backgroundColor: "#ffffff" }}>
+                                                        <tbody>
+                                                            <tr style={{ backgroundColor: "#f8f9fa" }}>
+                                                                <td style={{ fontWeight: "600", padding: "10px", width: "50%" }}>Fee Type</td>
+                                                                <td style={{ fontWeight: "600", padding: "10px", textAlign: "right" }}>Renewal Fee (Every 06 Month)</td>
+                                                            </tr>
+                                                            {(() => {
+                                                                const renewalItem = response.find(item => item.feeType === "Renewal Fee (Every 06 Month)");
+                                                                if (!renewalItem) return null;
+
+                                                                return (
+                                                                    <>
+                                                                        <tr>
+                                                                            <td style={{ padding: "10px" }}>Test Fee</td>
+                                                                            <td style={{ padding: "10px", textAlign: "right" }}>{renewalItem.fee}</td>
+                                                                        </tr>
+                                                                        <tr>
+                                                                            <td style={{ padding: "10px" }}>Late Fee</td>
+                                                                            <td style={{ padding: "10px", textAlign: "right" }}>0</td>
+                                                                        </tr>
+                                                                        <tr>
+                                                                            <td style={{ padding: "10px" }}>GST</td>
+                                                                            <td style={{ padding: "10px", textAlign: "right" }}>{renewalItem.feeWithGST - renewalItem.fee}</td>
+                                                                        </tr>
+                                                                        <tr style={{ backgroundColor: "#d4edda" }}>
+                                                                            <td style={{ fontWeight: "700", padding: "10px" }}>Total Fee Payable</td>
+                                                                            <td style={{ fontWeight: "700", padding: "10px", textAlign: "right" }}>{renewalItem.feeWithGST}</td>
+                                                                        </tr>
+                                                                        <tr>
+                                                                            <td style={{ padding: "10px" }}>Expiry Date</td>
+                                                                            <td style={{ padding: "10px", textAlign: "right" }}>05-Dec-25</td>
+                                                                        </tr>
+                                                                    </>
+                                                                );
+                                                            })()}
+                                                        </tbody>
+                                                    </table>
+                                                </Div>
+                                            </Div>
                                         ) : null}
                                     </Div>
                                 </Div>

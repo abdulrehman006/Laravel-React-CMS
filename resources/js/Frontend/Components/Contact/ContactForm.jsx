@@ -28,25 +28,25 @@ export default function ContactForm(){
         <form onSubmit={handleSubmit} className="row">
             <Div className="col-sm-6">
                 <label className="cs-primary_color">Full Name*</label>
-                <input onChange={(e) => setData('name', e.target.value)} value={data.name} type="text" className="cs-form_field" />
+                <input onChange={(e) => setData('name', e.target.value)} value={data.name} type="text" className="cs-form_field" maxLength={100} required />
                 {errors.name && <span className="text-danger">{errors.name}</span>}
                 <Spacing lg="20" md="20" />
             </Div>
             <Div className="col-sm-6">
                 <label className="cs-primary_color">Email*</label>
-                <input onChange={(e) => setData('email', e.target.value)} value={data.email}  type="text" className="cs-form_field" />
+                <input onChange={(e) => setData('email', e.target.value)} value={data.email} type="email" className="cs-form_field" maxLength={100} required />
                 {errors.email && <span className="text-danger">{errors.email}</span>}
                 <Spacing lg="20" md="20" />
             </Div>
             <Div className="col-sm-6">
                 <label className="cs-primary_color">Project Type*</label>
-                <input onChange={(e) => setData('project_type', e.target.value)} value={data.project_type}  type="text" className="cs-form_field" />
+                <input onChange={(e) => setData('project_type', e.target.value)} value={data.project_type} type="text" className="cs-form_field" maxLength={100} required />
                 {errors.project_type && <span className="text-danger">{errors.project_type}</span>}
                 <Spacing lg="20" md="20" />
             </Div>
             <Div className="col-sm-6">
                 <label className="cs-primary_color">Mobile*</label>
-                <input type="text" onChange={(e) => setData('mobile_number', e.target.value)} value={data.mobile_number}  className="cs-form_field" />
+                <input type="tel" onChange={(e) => setData('mobile_number', e.target.value)} value={data.mobile_number} className="cs-form_field" maxLength={20} required />
                 {errors.mobile_number && <span className="text-danger">{errors.mobile_number}</span>}
                 <Spacing lg="20" md="20" />
             </Div>
@@ -57,6 +57,8 @@ export default function ContactForm(){
                     rows="7"
                     className="cs-form_field"
                     onChange={(e) => setData('message', e.target.value)} value={data.message}
+                    maxLength={2000}
+                    required
                 ></textarea>
                 {errors.message && <span className="text-danger">{errors.message}</span>}
                 <Spacing lg="25" md="25" />
@@ -67,7 +69,8 @@ export default function ContactForm(){
                     <Icon icon="bi:arrow-right" />
                 </button>
             </Div>
-            {wasSuccessful && <span className="text-success mt-2">{flash.success}</span>}
+            {flash?.error && <span className="text-danger mt-2 d-block">{flash.error}</span>}
+            {wasSuccessful && flash?.success && <span className="text-success mt-2 d-block">{flash.success}</span>}
         </form>
     )
 }
