@@ -137,27 +137,19 @@ export default function LocationsInteractive({ data, locations: rawLocations }) 
     }
 
     return (
-        <Div className="container-fluid" style={{ padding: "0 30px" }}>
-            <Div className="container">
-                <Div className="text-center">
-                    <SectionHeading title={data.title} subtitle={data.sub_title} variant="cs-style1" />
-                    {data.description && (
-                        <>
-                            <Div className="cs-height_20 cs-height_lg_20" />
-                            <p className="mb-4">{data.description}</p>
-                        </>
-                    )}
-                </Div>
+        <Div className="container" style={{ padding: "40px 15px" }}>
+            <Div className="text-center mb-5">
+                <SectionHeading title={data.title} subtitle={data.sub_title} variant="cs-style1" />
+                {data.description && (
+                    <p style={{ color: '#666', marginTop: '15px', maxWidth: '600px', marginLeft: 'auto', marginRight: 'auto' }}>{data.description}</p>
+                )}
             </Div>
 
-            <Div className="cs-height_50 cs-height_lg_30" />
-
             {/* Main Content: Conditional View Rendering */}
-            <Div className="container">
-                {viewMode === 'map' ? (
-                    <Div className="row">
-                        {/* Left Side - City List */}
-                        <Div className="col-lg-4">
+            {viewMode === 'map' ? (
+                <Div className="row" style={{ background: '#fff', borderRadius: '12px', boxShadow: '0 2px 20px rgba(0,0,0,0.08)', overflow: 'hidden' }}>
+                    {/* Left Side - City List */}
+                    <Div className="col-lg-4" style={{ padding: '20px', borderRight: '1px solid #f0f0f0' }}>
                         {/* Search Bar - conditional based on settings */}
                         {data.enable_search !== false && (
                             <Div className="mb-3">
@@ -208,7 +200,15 @@ export default function LocationsInteractive({ data, locations: rawLocations }) 
                             </Div>
                         )}
 
-                        <div style={{ maxHeight: '500px', overflowY: 'auto' }}>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '10px' }}>
+                            <h6 style={{ margin: 0, fontWeight: '600', color: '#333', fontSize: '15px' }}>
+                                Select Location
+                            </h6>
+                            <span style={{ backgroundColor: '#DAA520', color: '#fff', padding: '2px 10px', borderRadius: '12px', fontSize: '12px', fontWeight: '600' }}>
+                                {filteredLocations.length}
+                            </span>
+                        </div>
+                        <div style={{ maxHeight: '450px', overflowY: 'auto', paddingRight: '5px' }} className="cstm-map-marker-scroll">
                             <ul style={{ listStyle: 'none', padding: 0 }} className="cstm-map-marker">
                                 {(() => {
                                     const citiesMap = new Map();
@@ -261,27 +261,28 @@ export default function LocationsInteractive({ data, locations: rawLocations }) 
                         <button
                             onClick={handleReset}
                             style={{
-                                marginTop: '20px',
-                                padding: '10px 20px',
-                                backgroundColor: '#DAA520',
-                                color: 'white',
+                                marginTop: '15px',
+                                padding: '12px 20px',
+                                backgroundColor: selectedCity ? '#DAA520' : '#e0e0e0',
+                                color: selectedCity ? 'white' : '#999',
                                 border: 'none',
-                                borderRadius: '6px',
-                                cursor: 'pointer',
-                                fontWeight: '500',
+                                borderRadius: '8px',
+                                cursor: selectedCity ? 'pointer' : 'default',
+                                fontWeight: '600',
+                                fontSize: '14px',
                                 width: '100%',
-                                opacity: !selectedCity ? '0.6' : '1',
-                                transition: 'opacity 0.3s ease'
+                                transition: 'all 0.3s ease',
+                                letterSpacing: '0.5px'
                             }}
                             disabled={!selectedCity}
                         >
-                            Show All Locations
+                            {selectedCity ? '← Show All Locations' : 'All Locations Shown'}
                         </button>
                     </Div>
 
                     {/* Right Side - Map */}
-                    <Div className="col-lg-8">
-                        <div style={{ height: '600px' }}>
+                    <Div className="col-lg-8" style={{ padding: 0 }}>
+                        <div style={{ height: '600px', borderRadius: '0 12px 12px 0', overflow: 'hidden' }}>
                             <GoogleMapWithMarkers
                                 markers={visibleMarkers}
                                 center={mapCenter}
@@ -292,7 +293,7 @@ export default function LocationsInteractive({ data, locations: rawLocations }) 
                         </div>
                     </Div>
                 </Div>
-                ) : viewMode === 'grid' ? (
+            ) : viewMode === 'grid' ? (
                     <Div className="row">
                         {filteredLocations.map((location, index) => (
                             <Div key={index} className="col-lg-4 col-md-6 mb-4">
@@ -390,29 +391,35 @@ export default function LocationsInteractive({ data, locations: rawLocations }) 
                             )}
                         </Div>
                     </Div>
-                )}
-            </Div>
+            )}
 
             <style>{`
                 .cstm-map-marker li:hover {
-                    background-color: #f0f0f0 !important;
+                    background-color: #fdf8ec !important;
+                    border-color: #DAA520 !important;
                 }
                 .cstm-map-marker li span {
                     display: block;
                 }
-                ::-webkit-scrollbar {
-                    width: 8px;
+                .cstm-map-marker li {
+                    transition: all 0.25s ease;
                 }
-                ::-webkit-scrollbar-track {
-                    background: #f1f1f1;
+                .cstm-map-marker::-webkit-scrollbar {
+                    width: 6px;
+                }
+                .cstm-map-marker::-webkit-scrollbar-track {
+                    background: #f8f8f8;
                     border-radius: 10px;
                 }
-                ::-webkit-scrollbar-thumb {
-                    background: #888;
+                .cstm-map-marker::-webkit-scrollbar-thumb {
+                    background: #DAA520;
                     border-radius: 10px;
                 }
-                ::-webkit-scrollbar-thumb:hover {
-                    background: #555;
+                .cstm-map-marker::-webkit-scrollbar-thumb:hover {
+                    background: #B8860B;
+                }
+                @media (max-width: 991px) {
+                    .cstm-map-marker { max-height: 300px !important; }
                 }
             `}</style>
         </Div>
