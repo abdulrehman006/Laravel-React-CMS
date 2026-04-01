@@ -466,7 +466,7 @@ export default function Create() {
 
     // handle publish
     const handlePublish = () => {
-        router.put(route("admin.pages.update", pageData), page);
+        router.post(route("admin.pages.update", pageData), { _method: 'put', ...page });
     };
 
     // update section to state
