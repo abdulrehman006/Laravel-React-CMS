@@ -184,11 +184,12 @@ Route::get('/clear-all-cache', function() {
 Route::get('/proxy/fee-structure', function (Request $request) {
     $regNo = $request->query('regNo');
     $chassisNo = $request->query('chassisNo');
+    $vir = $request->query('VIR');
 
     // Check if at least one parameter is provided
-    if (empty($regNo) && empty($chassisNo)) {
+    if (empty($regNo) && empty($chassisNo) && empty($vir)) {
         return response()->json([
-            'message' => 'Either registration number or chassis number is required.'
+            'message' => 'Please enter Vehicle Reg. No, Chassis No, or VIR.'
         ], 400);
     }
 
@@ -197,11 +198,13 @@ Route::get('/proxy/fee-structure', function (Request $request) {
     try {
         // Determine which parameter to use and normalize it
         $queryParams = [];
-       if (!empty($regNo)) {
-    $queryParams['regNo'] = trim($regNo); // Keep dashes intact
-} else {
-    $queryParams['chassisNo'] = trim($chassisNo);
-}
+        if (!empty($regNo)) {
+            $queryParams['regNo'] = trim($regNo);
+        } elseif (!empty($vir)) {
+            $queryParams['VIR'] = trim($vir);
+        } else {
+            $queryParams['chassisNo'] = trim($chassisNo);
+        }
 
         // Encode query params with %20 for spaces
         $queryString = http_build_query($queryParams, '', '&', PHP_QUERY_RFC3986);
@@ -214,7 +217,7 @@ Route::get('/proxy/fee-structure', function (Request $request) {
 
         if (empty($responseBody) || json_decode($responseBody) === []) {
             return response()->json([
-                'message' => 'No data found for the provided ' . (!empty($regNo) ? 'registration number' : 'chassis number') . '.'
+                'message' => 'No data found for the provided ' . (!empty($regNo) ? 'registration number' : (!empty($vir) ? 'VIR number' : 'chassis number')) . '.'
             ], 404);
         }
 
@@ -234,13 +237,13 @@ Route::get('/proxy/fee-structure', function (Request $request) {
 
             if ($statusCode === 404) {
                 return response()->json([
-                    'message' => 'No fee data found for the provided ' . (!empty($regNo) ? 'registration number' : 'chassis number') . '.'
+                    'message' => 'No fee data found for the provided ' . (!empty($regNo) ? 'registration number' : (!empty($vir) ? 'VIR number' : 'chassis number')) . '.'
                 ], 404);
             }
 
             if ($statusCode === 400) {
                 return response()->json([
-                    'message' => 'Invalid ' . (!empty($regNo) ? 'registration number' : 'chassis number') . '. Please check the format and try again.'
+                    'message' => 'Invalid ' . (!empty($regNo) ? 'registration number' : (!empty($vir) ? 'VIR number' : 'chassis number')) . '. Please check the format and try again.'
                 ], 400);
             }
 

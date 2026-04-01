@@ -18,7 +18,7 @@ class FeeCalculatorController extends Controller
         try {
             // Validate input
             $request->validate([
-                'searchType' => 'required|in:regNo,chassisNo',
+                'searchType' => 'required|in:regNo,chassisNo,VIR',
                 'searchValue' => 'required|string|max:255',
             ]);
 
@@ -63,7 +63,7 @@ class FeeCalculatorController extends Controller
                     return response()->json([
                         'error' => 'No data found',
                         'message' => 'No fee structure found for the provided ' .
-                                   ($searchType === 'regNo' ? 'registration number' : 'chassis number') . '.'
+                                   ($searchType === 'regNo' ? 'registration number' : ($searchType === 'VIR' ? 'VIR number' : 'chassis number')) . '.'
                     ], 404);
                 }
 
@@ -77,14 +77,14 @@ class FeeCalculatorController extends Controller
                 return response()->json([
                     'error' => 'Not found',
                     'message' => 'No fee data found for the provided ' .
-                               ($searchType === 'regNo' ? 'registration number' : 'chassis number') . '.'
+                               ($searchType === 'regNo' ? 'registration number' : ($searchType === 'VIR' ? 'VIR number' : 'chassis number')) . '.'
                 ], 404);
             }
 
             if ($statusCode === 400) {
                 return response()->json([
                     'error' => 'Bad request',
-                    'message' => 'Invalid ' . ($searchType === 'regNo' ? 'registration number' : 'chassis number') .
+                    'message' => 'Invalid ' . ($searchType === 'regNo' ? 'registration number' : ($searchType === 'VIR' ? 'VIR number' : 'chassis number')) .
                                '. Please check the format and try again.'
                 ], 400);
             }
