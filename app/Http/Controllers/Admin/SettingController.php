@@ -18,7 +18,13 @@ class SettingController extends Controller
 
     public function paymentGatewayUpdate(Request $request, SettingRepository $repository)
     {
-        $repository->updatePaymentGatewayConfigure($request->all());
+        $repository->updatePaymentGatewayConfigure($request->only([
+            'paypal_is_active', 'paypal_is_sandbox', 'paypal_client_id', 'paypal_client_secret',
+            'stripe_is_active', 'stripe_key', 'stripe_secret',
+            'sslcz_is_active', 'sslcz_is_sandbox', 'sslcz_store_id', 'sslcz_store_password',
+            'flutterwave_is_active', 'flutterwave_secret_key',
+            'razorpay_is_active', 'razorpay_key_id', 'razorpay_key_secret',
+        ]));
         return back()->with('success', 'Payment settings has been update');
     }
 
@@ -30,7 +36,9 @@ class SettingController extends Controller
 
     public function smtpUpdate(SmtpSettingUpdateRequest $request, SettingRepository $repository)
     {
-        $repository->updateEnvByKey($request->all());
+        $repository->updateEnvByKey($request->only([
+            'MAIL_HOST', 'MAIL_PORT', 'MAIL_USERNAME', 'MAIL_PASSWORD', 'MAIL_ENCRYPTION', 'MAIL_FROM_ADDRESS',
+        ]));
         return back()->with('success', 'Mail setting has been updated');
     }
 

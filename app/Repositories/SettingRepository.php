@@ -123,24 +123,27 @@ class SettingRepository
 
     private function writeEnvironmentFile($key, $value)
     {
+        // Only allow known MAIL_ keys to prevent arbitrary env manipulation
+        $allowedKeys = ['MAIL_HOST', 'MAIL_PORT', 'MAIL_USERNAME', 'MAIL_PASSWORD', 'MAIL_ENCRYPTION', 'MAIL_FROM_ADDRESS'];
+        if (!in_array($key, $allowedKeys)) {
+            return;
+        }
+
+        // Reject values containing newlines, null bytes, or control characters
+        if (preg_match('/[\r\n\x00]/', $value)) {
+            return;
+        }
+
         $path = base_path('.env');
         if (file_exists($path)) {
-            // Read the current contents of the .env file
             $contents = file_get_contents($path);
 
-            // Check if the key exists in the .env file
-            if (strpos($contents, $key) !== false) {
-                // If the value contains double quotes, handle it differently
-                if (strpos($value, '"') !== false) {
-                    $pattern = preg_quote($key.'='.env($key), '/');
-                    $replacement = $key.'='.$value;
-                    $contents = preg_replace('/'.$pattern.'/', $replacement, $contents);
-                } else {
-                    // If the value does not contain double quotes, replace normally
-                    $contents = preg_replace("/{$key}=(.*)/", "{$key}={$value}", $contents);
-                }
+            $escapedKey = preg_quote($key, '/');
+            // Always quote values and escape internal quotes
+            $safeValue = '"' . str_replace('"', '\\"', $value) . '"';
 
-                // Write the updated contents back to the .env file
+            if (preg_match("/^{$escapedKey}=/m", $contents)) {
+                $contents = preg_replace("/^{$escapedKey}=.*/m", "{$key}={$safeValue}", $contents);
                 file_put_contents($path, $contents);
             }
         }

@@ -40,6 +40,11 @@ class UserController extends Controller
      */
     public function store(UserStoreRequest $request, UserRepositories $repositories): RedirectResponse
     {
+        // Only allow role assignment if current user has role_permission
+        if (!auth()->user()->can('users.role_permission')) {
+            return back()->with('error', 'You do not have permission to assign user roles.');
+        }
+
         $repositories->store($request);
 
         return redirect()->route('admin.users.index')->with('success', 'User successfully created');
@@ -61,6 +66,11 @@ class UserController extends Controller
      */
     public function update(UserUpdateRequest $request, User $user, UserRepositories $repositories): RedirectResponse
     {
+        // Only allow role change if current user has role_permission
+        if ($request->filled('role') && !auth()->user()->can('users.role_permission')) {
+            return back()->with('error', 'You do not have permission to change user roles.');
+        }
+
         $repositories->update($user, $request);
 
         return redirect()->route('admin.users.index')->with('success', 'User successfully updated');

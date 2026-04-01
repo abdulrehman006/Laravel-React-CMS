@@ -49,6 +49,17 @@ trait ModelRepositoryTraits
         return $object;
     }
 
+    /**
+     * Sanitize sort parameters to prevent SQL injection via orderBy()
+     */
+    protected function sanitizeSort(array $sort, array $allowedColumns): array
+    {
+        return [
+            'column' => in_array($sort['column'] ?? '', $allowedColumns) ? $sort['column'] : $allowedColumns[0],
+            'order' => in_array(strtolower($sort['order'] ?? ''), ['asc', 'desc']) ? $sort['order'] : 'asc',
+        ];
+    }
+
     public function update($where, array $values = [])
     {
         if (is_array($where)) {

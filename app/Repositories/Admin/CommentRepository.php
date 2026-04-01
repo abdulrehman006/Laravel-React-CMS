@@ -33,6 +33,7 @@ class CommentRepository
         }
 
         // sort comment
+        $sort = $this->sanitizeSort($sort, ['id', 'comment_content', 'comment_author_email', 'comment_author_name', 'is_approved', 'created_at', 'updated_at']);
         if($sort['column']){
             $query->orderBy($sort['column'], $sort['order']);
         }

@@ -37,6 +37,7 @@ class ContactRepository
                 ->orWhere('email', 'LIKE', "%$search%");
         }
 
+        $sort = $this->sanitizeSort($sort, ['id', 'ticket_id', 'name', 'email', 'created_at']);
         $query->orderBy($sort['column'], $sort['order']);
 
         return $query->paginate(30)

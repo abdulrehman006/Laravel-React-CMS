@@ -38,6 +38,7 @@ class PageRepository
             $query->orWhere('title', 'like', "%$search%");
         }
 
+        $sort = $this->sanitizeSort($sort, ['id', 'title', 'created_at', 'updated_at']);
         $query->orderBy($sort['column'], $sort['order']);
 
         return $query->paginate(30)
@@ -102,6 +103,10 @@ class PageRepository
      */
     public function uploadFile(Request $request): string
     {
+        $request->validate([
+            'file' => 'required|image|mimes:jpeg,png,jpg,gif,webp|max:5120',
+        ]);
+
         return Storage::url($request->file('file')->store('pages'));
     }
 

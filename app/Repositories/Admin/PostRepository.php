@@ -60,6 +60,7 @@ class PostRepository
         }
 
         // sort post
+        $sort = $this->sanitizeSort($sort, ['id', 'title', 'published_by', 'category', 'comment_count', 'status', 'created_at', 'updated_at']);
         if (isset($sort['column'])) {
             switch ($sort['column']) {
                 case 'published_by':

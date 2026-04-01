@@ -40,6 +40,7 @@ class ServiceCategoryRepository
         }
 
         // sort category
+        $sort = $this->sanitizeSort($sort, ['id', 'title', 'created_at', 'updated_at']);
         if (isset($sort['column'])) {
             $query->orderBy($sort['column'], $sort['order']);
         }

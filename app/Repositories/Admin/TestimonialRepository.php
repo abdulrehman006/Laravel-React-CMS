@@ -39,6 +39,7 @@ class TestimonialRepository
         }
 
         // sort post
+        $sort = $this->sanitizeSort($sort, ['id', 'name', 'designation', 'created_at', 'updated_at']);
         $query->orderBy($sort['column'], $sort['order']);
 
         return $query->paginate(30)

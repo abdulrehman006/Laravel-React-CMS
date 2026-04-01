@@ -5,11 +5,13 @@ namespace App\Repositories\Admin;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator;
+use App\Repositories\Traits\ModelRepositoryTraits;
 use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;
 
 class RolePermissionRepository
 {
+    use ModelRepositoryTraits;
     /**
      * Get search result with paginate
      */
@@ -23,6 +25,7 @@ class RolePermissionRepository
         }
 
         // sort category
+        $sort = $this->sanitizeSort($sort, ['id', 'name', 'created_at', 'updated_at']);
         if (isset($sort['column'])) {
             $query->orderBy($sort['column'], $sort['order']);
         }

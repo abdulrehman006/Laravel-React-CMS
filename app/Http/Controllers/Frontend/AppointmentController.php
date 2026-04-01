@@ -40,7 +40,10 @@ class AppointmentController extends Controller
             'message.max' => 'Message cannot exceed 2000 characters',
         ]);
 
-        $data = $request->all();
+        $data = $request->only([
+            'vehicle_type', 'date', 'company_type', 'company_name', 'location_id',
+            'no_of_vehicles', 'vehicle_registration', 'name', 'phone', 'email', 'message',
+        ]);
 
         // Get location details
         $location = \App\Models\Location::find($request->location_id);

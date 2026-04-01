@@ -24,7 +24,7 @@ class Tag extends Model implements Sortable
 
     protected $appends = ['post_count'];
 
-    public $guarded = [];
+    protected $fillable = ['name', 'slug', 'type', 'order_column'];
 
     public static function getLocale()
     {

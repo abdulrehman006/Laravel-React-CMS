@@ -37,20 +37,27 @@ class CategoryRepository
             $query->where('title', 'LIKE', "%$search%");
         }
 
-        // sort category
+        // sort category — whitelist both column and direction to prevent SQL injection
         if (isset($sort['column'])) {
+            $direction = in_array(strtolower($sort['order'] ?? ''), ['asc', 'desc']) ? $sort['order'] : 'asc';
+            $allowedColumns = ['id', 'title', 'parent_category', 'post_count', 'created_at', 'updated_at'];
+
+            if (!in_array($sort['column'], $allowedColumns)) {
+                $sort['column'] = 'title';
+            }
+
             switch ($sort['column']) {
                 case 'parent_category':
                     $query->leftJoin('categories as parent', 'categories.parent_id', '=', 'parent.id')
-                        ->orderByRaw('parent.title '.$sort['order'])
+                        ->orderBy('parent.title', $direction)
                         ->select('categories.*', 'parent.title as parent_category');
                     break;
                 case 'post_count':
                     $query->withCount('posts')
-                        ->orderBy('posts_count', $sort['order']);
+                        ->orderBy('posts_count', $direction);
                     break;
                 default:
-                    $query->orderBy($sort['column'], $sort['order']);
+                    $query->orderBy($sort['column'], $direction);
                     break;
             }
         }
@@ -67,7 +74,7 @@ class CategoryRepository
      */
     public function create(Request $request): void
     {
-        $this->model->create($request->all());
+        $this->model->create($request->only(['title', 'parent_id']));
     }
 
     /**

@@ -46,6 +46,7 @@ class ServiceRepository
         }
 
         // sort post
+        $sort = $this->sanitizeSort($sort, ['id', 'title', 'category', 'created_at', 'updated_at']);
         if (isset($sort['column'])) {
             switch ($sort['column']) {
                 case 'category':

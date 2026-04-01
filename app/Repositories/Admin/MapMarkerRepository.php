@@ -3,15 +3,18 @@
 namespace App\Repositories\Admin;
 
 use App\Models\MapMarker;
+use App\Repositories\Traits\ModelRepositoryTraits;
 use Illuminate\Http\Request;
 
 class MapMarkerRepository
 {
+    use ModelRepositoryTraits;
     /**
      * Paginate and search the map markers
      */
     public function paginateSearchResult(string $search, array $sort): mixed
     {
+        $sort = $this->sanitizeSort($sort, ['id', 'title', 'created_at', 'updated_at']);
         return MapMarker::where('title', 'like', "%{$search}%")
             ->orderBy($sort['column'], $sort['order'])
             ->paginate(10); // Adjust the pagination as needed

@@ -40,6 +40,7 @@ class PaymentHistoryRepository
         }
 
         // sort payment history
+        $sort = $this->sanitizeSort($sort, ['id', 'name', 'email', 'created_at', 'updated_at']);
         if (isset($sort['column'])) {
             $query->orderBy($sort['column'], $sort['order']);
         }

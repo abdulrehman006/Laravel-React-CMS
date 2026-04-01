@@ -15,6 +15,10 @@ class EditorImageUploaderController extends Controller
      */
     public function upload(Request $request)
     {
+        $request->validate([
+            'files' => 'required|image|mimes:jpeg,png,jpg,gif,webp|max:2048',
+        ]);
+
         return Storage::url($request->file('files')->store('editor'));
     }
 }

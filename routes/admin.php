@@ -236,13 +236,13 @@ Route::group(['prefix' => 'users', 'as' => 'users.'], function () {
 
 // role permission route
 Route::group(['prefix' => 'roles-permissions', 'as' => 'roles.permissions.'], function () {
-    Route::get('/', [RolePermissionController::class, 'index'])->name('index');
-    Route::get('/create', [RolePermissionController::class, 'create'])->name('create');
-    Route::post('/store', [RolePermissionController::class, 'store'])->name('store');
-    Route::get('/edit/{role}', [RolePermissionController::class, 'edit'])->name('edit');
-    Route::put('/update/{role}', [RolePermissionController::class, 'update'])->name('update');
-    Route::delete('/destroy/{role}', [RolePermissionController::class, 'destroy'])->name('destroy');
-    Route::delete('/bulk-delete', [RolePermissionController::class, 'bulkDelete'])->name('bulk.delete');
+    Route::get('/', [RolePermissionController::class, 'index'])->name('index')->can('users.role_permission');
+    Route::get('/create', [RolePermissionController::class, 'create'])->name('create')->can('users.role_permission');
+    Route::post('/store', [RolePermissionController::class, 'store'])->name('store')->can('users.role_permission');
+    Route::get('/edit/{role}', [RolePermissionController::class, 'edit'])->name('edit')->can('users.role_permission');
+    Route::put('/update/{role}', [RolePermissionController::class, 'update'])->name('update')->can('users.role_permission');
+    Route::delete('/destroy/{role}', [RolePermissionController::class, 'destroy'])->name('destroy')->can('users.role_permission');
+    Route::delete('/bulk-delete', [RolePermissionController::class, 'bulkDelete'])->name('bulk.delete')->can('users.role_permission');
 });
 
 // pricing plan route

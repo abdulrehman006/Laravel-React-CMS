@@ -37,6 +37,7 @@ class PricingPlanRepository
         }
 
         // sort pricing plan
+        $sort = $this->sanitizeSort($sort, ['id', 'name', 'price', 'created_at', 'updated_at']);
         if (isset($sort['column'])) {
             $query->orderBy($sort['column'], $sort['order']);
         }

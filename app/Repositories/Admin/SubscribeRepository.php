@@ -36,6 +36,7 @@ class SubscribeRepository
             $query->orWhere('email', 'like', "%$search%");
         }
 
+        $sort = $this->sanitizeSort($sort, ['id', 'email', 'created_at', 'updated_at']);
         $query->orderBy($sort['column'], $sort['order']);
 
         return $query->paginate(30)

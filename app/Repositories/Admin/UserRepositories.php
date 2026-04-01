@@ -38,7 +38,10 @@ class UserRepositories
                 ->orWhere('email', 'like', "%$search%");
         }
 
-        $query->orderBy($sort['column'], $sort['order']);
+        $allowedColumns = ['id', 'name', 'email', 'created_at', 'updated_at'];
+        $column = in_array($sort['column'], $allowedColumns) ? $sort['column'] : 'name';
+        $direction = in_array(strtolower($sort['order'] ?? ''), ['asc', 'desc']) ? $sort['order'] : 'asc';
+        $query->orderBy($column, $direction);
 
         return $query->paginate(30)
             ->appends(array_filter([
