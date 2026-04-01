@@ -35,6 +35,7 @@ import {
     updateHomeTeamSection, updateHomeTestimonialSection,
     updateHomeVideoSection,
     updateHomeWhyChooseUsSection, updateHomeWorkingProgressSection,
+    updateHomeLocationsSection, updateHomeAPISection, updateHomeHTMLSection,
 } from "@/Redux/features/pages/home/home";
 import TeamCustomize from "@/Admin/Components/PageCustomize/TeamCustomize";
 import BlogCustomize from "@/Admin/Components/PageCustomize/BlogCustomize";
@@ -55,6 +56,9 @@ import PhotoGalleryCustomize from "@/Admin/Components/PageCustomize/PhotoGallery
 import WorkingProgressCustomize from "@/Admin/Components/PageCustomize/WorkingProgressCustomize";
 import BannerCustomize from "@/Admin/Components/PageCustomize/BannerCustomize";
 import ResumeCustomize from "@/Admin/Components/PageCustomize/ResumeCustomize";
+import LocationsCustomize from "@/Admin/Components/PageCustomize/LocationsCustomize";
+import APICustomize from "@/Admin/Components/PageCustomize/APICustomize";
+import HTMLCustomize from "@/Admin/Components/PageCustomize/HTMLCustomize";
 
 export default function HomeEdit() {
     const { home } = usePage().props;
@@ -153,6 +157,15 @@ export default function HomeEdit() {
     };
     const updateResumeSection = (data) => {
         dispatch(updateHomeResumeSection(data))
+    }
+    const updateLocationsSection = (data) => {
+        dispatch(updateHomeLocationsSection(data))
+    }
+    const updateAPISection = (data) => {
+        dispatch(updateHomeAPISection(data))
+    }
+    const updateHTMLSection = (data) => {
+        dispatch(updateHomeHTMLSection(data))
     }
 
     // conditional customize section render
@@ -377,6 +390,37 @@ export default function HomeEdit() {
                     updateResumeSection={updateResumeSection}
                 />
             )
+            break;
+        case "Locations":
+            customizeSection = (
+                <LocationsCustomize
+                    currentSection={currentSection}
+                    spacingCallback={handleUpdateSpacing}
+                    sectionData={homePageData.locations_section}
+                    updateLocationsSection={updateLocationsSection}
+                />
+            )
+            break;
+        case "API":
+            customizeSection = (
+                <APICustomize
+                    currentSection={currentSection}
+                    spacingCallback={handleUpdateSpacing}
+                    sectionData={homePageData.api_section}
+                    updateAPISection={updateAPISection}
+                />
+            )
+            break;
+        case "HTML":
+            customizeSection = (
+                <HTMLCustomize
+                    currentSection={currentSection}
+                    spacingCallback={handleUpdateSpacing}
+                    sectionData={homePageData.html_section}
+                    updateHTMLSection={updateHTMLSection}
+                />
+            )
+            break;
     }
     // handle remove section
     const handleRemoveSection = () => {

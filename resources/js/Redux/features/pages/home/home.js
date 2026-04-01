@@ -25,6 +25,9 @@ const initialState = {
     working_progress_section: {},
     banner_section: {},
     resume_section: {},
+    locations_section: {},
+    api_section: {},
+    html_section: {},
     sections_data:{},
 }
 
@@ -56,6 +59,9 @@ export const homePageSlice = createSlice({
             state.working_progress_section = payload.working_progress_section ?? {};
             state.banner_section = payload.banner_section ?? {};
             state.resume_section = payload.resume_section ?? {}
+            state.locations_section = payload.locations_section ?? {}
+            state.api_section = payload.api_section ?? {}
+            state.html_section = payload.html_section ?? {}
         },
         updateHomeHeroSection(state, action){
             state.hero_section = action.payload
@@ -125,7 +131,16 @@ export const homePageSlice = createSlice({
         },
         updateHomeResumeSection(state, action){
             state.resume_section = action.payload
-        }
+        },
+        updateHomeLocationsSection(state, action){
+            state.locations_section = action.payload
+        },
+        updateHomeAPISection(state, action){
+            state.api_section = action.payload
+        },
+        updateHomeHTMLSection(state, action){
+            state.html_section = action.payload
+        },
     }
 })
 
@@ -155,4 +170,7 @@ export const {
     updateHomeWorkingProgressSection,
     updateHomeBannerSection,
     updateHomeResumeSection,
+    updateHomeLocationsSection,
+    updateHomeAPISection,
+    updateHomeHTMLSection,
 } = homePageSlice.actions;
