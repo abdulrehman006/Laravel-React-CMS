@@ -463,7 +463,7 @@ export default function AboutEdit() {
 
     // handle publish
     const handlePublish = () => {
-        router.post(route("admin.pages.update", aboutData), { _method: 'put', ...about });
+        router.put(route("admin.pages.update", aboutData), about);
     };
 
     // handle set state

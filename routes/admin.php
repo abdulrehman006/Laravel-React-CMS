@@ -97,7 +97,7 @@ Route::group(['prefix' => 'pages', 'as' => 'pages.'], function () {
     Route::get('index', [PageController::class, 'index'])->name('index')->can('pages.index');
     Route::get('create', [PageController::class, 'create'])->name('create')->can('pages.create');
     Route::post('store', [PageController::class, 'store'])->name('store')->can('pages.create');
-    Route::match(['put', 'post'], 'update/{page}', [PageController::class, 'update'])->name('update')->can('pages.edit');
+    Route::put('update/{page}', [PageController::class, 'update'])->name('update')->can('pages.edit');
     Route::get('edit/{page}', [PageController::class, 'edit'])->name('edit')->can('pages.edit');
     Route::delete('destroy/{page}', [PageController::class, 'destroy'])->name('destroy')->can('pages.delete');
     Route::delete('bulk-delete', [PageController::class, 'bulkDelete'])->name('bulk.delete')->can('pages.delete');

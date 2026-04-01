@@ -452,10 +452,9 @@ export default function HomeEdit() {
         setCustomizeSections(copiedCustomizeSections);
     };
 
-    // handle publish — use POST with _method spoofing (Apache blocks PUT on some hosts)
+    // handle publish
     const handlePublish = () => {
-        router.post(route("admin.pages.update", home), {
-            _method: 'put',
+        router.put(route("admin.pages.update", home), {
             layouts_data: homePageData,
         });
     };
