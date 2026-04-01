@@ -25,7 +25,9 @@ export default function Create() {
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        post(route("admin.locations.store"));
+        post(route("admin.locations.store"), {
+            forceFormData: true,
+        });
     };
 
     const handleFileUpload = (file) => {

@@ -29,9 +29,10 @@ class LocationController extends Controller
             });
         }
 
-        // Sort functionality
-        $sortField = $request->get('sort_field', 'sort_order');
-        $sortDirection = $request->get('sort_direction', 'asc');
+        // Sort functionality — whitelist to prevent SQL injection
+        $allowedSortFields = ['id', 'name', 'city', 'country', 'phone', 'is_active', 'sort_order', 'created_at', 'updated_at'];
+        $sortField = in_array($request->get('sort_field'), $allowedSortFields) ? $request->get('sort_field') : 'sort_order';
+        $sortDirection = in_array(strtolower($request->get('sort_direction', '')), ['asc', 'desc']) ? $request->get('sort_direction') : 'asc';
         $query->orderBy($sortField, $sortDirection);
 
         $locations = $query->paginate(10)->appends($request->all());
@@ -55,7 +56,7 @@ class LocationController extends Controller
      */
     public function store(Request $request)
     {
-        $validated = $request->validate([
+        $rules = [
             'name' => 'required|string|max:100',
             'address' => 'required|string|max:255',
             'city' => 'nullable|string|max:100',
@@ -67,15 +68,23 @@ class LocationController extends Controller
             'url' => 'nullable|string|max:255',
             'latitude' => 'nullable|numeric|between:-90,90',
             'longitude' => 'nullable|numeric|between:-180,180',
-            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:2048',
             'description' => 'nullable|string|max:2000',
             'is_active' => 'boolean',
             'sort_order' => 'integer|min:0',
-        ]);
+        ];
+
+        // Only validate image if a file was actually uploaded
+        if ($request->hasFile('image')) {
+            $rules['image'] = 'image|mimes:jpeg,png,jpg,gif,webp|max:2048';
+        }
+
+        $validated = $request->validate($rules);
 
         // Handle image upload
         if ($request->hasFile('image')) {
             $validated['image'] = $request->file('image')->store('locations');
+        } else {
+            unset($validated['image']);
         }
 
         try {
@@ -114,7 +123,7 @@ class LocationController extends Controller
      */
     public function update(Request $request, Location $location)
     {
-        $validated = $request->validate([
+        $rules = [
             'name' => 'required|string|max:100',
             'address' => 'required|string|max:255',
             'city' => 'nullable|string|max:100',
@@ -126,11 +135,17 @@ class LocationController extends Controller
             'url' => 'nullable|string|max:255',
             'latitude' => 'nullable|numeric|between:-90,90',
             'longitude' => 'nullable|numeric|between:-180,180',
-            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:2048',
             'description' => 'nullable|string|max:2000',
             'is_active' => 'boolean',
             'sort_order' => 'integer|min:0',
-        ]);
+        ];
+
+        // Only validate image if a file was actually uploaded
+        if ($request->hasFile('image')) {
+            $rules['image'] = 'image|mimes:jpeg,png,jpg,gif,webp|max:2048';
+        }
+
+        $validated = $request->validate($rules);
 
         // Handle image upload — delete old image if new one uploaded
         if ($request->hasFile('image')) {

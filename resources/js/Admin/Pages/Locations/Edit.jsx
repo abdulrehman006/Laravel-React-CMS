@@ -7,7 +7,8 @@ import FromValidationError from "@/Admin/Components/Validation/FromValidationErr
 export default function Edit() {
     const { location } = usePage().props;
 
-    const { data, setData, put, errors, processing } = useForm({
+    const { data, setData, post, errors, processing } = useForm({
+        _method: 'put',
         name: location.name || "",
         address: location.address || "",
         city: location.city || "",
@@ -19,7 +20,7 @@ export default function Edit() {
         url: location.url || "",
         latitude: location.latitude || "",
         longitude: location.longitude || "",
-        image: location.image || "",
+        image: "",
         description: location.description || "",
         is_active: location.is_active ?? true,
         sort_order: location.sort_order || 0,
@@ -27,7 +28,9 @@ export default function Edit() {
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        put(route("admin.locations.update", location));
+        post(route("admin.locations.update", location), {
+            forceFormData: true,
+        });
     };
 
     const handleFileUpload = (file) => {
