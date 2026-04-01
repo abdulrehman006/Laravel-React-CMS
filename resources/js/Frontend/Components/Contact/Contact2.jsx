@@ -10,7 +10,8 @@ import { usePage } from "@inertiajs/react";
 export default function Contact2({ contact_data }) {
     const { google_maps_api_key } = usePage().props;
     const [selectedCity, setSelectedCity] = useState(null);
-    const [mapCenter, setMapCenter] = useState({ lat: 31.1704, lng: 72.7097 }); // Default center for Pakistan
+    const defaultCenter = { lat: 31.1704, lng: 72.7097 }; // Default center for Pakistan
+    const [mapCenter, setMapCenter] = useState(defaultCenter);
     const [zoomLevel, setZoomLevel] = useState(7); // Default zoom level
 
     const markers = [
@@ -46,13 +47,11 @@ export default function Contact2({ contact_data }) {
         { id: 30, position: { lat: 31.701359, lng: 74.271872 }, city: "Kala Shah Kaku" },
         { id: 31, position: { lat: 31.43193, lng: 74.185324 }, city: "Chung" },
         { id: 32, position: { lat: 32.42927207842168, lng: 74.5037330151352 }, city: "Sialkot" },
-        
-    
-
+        { id: 33, position: { lat: 31.12452306091609, lng: 74.47350595618535 }, city: "Kasur" },
     ];
 
     const filteredMarkers = useMemo(() => {
-        return selectedCity 
+        return selectedCity
             ? markers.filter(marker => marker.city === selectedCity)
             : markers;
     }, [selectedCity]);
@@ -61,8 +60,8 @@ export default function Contact2({ contact_data }) {
         if (selectedCity === city) {
             // Clicking the same city again shows all markers
             setSelectedCity(null);
-            setMapCenter({ lat: 31.1704, lng: 72.7097 }); // Reset to Pakistan center
-            setZoomLevel(7); // Reset to default zoom
+            setMapCenter(defaultCenter);
+            setZoomLevel(7);
         } else {
             setSelectedCity(city);
             const cityMarker = markers.find(marker => marker.city === city);
@@ -194,7 +193,7 @@ export default function Contact2({ contact_data }) {
                                 <button
                                     onClick={() => {
                                         setSelectedCity(null);
-                                        setMapCenter({ lat: 31.1704, lng: 72.7097 });
+                                        setMapCenter(defaultCenter);
                                         setZoomLevel(7);
                                     }}
                                     className="btn w-100"

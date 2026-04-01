@@ -54,11 +54,14 @@ export default function AppointmentForm() {
     });
   };
 
+  // Get today's date in YYYY-MM-DD format for min date
+  const today = new Date().toISOString().split("T")[0];
+
   const handleCompanyChange = (value) => {
     setSelectedCompany(value);
     setData("company_type", value);
-    if (value === "individual" || value === "local") {
-      setData("company_name", ""); // Clear company name when not corporate
+    if (value === "individual") {
+      setData("company_name", "");
     }
   };
 
@@ -78,6 +81,7 @@ export default function AppointmentForm() {
             onChange={(e) => setData("name", e.target.value)}
             className="cs-form_field"
             required
+            maxLength={100}
             placeholder="Enter your name"
             style={{ height: '50px' }}
           />
@@ -94,6 +98,7 @@ export default function AppointmentForm() {
             onChange={(e) => setData("email", e.target.value)}
             className="cs-form_field"
             required
+            maxLength={100}
             placeholder="Enter your email"
             style={{ height: '50px' }}
           />
@@ -110,6 +115,7 @@ export default function AppointmentForm() {
             onChange={(e) => setData("phone", e.target.value)}
             className="cs-form_field"
             required
+            maxLength={20}
             placeholder="Enter your phone number"
             style={{ height: '50px' }}
           />
@@ -130,17 +136,6 @@ export default function AppointmentForm() {
                 className="me-2"
               />
               <span>Individual</span>
-            </label>
-            <label className="d-flex align-items-center" style={{ cursor: "pointer" }}>
-              <input
-                type="radio"
-                name="company_type"
-                value="local"
-                checked={selectedCompany === "local"}
-                onChange={() => handleCompanyChange("local")}
-                className="me-2"
-              />
-              <span>Local</span>
             </label>
             <label className="d-flex align-items-center" style={{ cursor: "pointer" }}>
               <input
@@ -169,6 +164,7 @@ export default function AppointmentForm() {
               className="cs-form_field"
               placeholder="Enter company name"
               required={selectedCompany === "corporate"}
+              maxLength={150}
               style={{ height: '50px' }}
             />
             {errors.company_name && <span className="text-danger d-block mt-1">{errors.company_name}</span>}
@@ -233,6 +229,7 @@ export default function AppointmentForm() {
             className="cs-form_field"
             placeholder="e.g., ABC-1234"
             required
+            maxLength={20}
             style={{ height: '50px' }}
           />
           {errors.vehicle_registration && <span className="text-danger d-block mt-1">{errors.vehicle_registration}</span>}
@@ -266,6 +263,7 @@ export default function AppointmentForm() {
             onChange={(e) => setData("date", e.target.value)}
             className="cs-form_field"
             required
+            min={today}
             style={{ height: '50px' }}
           />
           {errors.date && <span className="text-danger d-block mt-1">{errors.date}</span>}
@@ -283,6 +281,7 @@ export default function AppointmentForm() {
           rows="5"
           placeholder="Any additional information or special requests..."
           required
+          maxLength={2000}
           style={{ minHeight: '120px', resize: 'vertical' }}
         ></textarea>
         {errors.message && <span className="text-danger d-block mt-1">{errors.message}</span>}
@@ -298,10 +297,17 @@ export default function AppointmentForm() {
       </Div>
 
       {/* Success/Error Messages */}
-      {wasSuccessful && (
+      {flash?.error && (
+        <Div className="col-12 mt-3">
+          <div className="alert alert-danger" role="alert" style={{ padding: '15px', borderRadius: '8px' }}>
+            {flash.error}
+          </div>
+        </Div>
+      )}
+      {wasSuccessful && flash?.success && (
         <Div className="col-12 mt-3">
           <div className="alert alert-success" role="alert" style={{ padding: '15px', borderRadius: '8px' }}>
-            {flash?.success || 'Appointment submitted successfully!'}
+            {flash.success}
           </div>
         </Div>
       )}

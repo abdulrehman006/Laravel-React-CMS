@@ -49,11 +49,12 @@ class ContactRepository
     /**
      * submit contact
      */
-    public function submitContact(Request $request): void
+    public function submitContact(Request $request): Contact
     {
         $latestContact = $this->model->latest()->first();
         $ticketid = $this->generateNewTicketID($latestContact?->ticket_id ?? null);
-        $this->model->create([
+
+        return $this->model->create([
             'ticket_id' => $ticketid,
             'name' => $request->name,
             'email' => $request->email,

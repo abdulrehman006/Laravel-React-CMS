@@ -25,7 +25,7 @@ class PostCommentRequest extends FormRequest
             'full_name' => 'required|max:255',
             'email' => 'required|max:100|email',
             'website' => 'nullable|max:100|url',
-            'comment' => 'required',
+            'comment' => 'required|max:2000',
         ];
     }
 }

@@ -59,10 +59,10 @@ Route::post('/pricing-plan/{pricing_plan}/pay', [PricingPlanController::class, '
 Route::get('/{slug}', [PageController::class, 'show'])->name('pages.show');
 
 // subscribe
-Route::post('subscribe', [SubscribeController::class, 'subscribe'])->name('subscribe');
+Route::post('subscribe', [SubscribeController::class, 'subscribe'])->middleware('throttle:5,1')->name('subscribe');
 
 // contact
-Route::post('contact', [ContactController::class, 'submitContact'])->name('contact');
+Route::post('contact', [ContactController::class, 'submitContact'])->middleware('throttle:5,1')->name('contact');
 
 
 // payment gateway releted route
@@ -82,78 +82,93 @@ Route::get('custom/css', function () {
     return $response;
 })->name('custom.css');
 
-Route::post('/appointment', [AppointmentController::class, 'send'])->name('appointment');
+Route::post('/appointment', [AppointmentController::class, 'send'])->middleware('throttle:5,1')->name('appointment');
 
 Route::get('/proxy/vehicle-verification', function (Request $request) {
-    $client = new Client();
+
+    // Validate input
+    $regNo     = trim($request->query('regNo', ''));
+    $chassisNo = trim($request->query('chassisNo', ''));
+    $vir       = trim($request->query('vir', ''));
+
+    if (empty($regNo) && empty($chassisNo) && empty($vir)) {
+        return response()->json([
+            'message' => 'Please enter Vehicle Reg. No, Chassis No, or VIR.',
+        ], 400);
+    }
+
+    // Only pass expected params
+    $queryParams = array_filter([
+        'regNo'     => $regNo,
+        'chassisNo' => $chassisNo,
+        'vir'       => $vir,
+    ]);
+
+    $client = new Client(['timeout' => 10]);
 
     try {
-        // Encode query params with %20 for spaces
-        $queryString = http_build_query($request->all(), '', '&', PHP_QUERY_RFC3986);
-        $response = $client->get('http://52.58.102.77:22109/api/VehicleVerification?' . $queryString, [
-            'timeout' => 10, // Set a timeout for the request (10 seconds)
-        ]);
+        $queryString = http_build_query($queryParams, '', '&', PHP_QUERY_RFC3986);
 
-        // Get the response body and status code
+        $response     = $client->get('http://52.58.102.77:22109/api/VehicleVerification?' . $queryString);
         $responseBody = $response->getBody()->getContents();
-        $statusCode = $response->getStatusCode();
+        $statusCode   = $response->getStatusCode();
+        $decoded      = json_decode($responseBody, true);
 
-        // Check if the response body is empty or contains no data
-        if (empty($responseBody) || json_decode($responseBody) === []) {
+        if (empty($responseBody) || empty($decoded)) {
             return response()->json([
                 'message' => 'No data found for the provided inputs.',
             ], 404);
         }
 
-        // Return the response as it is if data exists
         return response($responseBody, $statusCode)
-            ->header('Content-Type', $response->getHeader('Content-Type')[0]);
+            ->header('Content-Type', 'application/json')
+            ->header('Access-Control-Allow-Origin', '*');
 
     } catch (ConnectException $e) {
-        // Handle connection-related exceptions
         return response()->json([
             'message' => 'Cannot connect to the server. Please check your network or try again later.',
-        ], 503); // Service Unavailable
+        ], 503);
 
     } catch (RequestException $e) {
-        // Handle Guzzle exceptions
         if ($e->hasResponse()) {
             $errorResponse = $e->getResponse();
-            $statusCode = $errorResponse->getStatusCode();
-            $message = $errorResponse->getBody()->getContents();
+            $statusCode    = $errorResponse->getStatusCode();
+            $message       = $errorResponse->getBody()->getContents();
 
-            // Handle specific error codes
             if ($statusCode === 400) {
                 return response()->json([
                     'message' => 'Please enter Vehicle Reg. No, Chassis No, or VIR.',
                 ], 400);
-            } elseif ($statusCode === 404) {
+            }
+
+            if ($statusCode === 404) {
                 return response()->json([
                     'message' => 'Data is not found.',
                 ], 404);
             }
 
-            // Return the error as is for other status codes
             return response($message, $statusCode)
-                ->header('Content-Type', $errorResponse->getHeader('Content-Type')[0]);
+                ->header('Content-Type', 'application/json');
         }
 
-        // Handle other exceptions
         return response()->json([
             'message' => 'An unexpected error occurred. Please try again.',
-        ], 500); // Internal Server Error
+        ], 500);
 
     } catch (\Exception $e) {
-        // Handle general exceptions, such as timeouts
-        if (str_contains($e->getMessage(), 'Execution Timeout Expired')) {
+        $msg = $e->getMessage();
+
+        if (str_contains($msg, 'Execution Timeout Expired') || 
+            str_contains($msg, 'cURL error 28')) {
             return response()->json([
-                'message' => 'Execution Timeout Expired. The timeout period elapsed prior to completion of the operation or the server is not responding.',
-            ], 504); // Gateway Timeout
+                'message' => 'Request timed out. The server is not responding.',
+            ], 504);
         }
 
         return response()->json([
             'message' => 'An unexpected error occurred. Please try again.',
-        ], 500); // Internal Server Error
+            'debug'   => config('app.debug') ? $msg : null,
+        ], 500);
     }
 });
 
@@ -182,13 +197,11 @@ Route::get('/proxy/fee-structure', function (Request $request) {
     try {
         // Determine which parameter to use and normalize it
         $queryParams = [];
-        if (!empty($regNo)) {
-            // Normalize regNo (remove extra spaces/dashes)
-            $normalizedRegNo = preg_replace('/[^a-zA-Z0-9]/', '', $regNo);
-            $queryParams['regNo'] = $normalizedRegNo;
-        } else {
-            $queryParams['chassisNo'] = trim($chassisNo);
-        }
+       if (!empty($regNo)) {
+    $queryParams['regNo'] = trim($regNo); // Keep dashes intact
+} else {
+    $queryParams['chassisNo'] = trim($chassisNo);
+}
 
         // Encode query params with %20 for spaces
         $queryString = http_build_query($queryParams, '', '&', PHP_QUERY_RFC3986);

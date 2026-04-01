@@ -1,5 +1,11 @@
-export default function Div(props) {
+import { forwardRef } from 'react';
+
+const Div = forwardRef((props, ref) => {
     return (
-        <div {...props}>{props.children}</div>
+        <div ref={ref} {...props}>{props.children}</div>
     )
-}
+});
+
+Div.displayName = 'Div';
+
+export default Div;
