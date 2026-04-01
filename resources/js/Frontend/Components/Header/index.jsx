@@ -19,13 +19,11 @@ export default function Header({ variant }) {
         : [];
 
     useEffect(() => {
-        window.addEventListener("scroll", () => {
-            if (window.scrollY > 0) {
-                setIsSticky(true);
-            } else {
-                setIsSticky(false);
-            }
-        });
+        const handleScroll = () => {
+            setIsSticky(window.scrollY > 0);
+        };
+        window.addEventListener("scroll", handleScroll);
+        return () => window.removeEventListener("scroll", handleScroll);
     }, []);
 
     return (

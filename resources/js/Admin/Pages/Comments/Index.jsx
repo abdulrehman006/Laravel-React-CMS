@@ -318,7 +318,7 @@ export default function Index({ comments, sort }) {
                                                                             }
                                                                         </strong>{" "}
                                                                         <br />
-                                                                        <a href="">
+                                                                        <a href="#">
                                                                             {
                                                                                 comment.comment_author_email
                                                                             }
@@ -334,38 +334,44 @@ export default function Index({ comments, sort }) {
                                                                 </div>
                                                             </td>
                                                             <td>
-                                                                <span className="yoo-table-medias yoo-style1">
-                                                                    <strong>
-                                                                        <Link
-                                                                            href={route(
-                                                                                "admin.posts.edit",
-                                                                                comment
-                                                                                    .post
-                                                                                    .id
-                                                                            )}
-                                                                        >
-                                                                            {
-                                                                                comment
-                                                                                    .post
-                                                                                    .title
-                                                                            }
-                                                                        </Link>
-                                                                    </strong>
-                                                                </span>
-                                                                <span className="yoo-table-medias yoo-style1">
-                                                                    <a
-                                                                        href={route(
-                                                                            "blog.show",
-                                                                            comment
-                                                                                .post
-                                                                                .slug
-                                                                        )}
-                                                                        target="_blank"
-                                                                    >
-                                                                        View
-                                                                        Post
-                                                                    </a>
-                                                                </span>
+                                                                {comment.post ? (
+                                                                    <>
+                                                                        <span className="yoo-table-medias yoo-style1">
+                                                                            <strong>
+                                                                                <Link
+                                                                                    href={route(
+                                                                                        "admin.posts.edit",
+                                                                                        comment
+                                                                                            .post
+                                                                                            .id
+                                                                                    )}
+                                                                                >
+                                                                                    {
+                                                                                        comment
+                                                                                            .post
+                                                                                            .title
+                                                                                    }
+                                                                                </Link>
+                                                                            </strong>
+                                                                        </span>
+                                                                        <span className="yoo-table-medias yoo-style1">
+                                                                            <a
+                                                                                href={route(
+                                                                                    "blog.show",
+                                                                                    comment
+                                                                                        .post
+                                                                                        .slug
+                                                                                )}
+                                                                                target="_blank"
+                                                                            >
+                                                                                View
+                                                                                Post
+                                                                            </a>
+                                                                        </span>
+                                                                    </>
+                                                                ) : (
+                                                                    <span style={{ color: '#999' }}>Post deleted</span>
+                                                                )}
                                                             </td>
                                                             <td>
                                                                 {moment(

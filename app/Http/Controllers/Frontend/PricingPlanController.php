@@ -41,7 +41,8 @@ class PricingPlanController extends Controller
         try{
             return $repository->makePayment($request, $pricingPlan);
         } catch (\Exception $exception) {
-            dd($exception->getMessage());
+            \Log::error('Payment failed: ' . $exception->getMessage());
+            return back()->with('error', 'Payment processing failed. Please try again.');
         }
     }
 

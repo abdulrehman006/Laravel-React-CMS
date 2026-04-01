@@ -46,6 +46,15 @@ class PricingPlanController extends Controller
     }
 
     /**
+     * Display the specified pricing plan.
+     */
+    public function show(PricingPlan $pricingPlan): Response
+    {
+        $data['pricingPlan'] = $pricingPlan;
+        return Inertia::render('PricingPlan/Show', $data);
+    }
+
+    /**
      * Show the form for edit pricing plan
      */
     public function edit(PricingPlan $pricingPlan): Response

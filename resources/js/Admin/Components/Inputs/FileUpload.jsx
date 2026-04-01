@@ -1,5 +1,5 @@
 import React, {useEffect, useRef, useState} from 'react';
-import "./FileUoload.css";
+import "./FileUpload.css";
 import { IonIcon } from "@ionic/react";
 import { trashOutline } from "ionicons/icons";
 

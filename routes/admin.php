@@ -64,10 +64,8 @@ Route::group(['prefix' => 'tags', 'as' => 'tags.'], function () {
     Route::get('/index', [TagController::class, 'index'])->name('index')->can('post_tags.index');
     Route::get('/search', [TagController::class, 'searchTag'])->name('search');
     Route::post('/store', [TagController::class, 'store'])->name('store')->can('post_tags.create');
-    Route::get('/update', [TagController::class, 'update'])->name('update')->can('post_tags.edit');
     Route::delete('/destroy/{tag}', [TagController::class, 'destroy'])->name('destroy')->can('post_tags.delete');
     Route::delete('/bulk-delete', [TagController::class, 'bulkDelete'])->name('bulk.delete')->can('post_tags.delete');
-    Route::delete('/edit', [TagController::class, 'edit'])->name('edit')->can('post_tags.edit');
 });
 
 // admin comment routes
@@ -247,34 +245,34 @@ Route::group(['prefix' => 'roles-permissions', 'as' => 'roles.permissions.'], fu
 
 // pricing plan route
 Route::group(['prefix' => 'pricing-plan', 'as' => 'pricing.plans.'], function (){
-    Route::get('/', [PricingPlanController::class, 'index'])->name('index');
-    Route::get('/create', [PricingPlanController::class, 'create'])->name('create');
-    Route::post('/store', [PricingPlanController::class, 'store'])->name('store');
-    Route::get('/show/{pricingPlan}', [PricingPlanController::class, 'show'])->name('show');
-    Route::get('/edit/{pricingPlan}', [PricingPlanController::class, 'edit'])->name('edit');
-    Route::put('/update/{pricingPlan}', [PricingPlanController::class, 'update'])->name('update');
-    Route::delete('/destroy/{pricingPlan}', [PricingPlanController::class, 'destroy'])->name('destroy');
-    Route::delete('/bulk-delete', [PricingPlanController::class, 'bulkDelete'])->name('bulk.delete');
+    Route::get('/', [PricingPlanController::class, 'index'])->name('index')->can('settings.manage');
+    Route::get('/create', [PricingPlanController::class, 'create'])->name('create')->can('settings.manage');
+    Route::post('/store', [PricingPlanController::class, 'store'])->name('store')->can('settings.manage');
+    Route::get('/show/{pricingPlan}', [PricingPlanController::class, 'show'])->name('show')->can('settings.manage');
+    Route::get('/edit/{pricingPlan}', [PricingPlanController::class, 'edit'])->name('edit')->can('settings.manage');
+    Route::put('/update/{pricingPlan}', [PricingPlanController::class, 'update'])->name('update')->can('settings.manage');
+    Route::delete('/destroy/{pricingPlan}', [PricingPlanController::class, 'destroy'])->name('destroy')->can('settings.manage');
+    Route::delete('/bulk-delete', [PricingPlanController::class, 'bulkDelete'])->name('bulk.delete')->can('settings.manage');
 });
 
 // payment history route
 Route::group(['prefix' => 'payment-history', 'as' => 'payment.history.'], function () {
-    Route::get('/', [PaymentHistoryController::class, 'index'])->name('index');
-    Route::get('/show/{paymentHistory}', [PaymentHistoryController::class, 'show'])->name('show');
+    Route::get('/', [PaymentHistoryController::class, 'index'])->name('index')->can('settings.manage');
+    Route::get('/show/{paymentHistory}', [PaymentHistoryController::class, 'show'])->name('show')->can('settings.manage');
 });
 
 // settings route
 Route::group(['prefix' => 'settings', 'as' => 'settings.'], function (){
-    Route::get('/payment-gateways', [SettingController::class, 'paymentGateway'])->name('payment.gateway');
-    Route::put('/payment-gateway/update', [SettingController::class, 'paymentGatewayUpdate'])->name('payment.gateway.update');
+    Route::get('/payment-gateways', [SettingController::class, 'paymentGateway'])->name('payment.gateway')->can('settings.manage');
+    Route::put('/payment-gateway/update', [SettingController::class, 'paymentGatewayUpdate'])->name('payment.gateway.update')->can('settings.manage');
 
     // SMTP Settings
-    Route::get('/smtp-setting', [SettingController::class, 'smtpSetting'])->name('smtp.setting');
-    Route::put('/smtp-setting/update', [SettingController::class, 'smtpUpdate'])->name('smtp.update');
+    Route::get('/smtp-setting', [SettingController::class, 'smtpSetting'])->name('smtp.setting')->can('settings.manage');
+    Route::put('/smtp-setting/update', [SettingController::class, 'smtpUpdate'])->name('smtp.update')->can('settings.manage');
 
     // Google Maps Settings
-    Route::get('/google-maps', [SettingController::class, 'googleMapsSetting'])->name('google.maps');
-    Route::put('/google-maps/update', [SettingController::class, 'googleMapsUpdate'])->name('google.maps.update');
+    Route::get('/google-maps', [SettingController::class, 'googleMapsSetting'])->name('google.maps')->can('settings.manage');
+    Route::put('/google-maps/update', [SettingController::class, 'googleMapsUpdate'])->name('google.maps.update')->can('settings.manage');
 });
 
 // map markers routes

@@ -40,8 +40,6 @@ export default function AppointmentForm() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    // Set company_type in data before submission
-    setData("company_type", selectedCompany);
     post(route("appointment"), {
       preserveScroll: true,
       onSuccess: () => {

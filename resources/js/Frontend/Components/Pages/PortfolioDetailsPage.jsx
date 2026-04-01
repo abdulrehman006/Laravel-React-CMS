@@ -109,14 +109,14 @@ export default function PortfolioDetailsPage() {
                 <Div className="cs-page_navigation cs-center">
                     <Div>
                         <Button
-                            btnLink="/portfolio/portfolio-details"
+                            btnLink="#"
                             btnText="Prev Project"
                             variant="cs-type1"
                         />
                     </Div>
                     <Div>
                         <Button
-                            btnLink="/portfolio/portfolio-details"
+                            btnLink="#"
                             btnText="Next Project"
                         />
                     </Div>

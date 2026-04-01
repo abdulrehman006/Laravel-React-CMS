@@ -12,7 +12,6 @@ import { router } from "@inertiajs/react";
 import ThSortable from "@/Admin/Components/Table/ThSortable";
 
 export default function Index({ paymentHistories, sort }) {
-    console.log(paymentHistories)
     const [searchQuery, setSearchQuery] = useState("");
 
     // handle search sort

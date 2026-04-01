@@ -65,14 +65,14 @@ export default function Index({ posts, search, filter }) {
                             </p>
                             <div className="sidebar-search-form position-relative">
                                 <form
-                                    action="https://themedox.com/arino/"
+                                    action={route('blog.index')}
                                     method="get"
                                 >
                                     <input
                                         type="text"
-                                        defaultValue="dcfvdsvds"
+                                        defaultValue=""
                                         required=""
-                                        name="s"
+                                        name="search"
                                         placeholder="Search"
                                     />
                                     <button type="submit">

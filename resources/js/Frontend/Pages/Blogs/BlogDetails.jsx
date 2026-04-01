@@ -94,13 +94,13 @@ export default function BlogDetails({ blog }) {
                     <h4 className="name">
                         <Link
                             href={route("blog.index", {
-                                filter: { author: blog.user.id },
+                                filter: { author: blog.user?.id },
                             })}
                         >
-                            {blog.user.name}
+                            {blog.user?.name}
                         </Link>
                     </h4>
-                    <p>{blog.user.about}</p>
+                    <p>{blog.user?.about}</p>
                 </div>
             </div>
 
