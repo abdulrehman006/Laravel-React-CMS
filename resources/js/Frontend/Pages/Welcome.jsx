@@ -26,8 +26,9 @@ import PhotoGallerySection from "@/Frontend/Components/Sections/PhotoGallerySect
 import WorkingProgressSection from "@/Frontend/Components/Sections/WorkingProgressSection";
 import BannerSection from "@/Frontend/Components/Sections/BannerSection";
 import ResumeSection from "@/Frontend/Components/Sections/ResumeSection";
-import limitString from "@/utils/limitString";
-import removeHTMLTags from "@/utils/removeHTMLTags";
+import LocationsSection from "@/Frontend/Components/Sections/LocationsSection";
+import APISection from "@/Frontend/Components/Sections/APISection";
+import HTMLSection from "@/Frontend/Components/Sections/HTMLSection";
 
 export default function Welcome({ home_data }) {
     const homeData = useSelector((state) => state.homePage);
@@ -57,6 +58,9 @@ export default function Welcome({ home_data }) {
         WorkingProgress: WorkingProgressSection,
         Banner: BannerSection,
         Resume: ResumeSection,
+        Locations: LocationsSection,
+        API: APISection,
+        HTML: HTMLSection,
     };
 
     useEffect(() => {
@@ -87,16 +91,17 @@ export default function Welcome({ home_data }) {
 
                 {homeData.home_sections.map((section, index) => {
                     const SectionComponent = sectionComponents[section.id];
+                    if (!SectionComponent) return null;
                     return (
                         <Fragment key={index}>
                             <Spacing
-                                lg={section.spacing.top.lg ?? 0}
-                                md={section.spacing.top.md ?? 0}
+                                lg={section.spacing?.top?.lg ?? 0}
+                                md={section.spacing?.top?.md ?? 0}
                             />
                             <SectionComponent key={section.id} sections_data={homeData} />
                             <Spacing
-                                lg={section.spacing.bottom.lg ?? 0}
-                                md={section.spacing.bottom.md ?? 0}
+                                lg={section.spacing?.bottom?.lg ?? 0}
+                                md={section.spacing?.bottom?.md ?? 0}
                             />
                         </Fragment>
                     );
