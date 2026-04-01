@@ -101,7 +101,7 @@ Route::get('/proxy/vehicle-verification', function (Request $request) {
     $queryParams = array_filter([
         'regNo'     => $regNo,
         'chassisNo' => $chassisNo,
-        'vir'       => $vir,
+        'VIR'       => $vir,
     ]);
 
     $client = new Client(['timeout' => 10]);
