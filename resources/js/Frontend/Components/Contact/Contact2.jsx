@@ -48,6 +48,7 @@ export default function Contact2({ contact_data }) {
         { id: 31, position: { lat: 31.43193, lng: 74.185324 }, city: "Chung" },
         { id: 32, position: { lat: 32.42927207842168, lng: 74.5037330151352 }, city: "Sialkot" },
         { id: 33, position: { lat: 31.12452306091609, lng: 74.47350595618535 }, city: "Kasur" },
+        { id: 34, position: { lat: 30.788933133787996, lng: 73.45141855934895 }, city: "Okara" },
     ];
 
     const filteredMarkers = useMemo(() => {
