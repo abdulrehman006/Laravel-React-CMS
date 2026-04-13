@@ -415,7 +415,8 @@ export default function Edit() {
 
     // handle publish
     const handleUpdate = () => {
-        router.put(route("admin.portfolios.update", portfolioData), {
+        router.post(route("admin.portfolios.update", portfolioData), {
+            _method: 'put',
             ...portfolio.portfolioDetails,
             sections_data: portfolio.sections_data,
             sections: portfolio.sections,

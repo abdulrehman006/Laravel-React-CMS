@@ -10,7 +10,7 @@ export default function DeleteButton({ href }) {
             "You want to delete this post?",
             "Delete" + "!",
             () => {
-                router.delete(href);
+                router.post(href, { _method: 'delete' });
             }
         );
     };

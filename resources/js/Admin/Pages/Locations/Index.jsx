@@ -85,8 +85,9 @@ export default function Index() {
             confirmButtonText: "Yes, delete them!",
         }).then((result) => {
             if (result.isConfirmed) {
-                router.delete(route("admin.locations.bulk.delete"), {
-                    data: { ids: selectedItems },
+                router.post(route("admin.locations.bulk.delete"), {
+                    _method: 'delete',
+                    ids: selectedItems,
                     onSuccess: () => setSelectedItems([]),
                 });
             }

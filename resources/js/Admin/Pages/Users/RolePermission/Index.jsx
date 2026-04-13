@@ -68,7 +68,7 @@ export default function Index({ roles, sort }) {
         }
         setIsMarkAll([]);
         showAlert("Are you sure?", confirmMessage, selectedOption + "!", () => {
-            router.delete(route(action, { ids: markItems.join(",") }));
+            router.post(route(action, { ids: markItems.join(",") }), { _method: 'delete' });
         });
     };
 

@@ -65,10 +65,11 @@ export default function Index({ portfolios, sort, categories, filter }) {
             "You want to delete selected portfolios?",
             "Delete!",
             () => {
-                router.delete(
+                router.post(
                     route("admin.portfolios.bulk.delete", {
                         ids: markItems.join(","),
-                    })
+                    }),
+                    { _method: 'delete' }
                 );
             }
         );

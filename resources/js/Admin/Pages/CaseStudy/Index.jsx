@@ -67,10 +67,11 @@ export default function Index({ case_studies, sort, categories, filter }) {
             "You want to delete selected case_studies?",
             "Delete!",
             () => {
-                router.delete(
+                router.post(
                     route("admin.case.study.bulk.delete", {
                         ids: markItems.join(","),
-                    })
+                    }),
+                    { _method: 'delete' }
                 );
             }
         );

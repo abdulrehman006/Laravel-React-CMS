@@ -66,10 +66,11 @@ export default function Index({ testimonials, sort }) {
             "You want to delete selected testimonials?",
             "Delete!",
             () => {
-                router.delete(
+                router.post(
                     route("admin.testimonials.bulk.delete", {
                         ids: markItems.join(","),
-                    })
+                    }),
+                    { _method: 'delete' }
                 );
             }
         );

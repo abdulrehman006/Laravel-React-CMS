@@ -62,10 +62,11 @@ export default function Index({ teams, sort, categories }) {
             "You want to delete selected teams?",
             "Delete!",
             () => {
-                router.delete(
+                router.post(
                     route("admin.teams.bulk.delete", {
                         ids: markItems.join(","),
-                    })
+                    }),
+                    { _method: 'delete' }
                 );
             }
         );

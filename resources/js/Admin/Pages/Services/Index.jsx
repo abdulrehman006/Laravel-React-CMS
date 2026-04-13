@@ -65,10 +65,11 @@ export default function Index({ services, sort, categories, filter }) {
             "You want to delete selected services?",
             "Delete!",
             () => {
-                router.delete(
+                router.post(
                     route("admin.services.bulk.delete", {
                         ids: markItems.join(","),
-                    })
+                    }),
+                    { _method: 'delete' }
                 );
             }
         );

@@ -81,7 +81,7 @@ export default function Customize({ customize_settings }) {
                 return;
             }
         }
-        router.put(route("admin.customize.customize"), customize);
+        router.post(route("admin.customize.customize"), { ...customize, _method: 'put' });
     };
 
     useEffect(() => {

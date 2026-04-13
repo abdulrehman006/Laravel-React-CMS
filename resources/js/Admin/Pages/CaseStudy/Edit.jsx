@@ -426,7 +426,8 @@ export default function Edit() {
 
     // handle publish
     const handleUpdate = () => {
-        router.put(route("admin.case.study.update", caseStudyData), {
+        router.post(route("admin.case.study.update", caseStudyData), {
+            _method: 'put',
             ...caseStudy.case_study_details,
             sections_data: caseStudy.sections_data,
             sections: caseStudy.sections,

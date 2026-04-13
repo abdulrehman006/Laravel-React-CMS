@@ -454,7 +454,8 @@ export default function HomeEdit() {
 
     // handle publish
     const handlePublish = () => {
-        router.put(route("admin.pages.update", home), {
+        router.post(route("admin.pages.update", home), {
+            _method: 'put',
             layouts_data: homePageData,
         });
     };

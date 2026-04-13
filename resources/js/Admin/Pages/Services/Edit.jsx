@@ -414,7 +414,8 @@ export default function Edit() {
 
     // handle publish
     const handleUpdate = () => {
-        router.put(route("admin.services.update", service), {
+        router.post(route("admin.services.update", service), {
+            _method: 'put',
             ...services.service_details,
             sections_data: services.sections_data,
             sections: services.sections,

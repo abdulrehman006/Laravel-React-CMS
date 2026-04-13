@@ -15,7 +15,7 @@ export default function Edit({ permissions, permissionsId, role }) {
     // handle publish
     const handlePublish = (e) => {
         e.preventDefault();
-        router.put(route("admin.roles.permissions.update", role), data);
+        router.post(route("admin.roles.permissions.update", role), { ...data, _method: 'put' });
     };
     const permissionArray = Object.values(permissions.crud_permissions);
 
