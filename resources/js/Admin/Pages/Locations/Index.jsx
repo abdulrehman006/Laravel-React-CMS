@@ -15,9 +15,14 @@ export default function Index() {
         order: filters?.sort_direction || "asc",
     });
     const [selectedItems, setSelectedItems] = useState([]);
+    const [isInitialMount, setIsInitialMount] = useState(true);
 
-    // Handle search
+    // Handle search (skip initial mount to preserve pagination)
     useEffect(() => {
+        if (isInitialMount) {
+            setIsInitialMount(false);
+            return;
+        }
         const delayDebounceFn = setTimeout(() => {
             router.get(
                 route("admin.locations.index"),
