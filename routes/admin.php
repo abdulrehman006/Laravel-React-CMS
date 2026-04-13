@@ -64,8 +64,10 @@ Route::group(['prefix' => 'tags', 'as' => 'tags.'], function () {
     Route::get('/index', [TagController::class, 'index'])->name('index')->can('post_tags.index');
     Route::get('/search', [TagController::class, 'searchTag'])->name('search');
     Route::post('/store', [TagController::class, 'store'])->name('store')->can('post_tags.create');
-    Route::match(['delete', 'post'],'/destroy/{tag}', [TagController::class, 'destroy'])->name('destroy')->can('post_tags.delete');
-    Route::match(['delete', 'post'],'/bulk-delete', [TagController::class, 'bulkDelete'])->name('bulk.delete')->can('post_tags.delete');
+    Route::get('/update', [TagController::class, 'update'])->name('update')->can('post_tags.edit');
+    Route::match(['delete', 'post'], '/destroy/{tag}', [TagController::class, 'destroy'])->name('destroy')->can('post_tags.delete');
+    Route::match(['delete', 'post'], '/bulk-delete', [TagController::class, 'bulkDelete'])->name('bulk.delete')->can('post_tags.delete');
+    Route::match(['delete', 'post'], '/edit', [TagController::class, 'edit'])->name('edit')->can('post_tags.edit');
 });
 
 // admin comment routes
