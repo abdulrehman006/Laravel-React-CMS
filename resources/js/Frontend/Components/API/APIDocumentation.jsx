@@ -246,56 +246,6 @@ export default function APIDocumentation({ data }) {
                                                         </tbody>
                                                     </table>
                                                 </Div>
-
-                                                {/* Renewal Fee Table */}
-                                                <Div>
-                                                    <h6 style={{ fontWeight: "600", marginBottom: "15px", color: "#333" }}>Renewal Fee (Every 06 Month)</h6>
-                                                    <table className="table table-bordered" style={{ fontSize: "14px", backgroundColor: "#ffffff" }}>
-                                                        <tbody>
-                                                            <tr style={{ backgroundColor: "#f8f9fa" }}>
-                                                                <td style={{ fontWeight: "600", padding: "10px", width: "50%" }}>Fee Type</td>
-                                                                <td style={{ fontWeight: "600", padding: "10px", textAlign: "right" }}>Renewal Fee (Every 06 Month)</td>
-                                                            </tr>
-                                                            {(() => {
-                                                                const renewalItem = response.find(item => item.feeType === "Renewal Fee (Every 06 Month)");
-                                                                if (!renewalItem) return null;
-
-                                                                return (
-                                                                    <>
-                                                                        <tr>
-                                                                            <td style={{ padding: "10px" }}>Test Fee</td>
-                                                                            <td style={{ padding: "10px", textAlign: "right" }}>{renewalItem.fee}</td>
-                                                                        </tr>
-                                                                        <tr>
-                                                                            <td style={{ padding: "10px" }}>Late Fee</td>
-                                                                            <td style={{ padding: "10px", textAlign: "right" }}>0</td>
-                                                                        </tr>
-                                                                        <tr>
-                                                                            <td style={{ padding: "10px" }}>GST</td>
-                                                                            <td style={{ padding: "10px", textAlign: "right" }}>{renewalItem.feeWithGST - renewalItem.fee}</td>
-                                                                        </tr>
-                                                                        <tr style={{ backgroundColor: "#d4edda" }}>
-                                                                            <td style={{ fontWeight: "700", padding: "10px" }}>Total Fee Payable</td>
-                                                                            <td style={{ fontWeight: "700", padding: "10px", textAlign: "right" }}>{renewalItem.feeWithGST}</td>
-                                                                        </tr>
-                                                                        {renewalItem.expiryDate && (
-                                                                            <tr>
-                                                                                <td style={{ padding: "10px" }}>Expiry Date</td>
-                                                                                <td style={{ padding: "10px", textAlign: "right" }}>
-                                                                                    {new Date(renewalItem.expiryDate).toLocaleDateString('en-GB', {
-                                                                                        day: '2-digit',
-                                                                                        month: 'short',
-                                                                                        year: '2-digit'
-                                                                                    })}
-                                                                                </td>
-                                                                            </tr>
-                                                                        )}
-                                                                    </>
-                                                                );
-                                                            })()}
-                                                        </tbody>
-                                                    </table>
-                                                </Div>
                                             </Div>
                                         ) : null}
                                     </Div>
