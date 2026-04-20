@@ -18,7 +18,7 @@ class FeeCalculatorController extends Controller
         try {
             // Validate input
             $request->validate([
-                'searchType' => 'required|in:regNo,chassisNo,VIR',
+                'searchType' => 'required|in:regNo,chassisNo',
                 'searchValue' => 'required|string|max:255',
             ]);
 

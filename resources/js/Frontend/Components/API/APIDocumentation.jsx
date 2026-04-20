@@ -121,30 +121,18 @@ export default function APIDocumentation({ data }) {
                                     >
                                         Chassis Number
                                     </button>
-                                    <button
-                                        type="button"
-                                        className={`btn ${searchType === "VIR" ? "btn-primary" : "btn-outline-primary"}`}
-                                        onClick={() => setSearchType("VIR")}
-                                        style={{
-                                            backgroundColor: searchType === "VIR" ? "#DAA520" : "transparent",
-                                            borderColor: "#DAA520",
-                                            color: searchType === "VIR" ? "#fff" : "#DAA520"
-                                        }}
-                                    >
-                                        VIR
-                                    </button>
                                 </Div>
                             </Div>
 
                             {/* Search Input */}
                             <Div className="mb-3">
                                 <label style={{ fontWeight: "500", marginBottom: "10px", display: "block" }}>
-                                    {searchType === "regNo" ? "Registration Number:" : searchType === "VIR" ? "VIR Number:" : "Chassis Number:"}
+                                    {searchType === "regNo" ? "Registration Number:" : "Chassis Number:"}
                                 </label>
                                 <input
                                     type="text"
                                     className="form-control"
-                                    placeholder={searchType === "regNo" ? "e.g., LET-15-8676" : searchType === "VIR" ? "e.g., 88725120100026880" : "e.g., SR308PK291991"}
+                                    placeholder={searchType === "regNo" ? "e.g., LET-15-8676" : "e.g., SR308PK291991"}
                                     value={searchValue}
                                     onChange={(e) => setSearchValue(e.target.value)}
                                     onKeyDown={(e) => e.key === "Enter" && handleSearch()}
