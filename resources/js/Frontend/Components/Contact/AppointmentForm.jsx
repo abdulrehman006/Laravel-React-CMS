@@ -10,6 +10,8 @@ export default function AppointmentForm() {
   const [selectedCompany, setSelectedCompany] = useState("individual");
   const { data, setData, errors, post, wasSuccessful, reset, processing } = useForm({
     vehicle_type: "",
+    vehicle_make: "",
+    vehicle_model: "",
     date: "",
     company_name: "",
     no_of_vehicles: "",
@@ -26,15 +28,17 @@ export default function AppointmentForm() {
   const activeLocations = locations?.filter(loc => loc.is_active) || [];
 
   const vehicleTypes = [
-    "Car",
-    "Truck",
-    "Motorcycle",
     "Bus",
-    "Van",
-    "SUV",
-    "Bicycle",
+    "Panel Van",
+    "Passenger Car",
+    "Pickup Truck",
+    "Three-Wheel Vehicle",
+    "Station Wagon",
+    "Truck",
+    "Tow Truck",
+    "Sport Utility Vehicle",
     "Electric Vehicle",
-    "Other",
+    "Others",
   ];
   
 
@@ -214,6 +218,40 @@ export default function AppointmentForm() {
             ))}
           </select>
           {errors.vehicle_type && <span className="text-danger d-block mt-1">{errors.vehicle_type}</span>}
+        </Div>
+
+        {/* Vehicle Make */}
+        <Div className="mb-3">
+          <label className="cs-primary_color">Vehicle Make*</label>
+          <input
+            type="text"
+            name="vehicle_make"
+            value={data.vehicle_make}
+            onChange={(e) => setData("vehicle_make", e.target.value)}
+            className="cs-form_field"
+            placeholder="e.g., Toyota, Honda, Suzuki"
+            required
+            maxLength={50}
+            style={{ height: '50px' }}
+          />
+          {errors.vehicle_make && <span className="text-danger d-block mt-1">{errors.vehicle_make}</span>}
+        </Div>
+
+        {/* Vehicle Model */}
+        <Div className="mb-3">
+          <label className="cs-primary_color">Vehicle Model*</label>
+          <input
+            type="text"
+            name="vehicle_model"
+            value={data.vehicle_model}
+            onChange={(e) => setData("vehicle_model", e.target.value)}
+            className="cs-form_field"
+            placeholder="e.g., Corolla, Civic, Mehran"
+            required
+            maxLength={50}
+            style={{ height: '50px' }}
+          />
+          {errors.vehicle_model && <span className="text-danger d-block mt-1">{errors.vehicle_model}</span>}
         </Div>
 
         {/* Vehicle Registration */}

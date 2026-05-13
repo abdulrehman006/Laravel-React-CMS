@@ -68,6 +68,14 @@
                                     <td style="padding: 10px 0; border-bottom: 1px solid #f0f0f0; color: #212529; font-size: 14px;">{{ $vehicle_type }}</td>
                                 </tr>
                                 <tr>
+                                    <td style="padding: 10px 0; border-bottom: 1px solid #f0f0f0; color: #6c757d; font-size: 14px; font-weight: 600;">Vehicle Make</td>
+                                    <td style="padding: 10px 0; border-bottom: 1px solid #f0f0f0; color: #212529; font-size: 14px;">{{ $vehicle_make ?? 'N/A' }}</td>
+                                </tr>
+                                <tr>
+                                    <td style="padding: 10px 0; border-bottom: 1px solid #f0f0f0; color: #6c757d; font-size: 14px; font-weight: 600;">Vehicle Model</td>
+                                    <td style="padding: 10px 0; border-bottom: 1px solid #f0f0f0; color: #212529; font-size: 14px;">{{ $vehicle_model ?? 'N/A' }}</td>
+                                </tr>
+                                <tr>
                                     <td style="padding: 10px 0; border-bottom: 1px solid #f0f0f0; color: #6c757d; font-size: 14px; font-weight: 600;">Registration No.</td>
                                     <td style="padding: 10px 0; border-bottom: 1px solid #f0f0f0; color: #212529; font-size: 14px; font-weight: 700;">{{ $vehicle_registration }}</td>
                                 </tr>

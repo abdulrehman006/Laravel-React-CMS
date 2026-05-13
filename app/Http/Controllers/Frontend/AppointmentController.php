@@ -18,6 +18,8 @@ class AppointmentController extends Controller
     {
         $request->validate([
             'vehicle_type' => 'required|string|max:50',
+            'vehicle_make' => 'required|string|max:50',
+            'vehicle_model' => 'required|string|max:50',
             'date' => 'required|date|after_or_equal:today',
             'company_type' => 'required|in:individual,corporate',
             'company_name' => 'required_if:company_type,corporate|nullable|string|max:150',
@@ -41,7 +43,7 @@ class AppointmentController extends Controller
         ]);
 
         $data = $request->only([
-            'vehicle_type', 'date', 'company_type', 'company_name', 'location_id',
+            'vehicle_type', 'vehicle_make', 'vehicle_model', 'date', 'company_type', 'company_name', 'location_id',
             'no_of_vehicles', 'vehicle_registration', 'name', 'phone', 'email', 'message',
         ]);
 
