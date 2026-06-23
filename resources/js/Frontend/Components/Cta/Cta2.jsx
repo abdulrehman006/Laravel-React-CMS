@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { IonIcon } from "@ionic/react";
 import { checkmarkCircle, closeCircle } from "ionicons/icons";
@@ -26,20 +26,15 @@ export default function Cta2({ title, btnText, btnLink, bgSrc, bgColor, bgType, 
         });
     };
 
-    // Handle form submission
-    const handleSubmit = async (e) => {
-        e.preventDefault();
+    // Perform the verification request for the given values
+    const runVerification = async ({ regNo, chassisNo, VIR }) => {
         setLoading(true);
         setError(null);
         setResult(null);
 
         try {
             const response = await axios.get("/proxy/vehicle-verification", {
-                params: {
-                    regNo: formData.regNo,
-                    chassisNo: formData.chassisNo,
-                    VIR: formData.VIR,
-                },
+                params: { regNo, chassisNo, VIR },
             });
             // Check if response contains valid data
             if (Array.isArray(response.data) && response.data.length > 0) {
@@ -50,7 +45,7 @@ export default function Cta2({ title, btnText, btnLink, bgSrc, bgColor, bgType, 
         } catch (err) {
             if (err.response) {
                 const { status, data } = err.response;
-    
+
                 // Handle known error cases with specific messages
                 if (status === 400) {
                     setError(data.message || "Please enter Vehicle Reg. No, Chassis No, or VIR.");
@@ -70,6 +65,46 @@ export default function Cta2({ title, btnText, btnLink, bgSrc, bgColor, bgType, 
             setLoading(false); // End loading state
         }
     };
+
+    // Handle form submission
+    const handleSubmit = (e) => {
+        e.preventDefault();
+        runVerification(formData);
+    };
+
+    // On mount, read query params from the URL, prefill the form and auto-verify.
+    // Accepts common aliases, e.g. /report-verification?chassisnumber=NZE1402118579
+    useEffect(() => {
+        const params = new URLSearchParams(window.location.search);
+
+        // Build a case-insensitive lookup of the URL params
+        const lower = {};
+        params.forEach((value, key) => {
+            lower[key.toLowerCase()] = value;
+        });
+
+        const aliases = {
+            chassisNo: ["chassisnumber", "chassisno", "chassis"],
+            regNo: ["registrationnumber", "regno", "reg"],
+            VIR: ["vir"],
+        };
+
+        const next = { regNo: "", chassisNo: "", VIR: "" };
+        let found = false;
+        for (const [field, keys] of Object.entries(aliases)) {
+            const hit = keys.find((k) => lower[k] != null);
+            if (hit) {
+                next[field] = lower[hit].trim();
+                found = true;
+            }
+        }
+
+        if (found) {
+            setFormData(next);
+            runVerification(next);
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
 
     // Reset form data
     const handleReset = () => {
