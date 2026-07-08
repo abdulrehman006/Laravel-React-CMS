@@ -20,16 +20,21 @@ class BlogRepository
         $query = $this->model->newQuery();
 
         if (! empty($search)) {
-            $query->orWhere('title', 'LIKE', '%'.$search.'%')
-                ->orWhereHas('user', function ($userQuery) use ($search) {
-                    $userQuery->where('name', 'LIKE', "%$search%");
-                })
-                ->orWhereHas('category', function ($categoryQuery) use ($search) {
-                    $categoryQuery->where('title', 'LIKE', "%$search%");
-                })
-                ->orWhereHas('tags', function ($tagQuery) use ($search) {
-                    $tagQuery->where('name', 'LIKE', "%$search%");
-                });
+            // Wrap the OR conditions in a closure so the status='1' filter below
+            // applies to the whole group. Without this, SQL precedence (AND binds
+            // tighter than OR) lets unpublished/draft posts leak into search results.
+            $query->where(function ($q) use ($search) {
+                $q->where('title', 'LIKE', '%'.$search.'%')
+                    ->orWhereHas('user', function ($userQuery) use ($search) {
+                        $userQuery->where('name', 'LIKE', "%$search%");
+                    })
+                    ->orWhereHas('category', function ($categoryQuery) use ($search) {
+                        $categoryQuery->where('title', 'LIKE', "%$search%");
+                    })
+                    ->orWhereHas('tags', function ($tagQuery) use ($search) {
+                        $tagQuery->where('name', 'LIKE', "%$search%");
+                    });
+            });
         }
 
         if (! empty($filter['category'])) {

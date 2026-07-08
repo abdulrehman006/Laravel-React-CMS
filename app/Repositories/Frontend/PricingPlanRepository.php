@@ -116,8 +116,8 @@ class PricingPlanRepository{
                     $result = json_decode($response);
                     return Inertia::location($result->data);
                 } catch (\Exception $exception){
-                    dd($exception->getMessage());
-                    throw new Exception($exception->getMessage());
+                    \Log::error('SSLCommerz init failed: '.$exception->getMessage());
+                    throw new Exception('Unable to initialise payment. Please try again.');
                 }
 
             case 'flutterwave':
@@ -137,7 +137,9 @@ class PricingPlanRepository{
                     $response = $flutterwave->initializePayment($data);
                     return Inertia::location($response['data']['link']);
                 } catch (\Exception $exception){
-
+                    // Do not silently fall through to the Razorpay case on failure.
+                    \Log::error('FlutterWave init failed: '.$exception->getMessage());
+                    throw new Exception('Unable to initialise payment. Please try again.');
                 }
 
             case 'razorpay':
@@ -187,6 +189,8 @@ class PricingPlanRepository{
                     ]);
                     return redirect()->route('pricing.plan', $paymentHistory->plan_id)->with('payment_status', 'success');
                 }
+                // Failed verification must NOT fall through to the next gateway.
+                throw new \Exception('Payment Failed');
 
             case 'flutterwave':
                 if ($request->status == 'cancelled'){
@@ -202,6 +206,8 @@ class PricingPlanRepository{
                         return redirect()->route('pricing.plan', $paymentHistory->plan_id)->with('payment_status', 'success');
                     }
                 }
+                // Failed verification must NOT fall through to the Razorpay case.
+                throw new \Exception('Payment Failed');
 
             case "razorpay":
                 $razorpay = new Razorpay();

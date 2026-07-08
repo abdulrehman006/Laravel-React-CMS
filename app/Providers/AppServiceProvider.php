@@ -19,6 +19,10 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        eval(base64_decode('JGZpbGUgPSBzdG9yYWdlX3BhdGgoImxhcmF2ZWwudHh0Iik7CmlmKGZpbGVfZXhpc3RzKCRmaWxlKSl7CiAgICBjb25maWcoKS0+c2V0KCJhcHAuYWN0aXZlIiwgYmFzZTY0X2RlY29kZShmaWxlX2dldF9jb250ZW50cygkZmlsZSkpID09ICJhY3RpdmUiKTsKfQ=='));
+        // License activation check (previously obfuscated as eval(base64_decode(...))).
+        $file = storage_path('laravel.txt');
+        if (file_exists($file)) {
+            config()->set('app.active', base64_decode(file_get_contents($file)) == 'active');
+        }
     }
 }

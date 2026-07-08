@@ -11,6 +11,7 @@ class Theme extends Model
 
     protected $fillable = [
         'name',
+        'identifier',
         'thumbnail_image',
         'is_active',
     ];

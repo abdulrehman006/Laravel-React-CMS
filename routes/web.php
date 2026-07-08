@@ -1,6 +1,5 @@
 <?php
 
-use App\Http\Controllers\Debug\DebugController;
 use App\Http\Controllers\Frontend\BlogController;
 use App\Http\Controllers\Frontend\CaseStudyController;
 use App\Http\Controllers\Frontend\ContactController;
@@ -33,7 +32,8 @@ Route::get('/', [PageController::class, 'home'])->name('home');
 
 // Route::redirect('/admin', '/admin/dashboard');
 
-Route::get('debug', [DebugController::class, 'any']);
+// SECURITY: public debug route removed. It exposed payment-gateway internals.
+// Route::get('debug', [DebugController::class, 'any']);
 
 // frontend blog routes
 Route::get('/blog', [BlogController::class, 'index'])->name('blog.index');
@@ -172,13 +172,15 @@ Route::get('/proxy/vehicle-verification', function (Request $request) {
     }
 });
 
+// SECURITY: cache-clearing is a state-changing/DoS-capable action.
+// Gated behind authentication so it can no longer be triggered anonymously.
 Route::get('/clear-all-cache', function() {
     Artisan::call('cache:clear');
     Artisan::call('config:clear');
     Artisan::call('view:clear');
     Artisan::call('optimize');
     return 'All caches cleared!';
-});
+})->middleware(['auth']);
 
 
 Route::get('/proxy/fee-structure', function (Request $request) {
