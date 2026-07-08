@@ -2,12 +2,11 @@ import Spacing from "@/Frontend/Components/Spacing";
 import Div from "@/Frontend/Components/Div";
 import SectionHeading from "@/Frontend/Components/SectionHeading";
 import { Icon } from "@iconify/react";
-import React, { useState } from "react";
+import React from "react";
 import { useForm, usePage } from "@inertiajs/react";
 
 export default function AppointmentForm() {
   const { flash, locations } = usePage().props;
-  const [selectedCompany, setSelectedCompany] = useState("individual");
   const { data, setData, errors, post, wasSuccessful, reset, processing } = useForm({
     vehicle_type: "",
     vehicle_make: "",
@@ -48,7 +47,6 @@ export default function AppointmentForm() {
       preserveScroll: true,
       onSuccess: () => {
         reset();
-        setSelectedCompany("individual");
       },
       onError: (errors) => {
         console.error('Form submission errors:', errors);
@@ -60,7 +58,9 @@ export default function AppointmentForm() {
   const today = new Date().toISOString().split("T")[0];
 
   const handleCompanyChange = (value) => {
-    setSelectedCompany(value);
+    // Single source of truth: data.company_type drives both the checked radio and
+    // what gets submitted, so the two can never desync (which caused the "company
+    // name required for corporate" error while Individual appeared selected).
     setData("company_type", value);
     if (value === "individual") {
       setData("company_name", "");
@@ -133,7 +133,7 @@ export default function AppointmentForm() {
                 type="radio"
                 name="company_type"
                 value="individual"
-                checked={selectedCompany === "individual"}
+                checked={data.company_type === "individual"}
                 onChange={() => handleCompanyChange("individual")}
                 className="me-2"
               />
@@ -144,7 +144,7 @@ export default function AppointmentForm() {
                 type="radio"
                 name="company_type"
                 value="corporate"
-                checked={selectedCompany === "corporate"}
+                checked={data.company_type === "corporate"}
                 onChange={() => handleCompanyChange("corporate")}
                 className="me-2"
               />
@@ -155,7 +155,7 @@ export default function AppointmentForm() {
         </Div>
 
         {/* Company Name - Only for Corporate */}
-        {selectedCompany === "corporate" && (
+        {data.company_type === "corporate" && (
           <Div className="mb-3">
             <label className="cs-primary_color">Company Name*</label>
             <input
@@ -165,7 +165,7 @@ export default function AppointmentForm() {
               onChange={(e) => setData("company_name", e.target.value)}
               className="cs-form_field"
               placeholder="Enter company name"
-              required={selectedCompany === "corporate"}
+              required={data.company_type === "corporate"}
               maxLength={150}
               style={{ height: '50px' }}
             />
