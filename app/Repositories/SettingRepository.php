@@ -138,14 +138,30 @@ class SettingRepository
         if (file_exists($path)) {
             $contents = file_get_contents($path);
 
-            $escapedKey = preg_quote($key, '/');
-            // Always quote values and escape internal quotes
-            $safeValue = '"' . str_replace('"', '\\"', $value) . '"';
+            // Always quote values. Escape backslashes, double quotes, and '$' — phpdotenv
+            // interpolates $VAR / ${VAR} inside double-quoted values, which would corrupt
+            // passwords/keys that contain a literal '$'.
+            $escapedValue = str_replace(['\\', '"', '$'], ['\\\\', '\\"', '\\$'], (string) $value);
+            $newLine = $key . '=' . '"' . $escapedValue . '"';
 
-            if (preg_match("/^{$escapedKey}=/m", $contents)) {
-                $contents = preg_replace("/^{$escapedKey}=.*/m", "{$key}={$safeValue}", $contents);
-                file_put_contents($path, $contents);
+            // Replace/append line-by-line. Note: preg_replace() is deliberately NOT used
+            // for the substitution — the replacement string can contain '$' and '\', which
+            // preg_replace would re-interpret as backreferences and strip our escaping.
+            $lines = preg_split('/\r\n|\r|\n/', $contents);
+            $found = false;
+            foreach ($lines as $i => $line) {
+                if (strpos($line, $key . '=') === 0) {
+                    $lines[$i] = $newLine;
+                    $found = true;
+                    break;
+                }
             }
+            if (!$found) {
+                // Key not present yet: append it so the setting is not silently dropped.
+                $lines[] = $newLine;
+            }
+
+            file_put_contents($path, implode(PHP_EOL, $lines));
         }
     }
 

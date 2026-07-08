@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Backend\SmtpSettingUpdateRequest;
 use App\Repositories\SettingRepository;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Artisan;
 use Inertia\Inertia;
 
 class SettingController extends Controller
@@ -39,6 +40,16 @@ class SettingController extends Controller
         $repository->updateEnvByKey($request->only([
             'MAIL_HOST', 'MAIL_PORT', 'MAIL_USERNAME', 'MAIL_PASSWORD', 'MAIL_ENCRYPTION', 'MAIL_FROM_ADDRESS',
         ]));
+
+        // On production the config is cached (php artisan config:cache), so env() no
+        // longer reflects the .env file. Without clearing it, the new SMTP settings are
+        // written but never used, and mail keeps failing. Clear so they take effect.
+        try {
+            Artisan::call('config:clear');
+        } catch (\Throwable $e) {
+            \Log::warning('Could not clear config cache after SMTP update: ' . $e->getMessage());
+        }
+
         return back()->with('success', 'Mail setting has been updated');
     }
 

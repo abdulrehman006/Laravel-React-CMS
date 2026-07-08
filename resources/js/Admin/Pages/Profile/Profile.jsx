@@ -5,12 +5,13 @@ import { key, newspaperOutline, people } from "ionicons/icons";
 import TextInput from "@/Admin/Components/Inputs/TextInput";
 export default function Profile() {
     const { auth } = usePage().props;
-    const { data, setData, errors, put } = useForm(auth.user);
+    const { data, setData, errors, post, transform } = useForm(auth.user);
     const {
         data: password,
         setData: setPassword,
         errors: passwordError,
-        put: passwordPut,
+        post: passwordPost,
+        transform: passwordTransform,
         reset,
     } = useForm({
         old_password: "",
@@ -18,15 +19,19 @@ export default function Profile() {
         password_confirmation: "",
     });
     // handle update profile
+    // Use POST + _method spoofing: shared hosting (cPanel/Apache) commonly blocks real
+    // PUT/DELETE requests, which returns 405. The backend route accepts put|post.
     const handleUpdateProfile = (e) => {
         e.preventDefault();
-        put(route("admin.profile"));
+        transform((d) => ({ ...d, _method: "put" }));
+        post(route("admin.profile"));
     };
 
     // handle update password
     const handleUpdatePassword = (e) => {
         e.preventDefault();
-        passwordPut(route("admin.change.password"), {
+        passwordTransform((d) => ({ ...d, _method: "put" }));
+        passwordPost(route("admin.change.password"), {
             onSuccess: () => {
                 reset("old_password", "password", "password_confirmation");
             },

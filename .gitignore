@@ -25,3 +25,7 @@ update/
 # Environment file
 .env
 nul
+
+# Server config — managed per-environment, not via git
+# (prevents git from clobbering server-specific rewrite/SSL rules)
+.htaccess
