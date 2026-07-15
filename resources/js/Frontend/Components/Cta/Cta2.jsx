@@ -284,15 +284,15 @@ export default function Cta2({ title, btnText, btnLink, bgSrc, bgColor, bgType, 
                                                             <td style={{ padding: "10px" }}>{item.vehicleMake}</td>
                                                         </tr>
                                                         <tr>
-                                                            <td style={{ fontWeight: "600", backgroundColor: "#f8f9fa", padding: "10px" }}>Chassis Number</td>
+                                                            <td style={{ fontWeight: "600", backgroundColor: "#f8f9fa", padding: "10px" }}>Chassis No.</td>
                                                             <td style={{ padding: "10px" }}>{item.chassisNumber}</td>
                                                         </tr>
                                                         <tr>
-                                                            <td style={{ fontWeight: "600", backgroundColor: "#f8f9fa", padding: "10px" }}>Engine Number</td>
+                                                            <td style={{ fontWeight: "600", backgroundColor: "#f8f9fa", padding: "10px" }}>Engine No.</td>
                                                             <td style={{ padding: "10px" }}>{item.engineNumber}</td>
                                                         </tr>
                                                         <tr>
-                                                            <td style={{ fontWeight: "600", backgroundColor: "#f8f9fa", padding: "10px" }}>Certificate Number</td>
+                                                            <td style={{ fontWeight: "600", backgroundColor: "#f8f9fa", padding: "10px" }}>Certificate No.</td>
                                                             <td style={{ padding: "10px" }}>{item.certificateNumber}</td>
                                                         </tr>
                                                         <tr>
