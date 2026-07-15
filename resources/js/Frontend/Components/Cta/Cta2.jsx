@@ -148,7 +148,7 @@ export default function Cta2({ title, btnText, btnLink, bgSrc, bgColor, bgType, 
                                         id="regNo"
                                         name="regNo"
                                         className="form-control"
-                                        placeholder="e.g., LET-15-8676"
+                                        placeholder="Enter registration number"
                                         value={formData.regNo}
                                         onChange={handleChange}
                                         style={{
@@ -168,7 +168,7 @@ export default function Cta2({ title, btnText, btnLink, bgSrc, bgColor, bgType, 
                                         id="chassisNo"
                                         name="chassisNo"
                                         className="form-control"
-                                        placeholder="e.g., SR308PK291991"
+                                        placeholder="Enter chassis number"
                                         value={formData.chassisNo}
                                         onChange={handleChange}
                                         style={{
@@ -188,7 +188,7 @@ export default function Cta2({ title, btnText, btnLink, bgSrc, bgColor, bgType, 
                                         id="VIR"
                                         name="VIR"
                                         className="form-control"
-                                        placeholder="Enter VIR"
+                                        placeholder="Enter VIR number"
                                         value={formData.VIR}
                                         onChange={handleChange}
                                         style={{

@@ -132,7 +132,7 @@ export default function APIDocumentation({ data }) {
                                 <input
                                     type="text"
                                     className="form-control"
-                                    placeholder={searchType === "regNo" ? "e.g., LET-15-8676" : "e.g., SR308PK291991"}
+                                    placeholder={searchType === "regNo" ? "Enter registration number" : "Enter chassis number"}
                                     value={searchValue}
                                     onChange={(e) => setSearchValue(e.target.value)}
                                     onKeyDown={(e) => e.key === "Enter" && handleSearch()}
