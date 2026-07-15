@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import axios from "axios";
 import { IonIcon } from "@ionic/react";
 import { checkmarkCircle, closeCircle } from "ionicons/icons";
@@ -16,6 +16,9 @@ export default function Cta2({ title, btnText, btnLink, bgSrc, bgColor, bgType, 
     const [result, setResult] = useState(null);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
+    // Set when a verification is triggered from URL params, so we scroll to the
+    // results once they render (e.g. /report-verification?chassisnumber=...).
+    const shouldScrollToResult = useRef(false);
 
     // Handle input changes
     const handleChange = (e) => {
@@ -39,6 +42,15 @@ export default function Cta2({ title, btnText, btnLink, bgSrc, bgColor, bgType, 
             // Check if response contains valid data
             if (Array.isArray(response.data) && response.data.length > 0) {
                 setResult(response.data); // Expecting an array of objects
+                // If this verification was triggered from URL params, scroll to the
+                // results once they render so the visitor lands on the outcome.
+                if (shouldScrollToResult.current) {
+                    setTimeout(() => {
+                        document
+                            .getElementById("verification-result")
+                            ?.scrollIntoView({ behavior: "smooth", block: "start" });
+                    }, 200);
+                }
             } else {
                 setResult([]); // If no data is found, set an empty array
             }
@@ -63,6 +75,9 @@ export default function Cta2({ title, btnText, btnLink, bgSrc, bgColor, bgType, 
             }
         } finally {
             setLoading(false); // End loading state
+            // Consume the scroll flag regardless of outcome (data, no-data, or error)
+            // so a later manual search never auto-scrolls unexpectedly.
+            shouldScrollToResult.current = false;
         }
     };
 
@@ -101,6 +116,7 @@ export default function Cta2({ title, btnText, btnLink, bgSrc, bgColor, bgType, 
 
         if (found) {
             setFormData(next);
+            shouldScrollToResult.current = true;
             runVerification(next);
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -244,7 +260,7 @@ export default function Cta2({ title, btnText, btnLink, bgSrc, bgColor, bgType, 
 
                             {/* Success Result */}
                             {result && result.length > 0 && (
-                                <Div className="mt-4">
+                                <Div id="verification-result" className="mt-4">
                                     <Div className="d-flex align-items-center mb-3">
                                         <IonIcon icon={checkmarkCircle} style={{ color: "#28a745", fontSize: "24px", marginRight: "8px" }} />
                                         <strong style={{ color: "#28a745", fontSize: "16px" }}>Verification Results</strong>
